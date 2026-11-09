@@ -11,6 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { NotificationDropdown } from "@/components/notifications/notification-dropdown";
 import { cn } from "@/lib/utils";
 
 export interface TopbarProps {
@@ -50,15 +51,8 @@ export function Topbar({ title, role, className }: TopbarProps) {
           />
         </div>
 
-        {/* Notification Bell */}
-        <button
-          type="button"
-          aria-label="View notifications"
-          className="relative flex items-center justify-center size-9 rounded-full bg-white/[0.06] border border-cream/10 text-cream/80 hover:text-cream hover:border-cream/20 hover:bg-white/[0.1] transition-colors cursor-pointer"
-        >
-          <Bell className="size-4" />
-          <span className="absolute top-2 right-2 size-2 rounded-full bg-sand ring-2 ring-ink animate-pulse" />
-        </button>
+        {/* Notification Bell Dropdown */}
+        <NotificationDropdown />
 
         {/* User Avatar Dropdown */}
         <DropdownMenu>

@@ -1,6 +1,13 @@
 import fs from "fs";
 import path from "path";
 import bcrypt from "bcryptjs";
+import {
+  defaultQuizzes,
+  defaultRoadmaps,
+  defaultNotifications,
+  defaultAuditLogs,
+  defaultQuizAttempts,
+} from "./default-data";
 
 export type Role = "student" | "faculty" | "recruiter" | "institution" | "admin";
 export type UserStatus = "pending_verification" | "active" | "suspended" | "deactivated";
@@ -369,6 +376,143 @@ export interface BookmarkRecord {
   savedAt: string;
 }
 
+// --- Module 7: Assessment & Verification Interfaces ---
+export interface QuizQuestion {
+  id: string;
+  question: string;
+  options: string[];
+  correctIndex: number;
+  explanation: string;
+}
+
+export interface QuizRecord {
+  id: string;
+  domain: "programming" | "databases" | "web_dev" | "data_science";
+  title: string;
+  skillName: string;
+  description: string;
+  durationMinutes: number;
+  passPercentage: number;
+  questions: QuizQuestion[];
+}
+
+export interface QuizAttemptRecord {
+  id: string;
+  userId: string;
+  quizId: string;
+  domain: string;
+  skillName: string;
+  score: number;
+  totalQuestions: number;
+  percentage: number;
+  passed: boolean;
+  proficiencyLevel: "Beginner" | "Intermediate" | "Advanced";
+  attemptedAt: string;
+}
+
+// --- Module 10: Career Roadmap Interfaces ---
+export interface RoadmapResource {
+  title: string;
+  url: string;
+  type: "guide" | "video" | "documentation" | "practice";
+}
+
+export interface RoadmapProject {
+  id: string;
+  title: string;
+  description: string;
+  deliverables: string;
+  estimatedHours: number;
+}
+
+export interface RoadmapModule {
+  id: string;
+  title: string;
+  description: string;
+  order: number;
+  skillsCovered: string[];
+  objectives: string[];
+  resources: RoadmapResource[];
+  project: RoadmapProject;
+  assessmentQuizId?: string;
+  status: "pending" | "ongoing" | "completed";
+  completedAt?: string;
+  addedToResume?: boolean;
+}
+
+export interface RoadmapRecord {
+  id: string;
+  userId: string;
+  careerRoleId: string;
+  careerRoleTitle: string;
+  currentModuleIndex: number;
+  progressPercentage: number;
+  milestonesCompleted: number;
+  totalMilestones: number;
+  modules: RoadmapModule[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+// --- Module 9: Progressive Resume Builder Interfaces ---
+export interface ResumeBuilderRecord {
+  id: string;
+  userId: string;
+  title: string;
+  targetRole: string;
+  template: "modern-minimal" | "executive-slate" | "academic-classic" | "tech-focus";
+  personalInfo: {
+    fullName: string;
+    email: string;
+    phone: string;
+    location: string;
+    portfolioUrl?: string;
+    linkedinUrl?: string;
+    githubUrl?: string;
+    summary: string;
+  };
+  education: AcademicInfo[];
+  experience: ExperienceItem[];
+  projects: ProjectItem[];
+  skills: SkillItem[];
+  certifications: CertificationItem[];
+  achievements: AchievementItem[];
+  customSections?: { id: string; title: string; content: string }[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+// --- Notifications Interfaces ---
+export type NotificationType =
+  | "application_update"
+  | "deadline_reminder"
+  | "matching_opportunity"
+  | "learning_reminder"
+  | "new_applicant"
+  | "faculty_alert";
+
+export interface NotificationRecord {
+  id: string;
+  userId: string;
+  role: Role;
+  type: NotificationType;
+  title: string;
+  message: string;
+  link?: string;
+  read: boolean;
+  createdAt: string;
+}
+
+// --- Admin & Audit Interfaces ---
+export interface AuditLogRecord {
+  id: string;
+  action: string;
+  performedBy: string;
+  targetId?: string;
+  details?: string;
+  timestamp: string;
+}
+
 export interface DatabaseSchema {
   users: User[];
   sessions: Session[];
@@ -383,6 +527,12 @@ export interface DatabaseSchema {
   opportunities: Opportunity[];
   applications: ApplicationRecord[];
   bookmarks: BookmarkRecord[];
+  quizzes: QuizRecord[];
+  quizAttempts: QuizAttemptRecord[];
+  roadmaps: RoadmapRecord[];
+  resumeDocuments: ResumeBuilderRecord[];
+  notifications: NotificationRecord[];
+  auditLogs: AuditLogRecord[];
 }
 
 const DB_DIR = path.join(process.cwd(), "src", "data");
@@ -639,6 +789,12 @@ function ensureDbFile(): void {
       opportunities: [],
       applications: [],
       bookmarks: [],
+      quizzes: defaultQuizzes,
+      quizAttempts: defaultQuizAttempts,
+      roadmaps: defaultRoadmaps,
+      resumeDocuments: [],
+      notifications: defaultNotifications,
+      auditLogs: defaultAuditLogs,
     };
 
     fs.writeFileSync(DB_FILE, JSON.stringify(initialDb, null, 2), "utf-8");
@@ -944,6 +1100,35 @@ export function readDb(): DatabaseSchema {
           updatedAt: now,
         },
       ];
+      writeDb(parsed);
+    }
+
+    let needsWrite = false;
+    if (!parsed.quizzes || parsed.quizzes.length === 0) {
+      parsed.quizzes = defaultQuizzes;
+      needsWrite = true;
+    }
+    if (!parsed.quizAttempts) {
+      parsed.quizAttempts = defaultQuizAttempts;
+      needsWrite = true;
+    }
+    if (!parsed.roadmaps || parsed.roadmaps.length === 0) {
+      parsed.roadmaps = defaultRoadmaps;
+      needsWrite = true;
+    }
+    if (!parsed.resumeDocuments) {
+      parsed.resumeDocuments = [];
+      needsWrite = true;
+    }
+    if (!parsed.notifications || parsed.notifications.length === 0) {
+      parsed.notifications = defaultNotifications;
+      needsWrite = true;
+    }
+    if (!parsed.auditLogs || parsed.auditLogs.length === 0) {
+      parsed.auditLogs = defaultAuditLogs;
+      needsWrite = true;
+    }
+    if (needsWrite) {
       writeDb(parsed);
     }
 
