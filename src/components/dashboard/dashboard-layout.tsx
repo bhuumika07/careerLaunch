@@ -22,12 +22,16 @@ export function DashboardLayout({
   return (
     <div className="flex h-screen w-full overflow-hidden bg-ink font-body">
       {/* Dark Sidebar */}
-      <Sidebar role={role} />
+      <React.Suspense fallback={<div className="w-16 h-full bg-ink shrink-0" />}>
+        <Sidebar role={role} />
+      </React.Suspense>
 
       {/* Main Column */}
       <div className="flex flex-col flex-1 min-w-0 h-screen overflow-hidden bg-[#FBF8F3] text-ink">
         {/* Topbar */}
-        <Topbar role={role} title={title} />
+        <React.Suspense fallback={<div className="h-16 w-full bg-white border-b border-slate-200 shrink-0" />}>
+          <Topbar role={role} title={title} />
+        </React.Suspense>
 
         {/* Scrollable Content Area */}
         <main

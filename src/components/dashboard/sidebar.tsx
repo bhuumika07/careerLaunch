@@ -53,6 +53,7 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   Shield,
   Settings,
   FileEdit,
+  Compass,
 };
 
 export interface SidebarProps {

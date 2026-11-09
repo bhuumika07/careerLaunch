@@ -59,10 +59,41 @@
       "onboardingCompleted": true,
       "createdAt": "2026-11-09T09:51:19.707Z",
       "updatedAt": "2026-11-09T09:51:19.707Z"
+    },
+    {
+      "id": "usr_student_1794221971460",
+      "name": "bhumika",
+      "email": "bhumikaa2005@gmail.com",
+      "passwordHash": "$2b$10$FumwlCOWU44o8cmju5wggem5.C7mQRPsDXNkYT83SxWpP9kTEipZi",
+      "role": "student",
+      "status": "active",
+      "emailVerified": false,
+      "onboardingCompleted": true,
+      "createdAt": "2026-11-09T10:59:31.460Z",
+      "updatedAt": "2026-11-09T11:00:08.983Z"
     }
   ],
-  "sessions": [],
-  "verificationTokens": [],
+  "sessions": [
+    {
+      "id": "sess_a6668ec62a544fced7c2f5304fa091562c340ba1c396a48a99b6c7ef617c3dad",
+      "userId": "usr_student_1794221971460",
+      "role": "student",
+      "expiresAt": 1794826771472,
+      "createdAt": "2026-11-09T10:59:31.472Z"
+    }
+  ],
+  "verificationTokens": [
+    {
+      "id": "vt_1794221971462",
+      "token": "7c0d65e45d1146fd3201860ce94f2280e663b254c02139bc5f1b9a35f69d6b2c",
+      "userId": "usr_student_1794221971460",
+      "email": "bhumikaa2005@gmail.com",
+      "type": "email_verification",
+      "expiresAt": 1794308371462,
+      "used": false,
+      "createdAt": "2026-11-09T10:59:31.460Z"
+    }
+  ],
   "rateLimits": [],
   "studentProfiles": [
     {
@@ -197,6 +228,24 @@
         }
       ],
       "updatedAt": "2026-11-09T09:51:19.707Z"
+    },
+    {
+      "userId": "usr_student_1794221971460",
+      "skills": [],
+      "projects": [],
+      "experience": [],
+      "certifications": [],
+      "achievements": [],
+      "updatedAt": "2026-11-09T11:00:08.983Z",
+      "phone": "79734865454",
+      "bio": "going with flow",
+      "location": "punjab",
+      "institution": "St. Jude Institute of Technology",
+      "department": "Computer Science & Engineering",
+      "degree": "B.Tech in Computer Science",
+      "graduationYear": 2026,
+      "cgpa": 8.8,
+      "avatarUrl": ""
     }
   ],
   "facultyProfiles": [
@@ -346,6 +395,677 @@
         "Data Science & AI": 14
       },
       "updatedAt": "2026-11-09T09:51:19.707Z"
+    }
+  ],
+  "resumes": [],
+  "careerDiscoveryResponses": [
+    {
+      "id": "cd_1794222127286",
+      "userId": "usr_student_1794221971460",
+      "answers": {
+        "interests": [
+          "Web Development",
+          "Artificial Intelligence & ML"
+        ],
+        "workPreferences": [
+          "coding",
+          "analysis"
+        ],
+        "existingKnowledge": [
+          "JavaScript",
+          "Python",
+          "Git",
+          "React"
+        ],
+        "collegeProjects": [
+          "Academic Web App",
+          "Data Visualization Mini-Project"
+        ],
+        "preferredIndustries": [
+          "Technology & Software",
+          "Fintech"
+        ],
+        "careerGoals": "Aspiring to become a high-impact Software Engineer at an innovative technology firm.",
+        "updatedAt": "2026-11-09T11:02:07.285Z"
+      },
+      "recommendations": [
+        {
+          "roleId": "role_fullstack",
+          "title": "Fullstack Systems Engineer",
+          "interestCompatibility": 80,
+          "currentJobReadiness": 39,
+          "shortDescription": "Bridges client experiences with robust backend microservices, database schemas, and API contracts.",
+          "skillsToDevelop": [
+            "TypeScript",
+            "Node.js",
+            "PostgreSQL",
+            "REST APIs",
+            "Docker"
+          ],
+          "skillsAlreadyAcquired": [
+            "React",
+            "Git"
+          ],
+          "whyRecommended": [
+            "Your preferred working mode aligns with coding and analysis activities.",
+            "Direct alignment with your selected interest in Web Development.",
+            "You already have familiarity with React, Git, giving you a head-start."
+          ],
+          "typicalRoles": [
+            "Fullstack Engineer",
+            "Software Development Engineer (SDE-1)"
+          ],
+          "averageEntrySalary": "₹10 - 18 LPA",
+          "marketDemand": "Very High"
+        },
+        {
+          "roleId": "role_data_ai",
+          "title": "AI / Machine Learning Engineer",
+          "interestCompatibility": 67,
+          "currentJobReadiness": 30,
+          "shortDescription": "Develops machine learning models, fine-tunes transformers, and deploys high-throughput predictive inference pipelines.",
+          "skillsToDevelop": [
+            "PyTorch",
+            "TensorFlow",
+            "Pandas",
+            "Scikit-Learn",
+            "FastAPI",
+            "SQL"
+          ],
+          "skillsAlreadyAcquired": [
+            "Python"
+          ],
+          "whyRecommended": [
+            "Your preferred working mode aligns with analysis and research and coding activities.",
+            "Direct alignment with your selected interest in Artificial Intelligence & ML.",
+            "You already have familiarity with Python, giving you a head-start."
+          ],
+          "typicalRoles": [
+            "Junior ML Engineer",
+            "Applied AI Scientist",
+            "NLP Researcher"
+          ],
+          "averageEntrySalary": "₹12 - 20 LPA",
+          "marketDemand": "Very High"
+        },
+        {
+          "roleId": "role_frontend",
+          "title": "Frontend Engineer / UI Specialist",
+          "interestCompatibility": 60,
+          "currentJobReadiness": 39,
+          "shortDescription": "Specializes in building responsive web applications, design systems, and client-side performance architectures.",
+          "skillsToDevelop": [
+            "TypeScript",
+            "Next.js",
+            "Tailwind CSS",
+            "HTML5",
+            "CSS3"
+          ],
+          "skillsAlreadyAcquired": [
+            "React",
+            "Git"
+          ],
+          "whyRecommended": [
+            "Your preferred working mode aligns with coding and designing activities.",
+            "Direct alignment with your selected interest in Web Development.",
+            "You already have familiarity with React, Git, giving you a head-start."
+          ],
+          "typicalRoles": [
+            "Junior Frontend Developer",
+            "UI Engineer",
+            "Web Application Developer"
+          ],
+          "averageEntrySalary": "₹8 - 14 LPA",
+          "marketDemand": "Very High"
+        },
+        {
+          "roleId": "role_cloud_devops",
+          "title": "Cloud & DevOps Infrastructure Engineer",
+          "interestCompatibility": 57,
+          "currentJobReadiness": 30,
+          "shortDescription": "Automates CI/CD deployment pipelines, container orchestration, and multi-region cloud resilience.",
+          "skillsToDevelop": [
+            "Docker",
+            "Kubernetes",
+            "Linux",
+            "AWS / GCP",
+            "CI/CD",
+            "Terraform"
+          ],
+          "skillsAlreadyAcquired": [
+            "Bash / Python"
+          ],
+          "whyRecommended": [
+            "Your preferred working mode aligns with coding and management and analysis activities.",
+            "You already have familiarity with Bash / Python, giving you a head-start."
+          ],
+          "typicalRoles": [
+            "Junior Cloud Engineer",
+            "DevOps Engineer",
+            "Site Reliability Engineer (SRE)"
+          ],
+          "averageEntrySalary": "₹9 - 16 LPA",
+          "marketDemand": "Very High"
+        },
+        {
+          "roleId": "role_cybersecurity",
+          "title": "Cybersecurity & Application Security Analyst",
+          "interestCompatibility": 57,
+          "currentJobReadiness": 31,
+          "shortDescription": "Audits software attack surfaces, secures cryptographic protocols, and configures threat detection systems.",
+          "skillsToDevelop": [
+            "Linux",
+            "Network Protocols",
+            "Penetration Testing",
+            "OWASP Top 10",
+            "Cryptography"
+          ],
+          "skillsAlreadyAcquired": [
+            "Python"
+          ],
+          "whyRecommended": [
+            "Your preferred working mode aligns with research and analysis and coding activities.",
+            "You already have familiarity with Python, giving you a head-start."
+          ],
+          "typicalRoles": [
+            "SOC Analyst",
+            "Security Engineer",
+            "Vulnerability Analyst"
+          ],
+          "averageEntrySalary": "₹8 - 15 LPA",
+          "marketDemand": "High"
+        },
+        {
+          "roleId": "role_data_analyst",
+          "title": "Data Analyst & Business Intelligence Specialist",
+          "interestCompatibility": 50,
+          "currentJobReadiness": 31,
+          "shortDescription": "Transforms operational raw data into actionable dashboards, cohort analysis, and executive strategic roadmaps.",
+          "skillsToDevelop": [
+            "SQL",
+            "PowerBI / Tableau",
+            "Statistics",
+            "Excel",
+            "Data Modeling"
+          ],
+          "skillsAlreadyAcquired": [
+            "Python"
+          ],
+          "whyRecommended": [
+            "Your preferred working mode aligns with analysis and research activities.",
+            "You already have familiarity with Python, giving you a head-start."
+          ],
+          "typicalRoles": [
+            "Associate Data Analyst",
+            "Product Analyst",
+            "BI Developer"
+          ],
+          "averageEntrySalary": "₹7 - 12 LPA",
+          "marketDemand": "High"
+        },
+        {
+          "roleId": "role_tech_pm",
+          "title": "Associate Product Manager (Technical PM)",
+          "interestCompatibility": 43,
+          "currentJobReadiness": 22,
+          "shortDescription": "Defines product roadmaps, prioritizes sprint backlogs, and aligns engineering teams with customer needs.",
+          "skillsToDevelop": [
+            "Agile & Scrum",
+            "User Story Mapping",
+            "Data Analysis",
+            "Roadmapping",
+            "Cross-Functional Leadership"
+          ],
+          "skillsAlreadyAcquired": [],
+          "whyRecommended": [
+            "Your preferred working mode aligns with management and analysis and research activities.",
+            "High growth upside: learning Agile & Scrum & User Story Mapping will dramatically accelerate readiness."
+          ],
+          "typicalRoles": [
+            "Associate Product Manager (APM)",
+            "Product Owner",
+            "Tech Program Coordinator"
+          ],
+          "averageEntrySalary": "₹10 - 18 LPA",
+          "marketDemand": "High"
+        },
+        {
+          "roleId": "role_product_designer",
+          "title": "Product Designer (UI/UX)",
+          "interestCompatibility": 30,
+          "currentJobReadiness": 22,
+          "shortDescription": "Designs intuitive user journeys, wireframes, interaction systems, and conducts user research to solve product problems.",
+          "skillsToDevelop": [
+            "Figma",
+            "Design Systems",
+            "Prototyping",
+            "User Research",
+            "Wireframing",
+            "Usability Testing"
+          ],
+          "skillsAlreadyAcquired": [],
+          "whyRecommended": [
+            "Your preferred working mode aligns with designing and research activities.",
+            "High growth upside: learning Figma & Design Systems will dramatically accelerate readiness."
+          ],
+          "typicalRoles": [
+            "Junior Product Designer",
+            "UI/UX Designer",
+            "Interaction Designer"
+          ],
+          "averageEntrySalary": "₹7 - 13 LPA",
+          "marketDemand": "High"
+        }
+      ],
+      "completedAt": "2026-11-09T11:02:07.286Z",
+      "isDraft": false
+    }
+  ],
+  "applications": [],
+  "bookmarks": [],
+  "opportunities": [
+    {
+      "id": "opp_1",
+      "recruiterId": "usr_recruiter_demo",
+      "title": "Frontend Engineer (Next.js & Design Systems)",
+      "description": "We are looking for a passionate Frontend Engineer to build high-performance web applications, responsive user interfaces, and modular design components.",
+      "org": "TechCorp Labs",
+      "category": "Jobs",
+      "skills": [
+        "TypeScript",
+        "Next.js",
+        "Tailwind CSS",
+        "React"
+      ],
+      "eligibility": {
+        "degrees": [
+          "B.Tech",
+          "B.E.",
+          "M.Tech",
+          "MCA"
+        ],
+        "minCgpa": 7.5,
+        "graduationYears": [
+          "2024",
+          "2025",
+          "2026"
+        ],
+        "experienceLevel": "Entry-level"
+      },
+      "location": "Bangalore, India",
+      "workMode": "hybrid",
+      "deadline": "2026-12-31T23:59:59.000Z",
+      "stipendSalary": "₹14 - 18 LPA",
+      "status": "active",
+      "sourceUrl": "https://techcorp.example.com/careers/fe-eng",
+      "isExternal": false,
+      "publicationDate": "2026-10-15T10:00:00.000Z",
+      "lastVerifiedDate": "2026-11-09T10:59:31.315Z",
+      "applicantCount": 12,
+      "shortlistedCount": 4,
+      "selectedCount": 1,
+      "createdAt": "2026-11-09T10:59:31.315Z",
+      "updatedAt": "2026-11-09T10:59:31.315Z"
+    },
+    {
+      "id": "opp_2",
+      "recruiterId": "usr_recruiter_demo",
+      "title": "Fullstack Systems Engineer",
+      "description": "Architect scalable distributed backends, REST/gRPC microservices, and reactive user dashboards with high throughput.",
+      "org": "CloudScale Infotech",
+      "category": "Jobs",
+      "skills": [
+        "Node.js",
+        "PostgreSQL",
+        "Go",
+        "Docker"
+      ],
+      "eligibility": {
+        "degrees": [
+          "B.Tech",
+          "M.Tech",
+          "MCA"
+        ],
+        "minCgpa": 7,
+        "graduationYears": [
+          "2023",
+          "2024",
+          "2025"
+        ],
+        "experienceLevel": "Entry-level"
+      },
+      "location": "Remote, India",
+      "workMode": "remote",
+      "deadline": "2026-12-15T23:59:59.000Z",
+      "stipendSalary": "₹16 - 22 LPA",
+      "status": "active",
+      "sourceUrl": "https://cloudscale.example.com/jobs/fullstack",
+      "isExternal": false,
+      "publicationDate": "2026-10-20T10:00:00.000Z",
+      "lastVerifiedDate": "2026-11-09T10:59:31.315Z",
+      "applicantCount": 28,
+      "shortlistedCount": 6,
+      "selectedCount": 0,
+      "createdAt": "2026-11-09T10:59:31.315Z",
+      "updatedAt": "2026-11-09T10:59:31.315Z"
+    },
+    {
+      "id": "opp_3",
+      "recruiterId": "usr_recruiter_demo",
+      "title": "Software Engineering Summer Intern",
+      "description": "Join our core engineering team to build AI-augmented developer tooling, write unit tests, and ship real product features.",
+      "org": "Innovate AI",
+      "category": "Internships",
+      "skills": [
+        "Python",
+        "FastAPI",
+        "React",
+        "Git"
+      ],
+      "eligibility": {
+        "degrees": [
+          "B.Tech",
+          "B.Sc Computer Science",
+          "Dual Degree"
+        ],
+        "minCgpa": 8,
+        "graduationYears": [
+          "2026",
+          "2027"
+        ],
+        "experienceLevel": "Student / Intern"
+      },
+      "location": "Hyderabad, India",
+      "workMode": "onsite",
+      "deadline": "2026-11-30T23:59:59.000Z",
+      "stipendSalary": "₹45,000 / month",
+      "status": "active",
+      "sourceUrl": "https://innovateai.example.com/internships",
+      "isExternal": false,
+      "publicationDate": "2026-11-01T10:00:00.000Z",
+      "lastVerifiedDate": "2026-11-09T10:59:31.315Z",
+      "applicantCount": 45,
+      "shortlistedCount": 8,
+      "selectedCount": 2,
+      "createdAt": "2026-11-09T10:59:31.315Z",
+      "updatedAt": "2026-11-09T10:59:31.315Z"
+    },
+    {
+      "id": "opp_4",
+      "recruiterId": "usr_recruiter_demo",
+      "title": "UI/UX Product Design Intern",
+      "description": "Craft wireframes, interactive user flows, and Figma design tokens for our enterprise cloud suite.",
+      "org": "DesignCraft Studios",
+      "category": "Internships",
+      "skills": [
+        "Figma",
+        "Design Systems",
+        "Prototyping",
+        "User Research"
+      ],
+      "eligibility": {
+        "degrees": [
+          "B.Des",
+          "B.Tech",
+          "Any Graduate"
+        ],
+        "graduationYears": [
+          "2025",
+          "2026",
+          "2027"
+        ],
+        "experienceLevel": "Student / Intern"
+      },
+      "location": "Remote",
+      "workMode": "remote",
+      "deadline": "2026-12-05T23:59:59.000Z",
+      "stipendSalary": "₹35,000 / month",
+      "status": "active",
+      "sourceUrl": "https://designcraft.example.com/careers",
+      "isExternal": false,
+      "publicationDate": "2026-11-02T10:00:00.000Z",
+      "lastVerifiedDate": "2026-11-09T10:59:31.315Z",
+      "applicantCount": 19,
+      "shortlistedCount": 3,
+      "selectedCount": 0,
+      "createdAt": "2026-11-09T10:59:31.315Z",
+      "updatedAt": "2026-11-09T10:59:31.315Z"
+    },
+    {
+      "id": "opp_5",
+      "recruiterId": "usr_faculty_demo",
+      "title": "Postgraduate AI & NLP Research Fellowship",
+      "description": "Funded research fellowship focusing on parameter-efficient fine-tuning (PEFT) and low-resource multilingual language models.",
+      "org": "National AI Research Center",
+      "category": "Research fellowships",
+      "skills": [
+        "Python",
+        "PyTorch",
+        "Transformers",
+        "NLP"
+      ],
+      "eligibility": {
+        "degrees": [
+          "M.Tech",
+          "M.S.",
+          "PhD Candidate"
+        ],
+        "minCgpa": 8.5,
+        "graduationYears": [
+          "2024",
+          "2025",
+          "2026"
+        ],
+        "experienceLevel": "Entry-level"
+      },
+      "location": "New Delhi, India",
+      "workMode": "onsite",
+      "deadline": "2027-01-15T23:59:59.000Z",
+      "stipendSalary": "₹55,000 / month + Grant",
+      "status": "active",
+      "sourceUrl": "https://narc.gov.in/fellowships",
+      "isExternal": true,
+      "publicationDate": "2026-10-01T10:00:00.000Z",
+      "lastVerifiedDate": "2026-11-09T10:59:31.315Z",
+      "applicantCount": 8,
+      "shortlistedCount": 2,
+      "selectedCount": 0,
+      "createdAt": "2026-11-09T10:59:31.315Z",
+      "updatedAt": "2026-11-09T10:59:31.315Z"
+    },
+    {
+      "id": "opp_6",
+      "recruiterId": "usr_faculty_demo",
+      "title": "Federated Learning for Healthcare Systems",
+      "description": "Joint inter-institutional collaboration investigating privacy-preserving decentralized learning across clinical sensor networks.",
+      "org": "Apex Institute of Science",
+      "category": "Research collaborations",
+      "skills": [
+        "Privacy-Preserving ML",
+        "Federated Learning",
+        "Python"
+      ],
+      "eligibility": {
+        "degrees": [
+          "Faculty",
+          "Postdoc",
+          "M.Tech"
+        ],
+        "graduationYears": [
+          "All"
+        ],
+        "experienceLevel": "Mid-level"
+      },
+      "location": "Pune, India",
+      "workMode": "hybrid",
+      "deadline": "2026-12-20T23:59:59.000Z",
+      "stipendSalary": "Funded Research Grant",
+      "status": "active",
+      "sourceUrl": "https://apex.ac.in/research/collab",
+      "isExternal": false,
+      "publicationDate": "2026-10-18T10:00:00.000Z",
+      "lastVerifiedDate": "2026-11-09T10:59:31.315Z",
+      "applicantCount": 5,
+      "shortlistedCount": 2,
+      "selectedCount": 1,
+      "createdAt": "2026-11-09T10:59:31.315Z",
+      "updatedAt": "2026-11-09T10:59:31.315Z"
+    },
+    {
+      "id": "opp_7",
+      "recruiterId": "usr_institution_demo",
+      "title": "Faculty Development Program: Generative AI in Higher Education",
+      "description": "One-week national workshop & FDP certified by IEEE on integrating LLMs, ethical AI frameworks, and project-based evaluations.",
+      "org": "IEEE Computer Society & TechCorp",
+      "category": "FDPs",
+      "skills": [
+        "GenAI",
+        "Prompt Engineering",
+        "Curriculum Design"
+      ],
+      "eligibility": {
+        "degrees": [
+          "Faculty",
+          "Academic Leadership"
+        ],
+        "graduationYears": [
+          "All"
+        ],
+        "experienceLevel": "Senior"
+      },
+      "location": "Online (Virtual)",
+      "workMode": "remote",
+      "deadline": "2026-11-25T23:59:59.000Z",
+      "stipendSalary": "Complimentary / Certified",
+      "status": "active",
+      "sourceUrl": "https://ieee.org/fdp/genai-2026",
+      "isExternal": true,
+      "publicationDate": "2026-11-05T10:00:00.000Z",
+      "lastVerifiedDate": "2026-11-09T10:59:31.315Z",
+      "applicantCount": 62,
+      "shortlistedCount": 40,
+      "selectedCount": 40,
+      "createdAt": "2026-11-09T10:59:31.315Z",
+      "updatedAt": "2026-11-09T10:59:31.315Z"
+    },
+    {
+      "id": "opp_8",
+      "recruiterId": "usr_institution_demo",
+      "title": "Hands-on High-Performance Distributed Systems Workshop",
+      "description": "Weekend intensive bootcamp on consensus protocols (Raft), message queues (Apache Kafka), and Kubernetes pod orchestration.",
+      "org": "SystemsGuild",
+      "category": "Workshops",
+      "skills": [
+        "Kubernetes",
+        "Kafka",
+        "Distributed Computing",
+        "Go"
+      ],
+      "eligibility": {
+        "degrees": [
+          "B.Tech",
+          "M.Tech",
+          "MCA"
+        ],
+        "graduationYears": [
+          "2025",
+          "2026",
+          "2027"
+        ],
+        "experienceLevel": "Student / Intern"
+      },
+      "location": "Bangalore, India",
+      "workMode": "hybrid",
+      "deadline": "2026-11-28T23:59:59.000Z",
+      "stipendSalary": "Certificate Included",
+      "status": "active",
+      "sourceUrl": "https://systemsguild.org/workshop",
+      "isExternal": false,
+      "publicationDate": "2026-11-04T10:00:00.000Z",
+      "lastVerifiedDate": "2026-11-09T10:59:31.315Z",
+      "applicantCount": 34,
+      "shortlistedCount": 20,
+      "selectedCount": 20,
+      "createdAt": "2026-11-09T10:59:31.315Z",
+      "updatedAt": "2026-11-09T10:59:31.315Z"
+    },
+    {
+      "id": "opp_9",
+      "recruiterId": "usr_recruiter_demo",
+      "title": "Live Microservices Architecture Capstone",
+      "description": "Build an event-driven payment ledger under the mentorship of senior fintech principal engineers. Top performers receive interview fast-tracks.",
+      "org": "FinTech Alliance",
+      "category": "Industry projects",
+      "skills": [
+        "Event-Driven Architecture",
+        "Kafka",
+        "PostgreSQL",
+        "Docker"
+      ],
+      "eligibility": {
+        "degrees": [
+          "B.Tech",
+          "B.E.",
+          "Dual Degree"
+        ],
+        "minCgpa": 7.2,
+        "graduationYears": [
+          "2025",
+          "2026"
+        ],
+        "experienceLevel": "Entry-level"
+      },
+      "location": "Remote",
+      "workMode": "remote",
+      "deadline": "2026-12-10T23:59:59.000Z",
+      "stipendSalary": "₹30,000 Milestone Bonus",
+      "status": "active",
+      "sourceUrl": "https://fintechalliance.example.com/capstone",
+      "isExternal": false,
+      "publicationDate": "2026-10-25T10:00:00.000Z",
+      "lastVerifiedDate": "2026-11-09T10:59:31.315Z",
+      "applicantCount": 16,
+      "shortlistedCount": 5,
+      "selectedCount": 0,
+      "createdAt": "2026-11-09T10:59:31.315Z",
+      "updatedAt": "2026-11-09T10:59:31.315Z"
+    },
+    {
+      "id": "opp_10",
+      "recruiterId": "usr_recruiter_demo",
+      "title": "Executive Mentorship: Transitioning from Engineering to Tech Lead",
+      "description": "1-on-1 bi-weekly mentorship tracks with engineering directors covering system design, engineering leadership, and sprint negotiation.",
+      "org": "Founders & Leaders Network",
+      "category": "Mentorship",
+      "skills": [
+        "Leadership",
+        "System Architecture",
+        "Career Planning"
+      ],
+      "eligibility": {
+        "degrees": [
+          "Any Engineering Graduate",
+          "Working Professionals"
+        ],
+        "graduationYears": [
+          "All"
+        ],
+        "experienceLevel": "Mid-level"
+      },
+      "location": "1:1 Virtual Sessions",
+      "workMode": "remote",
+      "deadline": "2026-12-31T23:59:59.000Z",
+      "stipendSalary": "Complimentary",
+      "status": "active",
+      "sourceUrl": "https://leadersnetwork.example.com/mentorship",
+      "isExternal": false,
+      "publicationDate": "2026-10-12T10:00:00.000Z",
+      "lastVerifiedDate": "2026-11-09T10:59:31.315Z",
+      "applicantCount": 41,
+      "shortlistedCount": 12,
+      "selectedCount": 6,
+      "createdAt": "2026-11-09T10:59:31.315Z",
+      "updatedAt": "2026-11-09T10:59:31.315Z"
     }
   ]
 }
