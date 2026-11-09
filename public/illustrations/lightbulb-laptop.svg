@@ -1,0 +1,273 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%" fill="none">
+  <defs>
+    <!-- Sand-toned outer glow filter -->
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="3.5" result="blur" />
+      <feFlood flood-color="#C4A885" flood-opacity="0.65" result="glowColor" />
+      <feComposite in="glowColor" in2="blur" operator="in" result="coloredBlur" />
+      <feMerge>
+        <feMergeNode in="coloredBlur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+
+    <filter id="glow-subtle" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="2" result="blur" />
+      <feFlood flood-color="#C4A885" flood-opacity="0.45" result="glowColor" />
+      <feComposite in="glowColor" in2="blur" operator="in" result="coloredBlur" />
+      <feMerge>
+        <feMergeNode in="coloredBlur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+
+    <!-- Cone of light gradient -->
+    <linearGradient id="lightCone" x1="50%" y1="0%" x2="50%" y2="100%">
+      <stop offset="0%" stop-color="#C4A885" stop-opacity="0.22" />
+      <stop offset="60%" stop-color="#C4A885" stop-opacity="0.08" />
+      <stop offset="100%" stop-color="#C4A885" stop-opacity="0.0" />
+    </linearGradient>
+  </defs>
+
+  <!-- Ambient Perspective Light Cone onto Laptop Screen -->
+  <polygon points="180,180 220,180 300,295 100,295" fill="url(#lightCone)" />
+
+  <!-- Radiating Light Rays from the Bulb -->
+  <g stroke="#C4A885" stroke-width="1.2" stroke-linecap="round" opacity="0.85">
+    <!-- Top vertical rays -->
+    <line x1="200" y1="22" x2="200" y2="8" />
+    <line x1="200" y1="2" x2="200" y2="4" stroke="#E8DFD4" stroke-width="2" />
+
+    <!-- Top diagonals -->
+    <line x1="226" y1="28" x2="246" y2="12" stroke-dasharray="3 3" />
+    <line x1="174" y1="28" x2="154" y2="12" stroke-dasharray="3 3" />
+
+    <!-- High diagonals -->
+    <line x1="255" y1="46" x2="288" y2="28" />
+    <line x1="145" y1="46" x2="112" y2="28" />
+
+    <!-- Mid upper diagonals -->
+    <line x1="278" y1="74" x2="322" y2="58" />
+    <line x1="122" y1="74" x2="78" y2="58" />
+
+    <!-- Equator horizontal rays -->
+    <line x1="290" y1="108" x2="338" y2="105" stroke-dasharray="4 3" />
+    <line x1="110" y1="108" x2="62" y2="105" stroke-dasharray="4 3" />
+
+    <!-- Lower diagonals -->
+    <line x1="282" y1="142" x2="326" y2="155" />
+    <line x1="118" y1="142" x2="74" y2="155" />
+
+    <line x1="262" y1="172" x2="298" y2="192" stroke-dasharray="2 3" />
+    <line x1="138" y1="172" x2="102" y2="192" stroke-dasharray="2 3" />
+  </g>
+
+  <!-- Concentric Radial Spark Arcs -->
+  <g stroke="#E8DFD4" stroke-width="0.8" opacity="0.35">
+    <path d="M 125,45 A 95,95 0 0,1 275,45" stroke-dasharray="3 6" />
+    <path d="M 95,108 A 125,125 0 0,1 305,108" stroke-dasharray="4 8" />
+    <path d="M 80,150 A 150,150 0 0,1 320,150" stroke-dasharray="2 8" />
+  </g>
+
+  <!-- Geometric Laptop (Trapezoid Screen + Low-Poly Base in Cream Strokes) -->
+  <g id="laptop">
+    <!-- Back bezel / screen housing in perspective -->
+    <polygon points="95,202 305,202 325,302 75,302" stroke="#E8DFD4" stroke-width="1.3" stroke-linejoin="round" fill="#22343D" fill-opacity="0.18" />
+
+    <!-- Outer screen bevel facet -->
+    <polygon points="95,202 305,202 295,212 105,212" stroke="#E8DFD4" stroke-width="0.9" fill="#22343D" fill-opacity="0.10" />
+
+    <!-- Inner display boundary -->
+    <polygon points="105,212 295,212 312,294 88,294" stroke="#E8DFD4" stroke-width="1.2" stroke-linejoin="round" fill="#22343D" fill-opacity="0.25" />
+
+    <!-- Display Screen Internal Graphics (Low-poly UI wireframe) -->
+    <g stroke="#E8DFD4" stroke-width="0.9" opacity="0.5">
+      <!-- Top header line on display -->
+      <line x1="112" y1="222" x2="288" y2="222" />
+      <circle cx="118" cy="217" r="1.5" fill="#E8DFD4" />
+      <circle cx="124" cy="217" r="1.5" fill="#E8DFD4" />
+      <circle cx="130" cy="217" r="1.5" fill="#E8DFD4" />
+
+      <!-- Stylized low-poly code editor / career readiness metrics on screen -->
+      <polyline points="120,242 128,248 120,254" />
+      <polyline points="144,242 136,248 144,254" />
+      <line x1="154" y1="248" x2="204" y2="248" stroke-dasharray="3 2" />
+      <line x1="126" y1="264" x2="195" y2="264" />
+      <line x1="128" y1="274" x2="175" y2="274" stroke-dasharray="2 3" />
+
+      <!-- Wireframe chart on right half of screen -->
+      <polyline points="215,280 235,260 252,268 275,245" stroke="#C4A885" stroke-width="1.2" />
+      <polygon points="215,280 235,260 252,268 275,245 275,280 215,280" fill="#C4A885" fill-opacity="0.08" stroke="none" />
+      <circle cx="275" cy="245" r="2" fill="#C4A885" />
+    </g>
+
+    <!-- Laptop Hinge Section -->
+    <polygon points="75,302 325,302 328,309 72,309" stroke="#E8DFD4" stroke-width="1.1" stroke-linejoin="round" fill="#22343D" fill-opacity="0.3" />
+    <line x1="160" y1="305" x2="240" y2="305" stroke="#C4A885" stroke-width="1.4" stroke-linecap="round" />
+
+    <!-- Laptop Lower Body (Chassis) in Perspective -->
+    <polygon points="72,309 328,309 360,366 40,366" stroke="#E8DFD4" stroke-width="1.4" stroke-linejoin="round" fill="#22343D" fill-opacity="0.16" />
+
+    <!-- Chassis Front Thickness / Lip -->
+    <polygon points="40,366 360,366 358,374 42,374" stroke="#E8DFD4" stroke-width="1.2" stroke-linejoin="round" fill="#22343D" fill-opacity="0.28" />
+
+    <!-- Front Thumb Opening Recess -->
+    <polyline points="188,366 192,369 208,369 212,366" stroke="#C4A885" stroke-width="1.1" />
+
+    <!-- Keyboard Recessed Area (Trapezoid) -->
+    <polygon points="84,316 316,316 334,345 66,345" stroke="#E8DFD4" stroke-width="1" stroke-linejoin="round" fill="#22343D" fill-opacity="0.22" />
+
+    <!-- Low-Poly Keyboard Grid Facets -->
+    <g stroke="#E8DFD4" stroke-width="0.8" opacity="0.6">
+      <!-- Horizontal key row dividers -->
+      <line x1="81" y1="323" x2="319" y2="323" />
+      <line x1="76" y1="330" x2="324" y2="330" />
+      <line x1="71" y1="337" x2="329" y2="337" />
+
+      <!-- Vertical key dividers -->
+      <line x1="112" y1="316" x2="104" y2="345" />
+      <line x1="142" y1="316" x2="137" y2="345" />
+      <line x1="172" y1="316" x2="170" y2="337" />
+      <line x1="228" y1="316" x2="230" y2="337" />
+      <line x1="258" y1="316" x2="263" y2="345" />
+      <line x1="288" y1="316" x2="296" y2="345" />
+
+      <!-- Spacebar outline -->
+      <polygon points="152,338 248,338 250,344 150,344" stroke="#C4A885" stroke-width="1" fill="#22343D" fill-opacity="0.15" />
+    </g>
+
+    <!-- Trackpad (Centered Trapezoid on Palm Rest) -->
+    <polygon points="172,349 228,349 232,363 168,363" stroke="#E8DFD4" stroke-width="1.1" stroke-linejoin="round" fill="#22343D" fill-opacity="0.12" />
+  </g>
+
+  <!-- Wireframe Lightbulb Floating Above Laptop (Triangulated Low-Poly Mesh) -->
+  <!-- Sand strokes with glow filter -->
+  <g id="low-poly-lightbulb" filter="url(#glow)">
+    <!-- Top Crown Facets -->
+    <polygon points="200,34 176,46 200,58" stroke="#C4A885" stroke-width="1.3" stroke-linejoin="round" fill="#22343D" fill-opacity="0.10" />
+    <polygon points="200,34 224,46 200,58" stroke="#C4A885" stroke-width="1.3" stroke-linejoin="round" fill="#22343D" fill-opacity="0.18" />
+
+    <!-- Upper Dome Tier 1 -->
+    <polygon points="176,46 148,68 180,78" stroke="#C4A885" stroke-width="1.3" stroke-linejoin="round" fill="#22343D" fill-opacity="0.14" />
+    <polygon points="176,46 200,58 180,78" stroke="#C4A885" stroke-width="1.3" stroke-linejoin="round" fill="#22343D" fill-opacity="0.22" />
+    <polygon points="200,58 224,46 220,78" stroke="#C4A885" stroke-width="1.3" stroke-linejoin="round" fill="#22343D" fill-opacity="0.12" />
+    <polygon points="224,46 252,68 220,78" stroke="#C4A885" stroke-width="1.3" stroke-linejoin="round" fill="#22343D" fill-opacity="0.25" />
+
+    <!-- Upper Dome Tier 2 (Shoulder flare) -->
+    <polygon points="148,68 134,98 165,108" stroke="#C4A885" stroke-width="1.3" stroke-linejoin="round" fill="#22343D" fill-opacity="0.20" />
+    <polygon points="148,68 180,78 165,108" stroke="#C4A885" stroke-width="1.3" stroke-linejoin="round" fill="#22343D" fill-opacity="0.10" />
+    <polygon points="180,78 200,58 200,92" stroke="#C4A885" stroke-width="1.3" stroke-linejoin="round" fill="#22343D" fill-opacity="0.16" />
+    <polygon points="180,78 200,92 165,108" stroke="#C4A885" stroke-width="1.3" stroke-linejoin="round" fill="#22343D" fill-opacity="0.26" />
+    <polygon points="200,58 220,78 200,92" stroke="#C4A885" stroke-width="1.3" stroke-linejoin="round" fill="#22343D" fill-opacity="0.12" />
+    <polygon points="220,78 200,92 235,108" stroke="#C4A885" stroke-width="1.3" stroke-linejoin="round" fill="#22343D" fill-opacity="0.20" />
+    <polygon points="220,78 252,68 235,108" stroke="#C4A885" stroke-width="1.3" stroke-linejoin="round" fill="#22343D" fill-opacity="0.15" />
+    <polygon points="252,68 266,98 235,108" stroke="#C4A885" stroke-width="1.3" stroke-linejoin="round" fill="#22343D" fill-opacity="0.24" />
+
+    <!-- Equator / Widest Midsection Facets -->
+    <polygon points="134,98 140,128 172,132" stroke="#C4A885" stroke-width="1.3" stroke-linejoin="round" fill="#22343D" fill-opacity="0.16" />
+    <polygon points="134,98 165,108 172,132" stroke="#C4A885" stroke-width="1.3" stroke-linejoin="round" fill="#22343D" fill-opacity="0.08" />
+    <polygon points="165,108 200,92 200,128" stroke="#C4A885" stroke-width="1.3" stroke-linejoin="round" fill="#22343D" fill-opacity="0.22" />
+    <polygon points="165,108 172,132 200,128" stroke="#C4A885" stroke-width="1.3" stroke-linejoin="round" fill="#22343D" fill-opacity="0.14" />
+    <polygon points="200,92 235,108 200,128" stroke="#C4A885" stroke-width="1.3" stroke-linejoin="round" fill="#22343D" fill-opacity="0.18" />
+    <polygon points="235,108 228,132 200,128" stroke="#C4A885" stroke-width="1.3" stroke-linejoin="round" fill="#22343D" fill-opacity="0.10" />
+    <polygon points="235,108 266,98 228,132" stroke="#C4A885" stroke-width="1.3" stroke-linejoin="round" fill="#22343D" fill-opacity="0.26" />
+    <polygon points="266,98 260,128 228,132" stroke="#C4A885" stroke-width="1.3" stroke-linejoin="round" fill="#22343D" fill-opacity="0.12" />
+
+    <!-- Inward Taper to Neck -->
+    <polygon points="140,128 160,154 172,132" stroke="#C4A885" stroke-width="1.3" stroke-linejoin="round" fill="#22343D" fill-opacity="0.22" />
+    <polygon points="172,132 160,154 186,156" stroke="#C4A885" stroke-width="1.3" stroke-linejoin="round" fill="#22343D" fill-opacity="0.14" />
+    <polygon points="172,132 200,128 186,156" stroke="#C4A885" stroke-width="1.3" stroke-linejoin="round" fill="#22343D" fill-opacity="0.25" />
+    <polygon points="200,128 228,132 214,156" stroke="#C4A885" stroke-width="1.3" stroke-linejoin="round" fill="#22343D" fill-opacity="0.12" />
+    <polygon points="200,128 186,156 214,156" stroke="#C4A885" stroke-width="1.3" stroke-linejoin="round" fill="#22343D" fill-opacity="0.20" />
+    <polygon points="228,132 214,156 240,154" stroke="#C4A885" stroke-width="1.3" stroke-linejoin="round" fill="#22343D" fill-opacity="0.18" />
+    <polygon points="228,132 260,128 240,154" stroke="#C4A885" stroke-width="1.3" stroke-linejoin="round" fill="#22343D" fill-opacity="0.26" />
+
+    <!-- Lower Neck Transition -->
+    <polygon points="160,154 174,174 186,156" stroke="#C4A885" stroke-width="1.3" stroke-linejoin="round" fill="#22343D" fill-opacity="0.16" />
+    <polygon points="186,156 174,174 200,172" stroke="#C4A885" stroke-width="1.3" stroke-linejoin="round" fill="#22343D" fill-opacity="0.24" />
+    <polygon points="186,156 200,172 214,156" stroke="#C4A885" stroke-width="1.3" stroke-linejoin="round" fill="#22343D" fill-opacity="0.10" />
+    <polygon points="214,156 200,172 226,174" stroke="#C4A885" stroke-width="1.3" stroke-linejoin="round" fill="#22343D" fill-opacity="0.22" />
+    <polygon points="214,156 226,174 240,154" stroke="#C4A885" stroke-width="1.3" stroke-linejoin="round" fill="#22343D" fill-opacity="0.15" />
+
+    <!-- Threaded Metallic Screw Base (Faceted screw rings) -->
+    <!-- Thread 1 -->
+    <polygon points="174,174 226,174 228,183 172,183" stroke="#C4A885" stroke-width="1.2" stroke-linejoin="round" fill="#22343D" fill-opacity="0.3" />
+    <line x1="172" y1="183" x2="228" y2="183" stroke="#C4A885" stroke-width="1.3" />
+    <line x1="190" y1="174" x2="195" y2="183" stroke="#C4A885" stroke-width="1" />
+    <line x1="210" y1="174" x2="215" y2="183" stroke="#C4A885" stroke-width="1" />
+
+    <!-- Thread 2 -->
+    <polygon points="172,183 228,183 225,193 175,193" stroke="#C4A885" stroke-width="1.2" stroke-linejoin="round" fill="#22343D" fill-opacity="0.35" />
+    <line x1="175" y1="193" x2="225" y2="193" stroke="#C4A885" stroke-width="1.3" />
+    <line x1="188" y1="183" x2="193" y2="193" stroke="#C4A885" stroke-width="1" />
+    <line x1="208" y1="183" x2="213" y2="193" stroke="#C4A885" stroke-width="1" />
+
+    <!-- Thread 3 -->
+    <polygon points="175,193 225,193 220,203 180,203" stroke="#C4A885" stroke-width="1.2" stroke-linejoin="round" fill="#22343D" fill-opacity="0.4" />
+    <line x1="180" y1="203" x2="220" y2="203" stroke="#C4A885" stroke-width="1.3" />
+
+    <!-- Bottom Contact Terminal -->
+    <polygon points="180,203 220,203 208,212 192,212" stroke="#C4A885" stroke-width="1.2" stroke-linejoin="round" fill="#22343D" fill-opacity="0.45" />
+    <polygon points="192,212 208,212 200,217" stroke="#C4A885" stroke-width="1.2" stroke-linejoin="round" fill="#22343D" fill-opacity="0.5" />
+
+    <!-- Glowing Internal Geometric Filament (Double diamond / radiant core) -->
+    <g id="filament" stroke="#E8DFD4" stroke-width="1.3" stroke-linejoin="round">
+      <!-- Support stems -->
+      <line x1="190" y1="172" x2="194" y2="116" stroke="#C4A885" stroke-width="1.1" />
+      <line x1="210" y1="172" x2="206" y2="116" stroke="#C4A885" stroke-width="1.1" />
+
+      <!-- Glowing diamond loop -->
+      <polygon points="200,66 214,88 200,108 186,88" fill="#C4A885" fill-opacity="0.3" stroke="#E8DFD4" stroke-width="1.4" filter="url(#glow-subtle)" />
+      <line x1="186" y1="88" x2="194" y2="116" stroke="#E8DFD4" stroke-width="1.2" />
+      <line x1="214" y1="88" x2="206" y2="116" stroke="#E8DFD4" stroke-width="1.2" />
+
+      <!-- Center filament spark -->
+      <circle cx="200" cy="88" r="2.8" fill="#E8DFD4" />
+    </g>
+
+    <!-- Vertex Accent Dots along bulb surface -->
+    <circle cx="200" cy="34" r="2" fill="#E8DFD4" />
+    <circle cx="176" cy="46" r="1.8" fill="#E8DFD4" />
+    <circle cx="224" cy="46" r="1.8" fill="#E8DFD4" />
+    <circle cx="148" cy="68" r="2" fill="#E8DFD4" />
+    <circle cx="252" cy="68" r="2" fill="#E8DFD4" />
+    <circle cx="134" cy="98" r="2.2" fill="#E8DFD4" />
+    <circle cx="266" cy="98" r="2.2" fill="#E8DFD4" />
+    <circle cx="140" cy="128" r="2" fill="#E8DFD4" />
+    <circle cx="260" cy="128" r="2" fill="#E8DFD4" />
+  </g>
+
+  <!-- Small Geometric Particles, Stars & Dots Floating Around -->
+  <!-- Cream & Sand accents -->
+  <g id="floating-particles">
+    <!-- 4-point sparkle stars -->
+    <path d="M 68,36 L 70,41 L 75,43 L 70,45 L 68,50 L 66,45 L 61,43 L 66,41 Z" fill="#E8DFD4" opacity="0.8" />
+    <path d="M 334,34 L 336,38 L 340,40 L 336,42 L 334,46 L 332,42 L 328,40 L 332,38 Z" fill="#C4A885" opacity="0.85" />
+    <path d="M 346,180 L 348,184 L 352,186 L 348,188 L 346,192 L 344,188 L 340,186 L 344,184 Z" fill="#E8DFD4" opacity="0.75" />
+    <path d="M 52,190 L 53.5,193.5 L 57,195 L 53.5,196.5 L 52,200 L 50.5,196.5 L 47,195 L 50.5,193.5 Z" fill="#C4A885" opacity="0.7" />
+
+    <!-- Plus symbols -->
+    <path d="M 88,88 H 96 M 92,84 V 92" stroke="#E8DFD4" stroke-width="1.1" stroke-linecap="round" opacity="0.6" />
+    <path d="M 314,84 H 322 M 318,80 V 88" stroke="#E8DFD4" stroke-width="1.1" stroke-linecap="round" opacity="0.6" />
+    <path d="M 368,138 H 374 M 371,135 V 141" stroke="#C4A885" stroke-width="1" stroke-linecap="round" opacity="0.7" />
+    <path d="M 32,130 H 38 M 35,127 V 133" stroke="#C4A885" stroke-width="1" stroke-linecap="round" opacity="0.7" />
+
+    <!-- Floating diamonds -->
+    <polygon points="102,154 105,158 102,162 99,158" fill="#C4A885" opacity="0.7" />
+    <polygon points="302,148 305,152 302,156 299,152" fill="#E8DFD4" opacity="0.7" />
+    <polygon points="152,18 155,22 152,26 149,22" fill="#E8DFD4" opacity="0.8" />
+    <polygon points="252,16 255,20 252,24 249,20" fill="#C4A885" opacity="0.8" />
+
+    <!-- Ambient dots -->
+    <circle cx="56" cy="74" r="1.5" fill="#E8DFD4" opacity="0.6" />
+    <circle cx="44" cy="108" r="1.2" fill="#C4A885" opacity="0.7" />
+    <circle cx="348" cy="80" r="1.5" fill="#E8DFD4" opacity="0.6" />
+    <circle cx="360" cy="112" r="1.2" fill="#C4A885" opacity="0.8" />
+    <circle cx="362" cy="226" r="1.6" fill="#E8DFD4" opacity="0.5" />
+    <circle cx="38" cy="235" r="1.6" fill="#E8DFD4" opacity="0.5" />
+    <circle cx="28" cy="310" r="1.5" fill="#C4A885" opacity="0.6" />
+    <circle cx="374" cy="305" r="1.5" fill="#C4A885" opacity="0.6" />
+    <circle cx="28" cy="370" r="1.2" fill="#E8DFD4" opacity="0.5" />
+    <circle cx="372" cy="368" r="1.2" fill="#E8DFD4" opacity="0.5" />
+  </g>
+</svg>

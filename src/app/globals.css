@@ -1,0 +1,237 @@
+@import "tailwindcss";
+
+/* -------------------------------------------------------------------------- */
+/* CareerLaunch Design System Tokens & Themes                                 */
+/* -------------------------------------------------------------------------- */
+
+:root {
+  /* Brand color tokens */
+  --ink: #0B0B09;
+  --slate: #22343D;
+  --cream: #E8DFD4;
+  --sand: #C4A885;
+  --umber: #5C4D3A;
+
+  /* Derived semantic colors (earth tones) */
+  --success: #7B9E6B;
+  --warning: #D4A843;
+  --danger: #C26B5A;
+  --info: #6B8EA5;
+
+  /* Dark Theme Mappings (DEFAULT) */
+  /* Contrast: cream (#E8DFD4) on ink (#0B0B09) achieves ~15:1 (well above WCAG AA 4.5:1) */
+  --background: #0B0B09;
+  --foreground: #E8DFD4;
+  --muted: rgba(232, 223, 212, 0.65);
+  --muted-foreground: rgba(232, 223, 212, 0.65);
+  --border: rgba(232, 223, 212, 0.15);
+  --card: rgba(255, 255, 255, 0.06);
+  --card-foreground: #E8DFD4;
+
+  /* UI Component Semantic Mappings */
+  --primary: #C4A885;
+  --primary-foreground: #0B0B09;
+  --secondary: rgba(232, 223, 212, 0.1);
+  --secondary-foreground: #E8DFD4;
+  --accent: #C4A885;
+  --accent-foreground: #0B0B09;
+  --destructive: #C26B5A;
+  --destructive-foreground: #FFFFFF;
+  --input: rgba(232, 223, 212, 0.15);
+  --ring: #C4A885;
+}
+
+[data-theme="light"] {
+  /* Light Theme Mappings */
+  --background: #E8DFD4;
+  --foreground: #0B0B09;
+  --muted: rgba(34, 52, 61, 0.65);
+  --muted-foreground: rgba(34, 52, 61, 0.65);
+  --border: rgba(34, 52, 61, 0.15);
+  --card: rgba(255, 255, 255, 0.85);
+  --card-foreground: #0B0B09;
+
+  /* Light UI Component Mappings */
+  --primary: #22343D;
+  --primary-foreground: #E8DFD4;
+  --secondary: rgba(34, 52, 61, 0.1);
+  --secondary-foreground: #0B0B09;
+  --accent: #C4A885;
+  --accent-foreground: #0B0B09;
+  --destructive: #C26B5A;
+  --destructive-foreground: #FFFFFF;
+  --input: rgba(34, 52, 61, 0.15);
+  --ring: #22343D;
+}
+
+@theme inline {
+  /* Brand color tokens */
+  --color-ink: var(--ink);
+  --color-slate: var(--slate);
+  --color-cream: var(--cream);
+  --color-sand: var(--sand);
+  --color-umber: var(--umber);
+
+  /* Semantic colors */
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --color-info: var(--info);
+
+  /* Background & Foreground */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  /* Muted */
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  /* Border */
+  --color-border: var(--border);
+
+  /* Card */
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+
+  /* Component tokens */
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Typography */
+  --font-sans: var(--font-inter);
+  --font-heading: var(--font-plus-jakarta);
+  --font-size-hero: clamp(2.5rem, 5vw, 4.5rem);
+
+  /* Border Radii */
+  --radius-pill: 9999px;
+  --radius-card: 20px;
+  --radius-lg: 16px;
+  --radius-md: 12px;
+  --radius-sm: calc(var(--radius-md) - 4px);
+
+  /* Animations */
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-fade-up: fadeUp 0.6s ease-out;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Base & Global Layer Styles                                                 */
+/* -------------------------------------------------------------------------- */
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: linear-gradient(180deg, var(--ink) 0%, var(--slate) 100%);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  min-height: 100vh;
+}
+
+[data-theme="light"] body {
+  background: var(--cream);
+}
+
+::selection {
+  background-color: var(--sand);
+  color: var(--ink);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Custom Scrollbars                                                          */
+/* -------------------------------------------------------------------------- */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--ink);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(232, 223, 212, 0.2);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(232, 223, 212, 0.35);
+}
+
+[data-theme="light"] ::-webkit-scrollbar-track {
+  background: var(--cream);
+}
+
+[data-theme="light"] ::-webkit-scrollbar-thumb {
+  background: rgba(34, 52, 61, 0.2);
+}
+
+[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
+  background: rgba(34, 52, 61, 0.35);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Glass Card Utility                                                         */
+/* -------------------------------------------------------------------------- */
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(232, 223, 212, 0.12);
+  border-radius: 20px;
+}
+
+[data-theme="light"] .glass-card {
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(34, 52, 61, 0.12);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Keyframes & Motion Accessibility                                           */
+/* -------------------------------------------------------------------------- */
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
