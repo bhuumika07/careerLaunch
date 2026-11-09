@@ -1,0 +1,351 @@
+{
+  "users": [
+    {
+      "id": "usr_student_demo",
+      "name": "Alex Morgan",
+      "email": "student@careerlaunch.com",
+      "passwordHash": "$2b$10$G58.lJZgL/loCtIGAAATEOb.TgrgHAH9NJty7NAKgBpSK.3yVjbsi",
+      "role": "student",
+      "status": "active",
+      "emailVerified": true,
+      "onboardingCompleted": true,
+      "createdAt": "2026-11-09T09:51:19.707Z",
+      "updatedAt": "2026-11-09T09:51:19.707Z"
+    },
+    {
+      "id": "usr_faculty_demo",
+      "name": "Dr. Elena Vance",
+      "email": "faculty@careerlaunch.com",
+      "passwordHash": "$2b$10$G58.lJZgL/loCtIGAAATEOb.TgrgHAH9NJty7NAKgBpSK.3yVjbsi",
+      "role": "faculty",
+      "status": "active",
+      "emailVerified": true,
+      "onboardingCompleted": true,
+      "createdAt": "2026-11-09T09:51:19.707Z",
+      "updatedAt": "2026-11-09T09:51:19.707Z"
+    },
+    {
+      "id": "usr_recruiter_demo",
+      "name": "Marcus Cole",
+      "email": "recruiter@careerlaunch.com",
+      "passwordHash": "$2b$10$G58.lJZgL/loCtIGAAATEOb.TgrgHAH9NJty7NAKgBpSK.3yVjbsi",
+      "role": "recruiter",
+      "status": "active",
+      "emailVerified": true,
+      "onboardingCompleted": true,
+      "createdAt": "2026-11-09T09:51:19.707Z",
+      "updatedAt": "2026-11-09T09:51:19.707Z"
+    },
+    {
+      "id": "usr_institution_demo",
+      "name": "St. Jude Polytechnic & Tech",
+      "email": "institution@careerlaunch.com",
+      "passwordHash": "$2b$10$G58.lJZgL/loCtIGAAATEOb.TgrgHAH9NJty7NAKgBpSK.3yVjbsi",
+      "role": "institution",
+      "status": "active",
+      "emailVerified": true,
+      "onboardingCompleted": true,
+      "createdAt": "2026-11-09T09:51:19.707Z",
+      "updatedAt": "2026-11-09T09:51:19.707Z"
+    },
+    {
+      "id": "usr_admin_demo",
+      "name": "System Admin",
+      "email": "admin@careerlaunch.com",
+      "passwordHash": "$2b$10$G58.lJZgL/loCtIGAAATEOb.TgrgHAH9NJty7NAKgBpSK.3yVjbsi",
+      "role": "admin",
+      "status": "active",
+      "emailVerified": true,
+      "onboardingCompleted": true,
+      "createdAt": "2026-11-09T09:51:19.707Z",
+      "updatedAt": "2026-11-09T09:51:19.707Z"
+    }
+  ],
+  "sessions": [],
+  "verificationTokens": [],
+  "rateLimits": [],
+  "studentProfiles": [
+    {
+      "userId": "usr_student_demo",
+      "phone": "+1 (555) 382-9012",
+      "bio": "Computer Science undergraduate passionate about systems engineering and AI integration. Building explainable telemetry tools.",
+      "location": "San Francisco, CA",
+      "institution": "St. Jude Institute of Technology",
+      "department": "Computer Science & Engineering",
+      "degree": "B.Tech in Computer Science",
+      "graduationYear": 2026,
+      "cgpa": 8.92,
+      "portfolioUrl": "https://alexmorgan.dev",
+      "githubUrl": "https://github.com/alexmorgan",
+      "linkedinUrl": "https://linkedin.com/in/alexmorgan",
+      "skills": [
+        {
+          "id": "sk_1",
+          "name": "TypeScript",
+          "category": "technical",
+          "level": "advanced",
+          "status": "verified",
+          "verifiedAt": "2026-11-09T09:51:19.707Z"
+        },
+        {
+          "id": "sk_2",
+          "name": "React / Next.js",
+          "category": "technical",
+          "level": "advanced",
+          "status": "verified",
+          "verifiedAt": "2026-11-09T09:51:19.707Z"
+        },
+        {
+          "id": "sk_3",
+          "name": "Distributed Systems",
+          "category": "technical",
+          "level": "intermediate",
+          "status": "self_declared"
+        },
+        {
+          "id": "sk_4",
+          "name": "Python",
+          "category": "technical",
+          "level": "advanced",
+          "status": "verified",
+          "verifiedAt": "2026-11-09T09:51:19.707Z"
+        },
+        {
+          "id": "sk_5",
+          "name": "PostgreSQL",
+          "category": "technical",
+          "level": "intermediate",
+          "status": "self_declared"
+        },
+        {
+          "id": "sk_6",
+          "name": "System Architecture",
+          "category": "non-technical",
+          "level": "intermediate",
+          "status": "self_declared"
+        },
+        {
+          "id": "sk_7",
+          "name": "Cross-functional Leadership",
+          "category": "non-technical",
+          "level": "advanced",
+          "status": "verified",
+          "verifiedAt": "2026-11-09T09:51:19.707Z"
+        },
+        {
+          "id": "sk_8",
+          "name": "Technical Writing",
+          "category": "non-technical",
+          "level": "intermediate",
+          "status": "self_declared"
+        }
+      ],
+      "projects": [
+        {
+          "id": "prj_1",
+          "title": "Career Telemetry Engine",
+          "description": "Explainable skill-gap matching analyzer parsing syllabus benchmarks into vector embeddings.",
+          "technologies": [
+            "Next.js",
+            "TypeScript",
+            "Tailwind CSS",
+            "Python"
+          ],
+          "githubUrl": "https://github.com/alexmorgan/career-telemetry",
+          "deploymentUrl": "https://career-telemetry.dev"
+        },
+        {
+          "id": "prj_2",
+          "title": "Decentralized Credential Attestation",
+          "description": "Lightweight cryptographic credential verifier for university transcripts.",
+          "technologies": [
+            "Node.js",
+            "Cryptography",
+            "React"
+          ],
+          "githubUrl": "https://github.com/alexmorgan/credential-attest"
+        }
+      ],
+      "experience": [
+        {
+          "id": "exp_1",
+          "role": "Frontend Engineering Intern",
+          "company": "Nova Systems",
+          "location": "Remote",
+          "startDate": "June 2025",
+          "endDate": "August 2025",
+          "current": false,
+          "description": "Developed dashboard telemetry widgets and reduced client load times by 28%."
+        }
+      ],
+      "certifications": [
+        {
+          "id": "cert_1",
+          "name": "Certified Cloud Practitioner",
+          "issuer": "Amazon Web Services",
+          "issueDate": "January 2025",
+          "credentialId": "AWS-CCP-98421",
+          "verificationUrl": "https://aws.amazon.com/verification"
+        }
+      ],
+      "achievements": [
+        {
+          "id": "ach_1",
+          "title": "1st Place - University Hackathon 2025",
+          "date": "November 2025",
+          "description": "Designed automated syllabus-gap evaluator among 48 competing teams."
+        }
+      ],
+      "updatedAt": "2026-11-09T09:51:19.707Z"
+    }
+  ],
+  "facultyProfiles": [
+    {
+      "userId": "usr_faculty_demo",
+      "designation": "Associate Professor",
+      "department": "Computer Science & Engineering",
+      "institution": "St. Jude Institute of Technology",
+      "qualifications": [
+        "Ph.D. in Computer Science (Distributed Systems)",
+        "M.Tech in Software Engineering"
+      ],
+      "expertise": [
+        "Distributed Algorithms",
+        "Cloud Architecture",
+        "Database Systems",
+        "Syllabus Modernization"
+      ],
+      "experienceYears": 12,
+      "experienceHistory": [
+        {
+          "id": "fexp_1",
+          "role": "Associate Professor",
+          "company": "St. Jude Institute of Technology",
+          "startDate": "2018",
+          "current": true,
+          "description": "Lead research in scalable compute nodes and manage curriculum redesign."
+        }
+      ],
+      "publications": [
+        {
+          "id": "pub_1",
+          "title": "Fault-Tolerant Consensus in Low-Latency Edge Networks",
+          "venue": "IEEE Transactions on Parallel and Distributed Systems",
+          "year": 2024,
+          "doi": "10.1109/TPDS.2024.3189021"
+        }
+      ],
+      "certificationsFDPs": [
+        {
+          "id": "fdp_1",
+          "name": "National FDP on AI-Assisted Curriculum Engineering",
+          "issuer": "National Board of Accreditation",
+          "issueDate": "July 2025"
+        }
+      ],
+      "collaborationInterests": [
+        "Joint Industry Research",
+        "Student Mentorship",
+        "Curriculum Benchmarking"
+      ],
+      "updatedAt": "2026-11-09T09:51:19.707Z"
+    }
+  ],
+  "recruiterProfiles": [
+    {
+      "userId": "usr_recruiter_demo",
+      "companyName": "Apex Cloud Solutions",
+      "website": "https://apexcloud.example.com",
+      "industry": "Cloud Infrastructure & Enterprise SaaS",
+      "recruiterDesignation": "Lead Technical Talent Partner",
+      "officialEmail": "recruiter@careerlaunch.com",
+      "companySize": "500-1000 employees",
+      "headquarters": "Seattle, WA",
+      "aboutCompany": "Apex Cloud builds next-generation serverless orchestration fabrics for global tech leaders.",
+      "verificationStatus": "verified",
+      "hiringPreferences": {
+        "targetDepartments": [
+          "Computer Science",
+          "Information Technology",
+          "Data Science"
+        ],
+        "cgpaCutoff": 7.5,
+        "targetRoles": [
+          "Cloud Infrastructure Engineer",
+          "Full Stack Developer",
+          "Site Reliability Engineer"
+        ],
+        "preferredSkills": [
+          "TypeScript",
+          "Go",
+          "Kubernetes",
+          "Distributed Systems"
+        ]
+      },
+      "opportunitiesCount": 0,
+      "updatedAt": "2026-11-09T09:51:19.707Z"
+    }
+  ],
+  "institutionProfiles": [
+    {
+      "userId": "usr_institution_demo",
+      "name": "St. Jude Institute of Technology",
+      "type": "Autonomous College",
+      "location": "Austin, Texas",
+      "website": "https://stjude-tech.edu",
+      "accreditation": "NAAC A++ / ABET Accredited",
+      "establishedYear": 1988,
+      "adminName": "Dr. Arthur Pendelton",
+      "adminDesignation": "Dean of Academic & Career Affairs",
+      "adminContact": "+1 (555) 902-1849",
+      "verificationStatus": "verified",
+      "departments": [
+        {
+          "id": "dept_1",
+          "name": "Computer Science & Engineering",
+          "code": "CSE",
+          "head": "Dr. Elena Vance",
+          "studentCount": 480,
+          "facultyCount": 24
+        },
+        {
+          "id": "dept_2",
+          "name": "Information Technology",
+          "code": "IT",
+          "head": "Dr. Robert Sterling",
+          "studentCount": 360,
+          "facultyCount": 18
+        },
+        {
+          "id": "dept_3",
+          "name": "Electronics & Communication",
+          "code": "ECE",
+          "head": "Dr. Priya Nair",
+          "studentCount": 320,
+          "facultyCount": 16
+        },
+        {
+          "id": "dept_4",
+          "name": "Data Science & AI",
+          "code": "DSAI",
+          "head": "Dr. Marcus Wei",
+          "studentCount": 240,
+          "facultyCount": 14
+        }
+      ],
+      "studentCountByBatch": {
+        "2023": 310,
+        "2024": 340,
+        "2025": 370,
+        "2026": 380
+      },
+      "facultyCountByDepartment": {
+        "Computer Science & Engineering": 24,
+        "Information Technology": 18,
+        "Electronics & Communication": 16,
+        "Data Science & AI": 14
+      },
+      "updatedAt": "2026-11-09T09:51:19.707Z"
+    }
+  ]
+}

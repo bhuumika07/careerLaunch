@@ -79,11 +79,8 @@ export const PillButton = React.forwardRef<HTMLButtonElement, PillButtonProps>(
     }
 
     if (asChild && React.isValidElement(children)) {
-      const childElement = children as React.ReactElement<{
-        className?: string;
-      }>;
+      const childElement = children as React.ReactElement<any>;
       return React.cloneElement(childElement, {
-        ref,
         className: cn(
           pillButtonVariants({ variant, size, className }),
           childElement.props?.className
