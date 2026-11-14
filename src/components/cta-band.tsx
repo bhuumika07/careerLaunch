@@ -29,7 +29,7 @@ export function CtaBand({
   return (
     <section
       className={cn(
-        "w-full bg-gradient-to-b from-sand/10 via-sand/5 to-transparent border-y border-cream/10 py-16 md:py-24 px-6 relative overflow-hidden",
+        "w-full bg-gradient-to-b from-teal/15 via-orange/5 to-transparent border-y border-border py-16 md:py-24 px-6 relative overflow-hidden",
         className
       )}
     >
@@ -38,7 +38,12 @@ export function CtaBand({
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 -z-10 flex items-center justify-center opacity-30"
       >
-        <div className="w-[500px] h-[250px] bg-sand/20 blur-[120px] rounded-full" />
+        <div
+          className="w-[500px] h-[250px] blur-[120px] rounded-full"
+          style={{
+            background: "radial-gradient(circle, var(--glow-teal) 0%, var(--glow-orange) 55%, transparent 80%)",
+          }}
+        />
       </div>
 
       <motion.div
@@ -49,13 +54,13 @@ export function CtaBand({
         className="max-w-4xl mx-auto text-center flex flex-col items-center"
       >
         {/* Title */}
-        <h2 className="text-3xl sm:text-4xl md:text-5xl font-heading font-bold text-cream tracking-tight max-w-3xl leading-tight">
+        <h2 className="text-3xl sm:text-4xl md:text-5xl font-heading font-bold text-foreground tracking-tight max-w-3xl leading-tight">
           {title}
         </h2>
 
         {/* Description */}
         {description && (
-          <p className="text-base sm:text-lg text-cream/70 max-w-2xl mt-4 sm:mt-5 leading-relaxed">
+          <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mt-4 sm:mt-5 leading-relaxed">
             {description}
           </p>
         )}
@@ -66,7 +71,7 @@ export function CtaBand({
             asChild
             variant="primary"
             size="lg"
-            className="w-full sm:w-auto min-w-[160px] shadow-lg shadow-sand/20 cursor-pointer"
+            className="w-full sm:w-auto min-w-[160px] shadow-lg shadow-primary/25 cursor-pointer"
           >
             <Link href={primaryAction.href}>{primaryAction.label}</Link>
           </PillButton>

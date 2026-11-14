@@ -27,14 +27,15 @@ export function Topbar({ title, role, className }: TopbarProps) {
 
   return (
     <header
+      data-theme="dark"
       className={cn(
-        "h-16 shrink-0 flex items-center justify-between px-6 bg-ink/80 backdrop-blur-md border-b border-cream/10 text-cream sticky top-0 z-20",
+        "h-16 shrink-0 flex items-center justify-between px-6 bg-navy border-b border-sky/15 text-sky-50 sticky top-0 z-20",
         className
       )}
     >
       {/* Left: Page Title / Breadcrumb */}
       <div className="flex items-center gap-3">
-        <h1 className="font-heading text-lg font-bold tracking-tight text-cream">
+        <h1 className="font-heading text-lg font-bold tracking-tight text-sky-50">
           {displayTitle}
         </h1>
       </div>
@@ -43,11 +44,11 @@ export function Topbar({ title, role, className }: TopbarProps) {
       <div className="flex items-center gap-3 sm:gap-4">
         {/* Small Search Bar */}
         <div className="relative hidden sm:block w-48 md:w-64">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-cream/40" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-sky/70" />
           <input
             type="text"
             placeholder="Search..."
-            className="w-full h-9 pl-9 pr-3 rounded-full bg-white/[0.06] border border-cream/15 text-xs text-cream placeholder:text-cream/40 focus:outline-hidden focus:border-sand/60 focus:ring-1 focus:ring-sand/60 transition-colors"
+            className="w-full h-9 pl-9 pr-3 rounded-full bg-white/[0.07] border border-sky/20 text-xs text-sky-50 placeholder:text-sky/60 focus:outline-hidden focus:border-amber focus:ring-2 focus:ring-amber/60 transition-colors"
           />
         </div>
 
@@ -59,50 +60,51 @@ export function Topbar({ title, role, className }: TopbarProps) {
           <DropdownMenuTrigger asChild>
             <button
               type="button"
-              className="flex items-center gap-2.5 pl-2 pr-3 py-1.5 rounded-full bg-white/[0.06] border border-cream/10 hover:border-cream/20 hover:bg-white/[0.1] transition-colors cursor-pointer outline-hidden"
+              className="flex items-center gap-2.5 pl-2 pr-3 py-1.5 rounded-full bg-white/[0.07] border border-sky/15 hover:border-sky/30 hover:bg-white/[0.12] transition-colors cursor-pointer outline-hidden"
             >
-              <div className="size-7 rounded-full bg-sand text-ink flex items-center justify-center font-bold text-xs">
+              <div className="size-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-xs">
                 {role.slice(0, 2).toUpperCase()}
               </div>
-              <span className="hidden md:inline-block text-xs font-medium text-cream capitalize">
+              <span className="hidden md:inline-block text-xs font-medium text-sky-50 capitalize">
                 {role}
               </span>
-              <ChevronDown className="size-3.5 text-cream/50" />
+              <ChevronDown className="size-3.5 text-sky/70" />
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent
             align="end"
-            className="w-48 bg-ink border border-cream/15 text-cream p-1.5 shadow-xl rounded-xl backdrop-blur-xl"
+            className="w-48 bg-navy-950 border border-sky/20 text-sky-50 p-1.5 shadow-xl rounded-xl backdrop-blur-xl"
+            data-theme="dark"
           >
-            <DropdownMenuLabel className="text-xs text-cream/60 px-2 py-1.5 uppercase tracking-wider font-semibold">
+            <DropdownMenuLabel className="text-xs text-sky/70 px-2 py-1.5 uppercase tracking-wider font-semibold">
               My Account
             </DropdownMenuLabel>
-            <DropdownMenuSeparator className="bg-cream/10 my-1" />
+            <DropdownMenuSeparator className="bg-sky/15 my-1" />
             <DropdownMenuItem asChild>
               <Link
                 href={`/${role}/profile`}
-                className="flex items-center gap-2 px-2 py-1.5 text-sm rounded-md text-cream hover:bg-white/[0.08] hover:text-sand cursor-pointer transition-colors"
+                className="flex items-center gap-2 px-2 py-1.5 text-sm rounded-md text-sky-50 hover:bg-sky/10 hover:text-amber cursor-pointer transition-colors"
               >
-                <User className="size-4 text-cream/70" />
+                <User className="size-4 text-sky/75" />
                 Profile
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
               <Link
                 href={`/${role}/settings`}
-                className="flex items-center gap-2 px-2 py-1.5 text-sm rounded-md text-cream hover:bg-white/[0.08] hover:text-sand cursor-pointer transition-colors"
+                className="flex items-center gap-2 px-2 py-1.5 text-sm rounded-md text-sky-50 hover:bg-sky/10 hover:text-amber cursor-pointer transition-colors"
               >
-                <Settings className="size-4 text-cream/70" />
+                <Settings className="size-4 text-sky/75" />
                 Settings
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuSeparator className="bg-cream/10 my-1" />
+            <DropdownMenuSeparator className="bg-sky/15 my-1" />
             <DropdownMenuItem asChild>
               <Link
                 href="/login"
-                className="flex items-center gap-2 px-2 py-1.5 text-sm rounded-md text-rose-400 hover:bg-rose-500/10 cursor-pointer transition-colors"
+                className="flex items-center gap-2 px-2 py-1.5 text-sm rounded-md text-sky-50 hover:bg-danger hover:text-danger-foreground cursor-pointer transition-colors"
               >
-                <LogOut className="size-4 text-rose-400" />
+                <LogOut className="size-4" />
                 Sign Out
               </Link>
             </DropdownMenuItem>
@@ -112,3 +114,5 @@ export function Topbar({ title, role, className }: TopbarProps) {
     </header>
   );
 }
+
+export default Topbar;

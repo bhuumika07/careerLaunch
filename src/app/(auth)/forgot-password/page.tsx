@@ -44,48 +44,48 @@ export default function ForgotPasswordPage() {
     <div className="w-full space-y-6">
       <Link
         href="/login"
-        className="inline-flex items-center gap-1.5 text-xs text-cream/60 hover:text-cream transition-colors"
+        className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
       >
         <ArrowLeft className="size-3.5" />
         <span>Back to Sign In</span>
       </Link>
 
       <div className="space-y-1">
-        <h1 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-cream">
+        <h1 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
           Reset Password
         </h1>
-        <p className="text-xs sm:text-sm text-cream/60">
+        <p className="text-xs sm:text-sm text-muted-foreground">
           Enter your registered email address and we&apos;ll generate a secure reset link.
         </p>
       </div>
 
       {error && (
-        <div className="p-3.5 rounded-xl border border-danger/40 bg-danger/10 text-cream text-xs flex items-center gap-2.5">
+        <div className="p-3.5 rounded-xl border border-danger/50 bg-danger/15 text-foreground text-xs flex items-center gap-2.5">
           <AlertCircle className="size-4 text-danger shrink-0" />
           <span>{error}</span>
         </div>
       )}
 
       {successData ? (
-        <div className="p-6 rounded-2xl border border-sand/30 bg-white/[0.04] space-y-4 text-center">
-          <div className="size-12 rounded-full bg-sand/20 text-sand flex items-center justify-center mx-auto">
-            <CheckCircle2 className="size-6 text-sand" />
+        <div className="p-6 rounded-2xl border border-success/40 bg-success/10 space-y-4 text-center">
+          <div className="size-12 rounded-full bg-success/20 text-success flex items-center justify-center mx-auto">
+            <CheckCircle2 className="size-6 text-success" />
           </div>
           <div className="space-y-1">
-            <h3 className="font-heading text-lg font-bold text-cream">Check Your Inbox</h3>
-            <p className="text-xs text-cream/70 leading-relaxed max-w-sm mx-auto">
+            <h3 className="font-heading text-lg font-bold text-foreground">Check Your Inbox</h3>
+            <p className="text-xs text-muted-foreground leading-relaxed max-w-sm mx-auto">
               {successData.message}
             </p>
           </div>
 
           {successData.resetLink && (
-            <div className="p-3 rounded-xl bg-white/[0.05] border border-cream/10 text-xs space-y-2 text-left">
-              <span className="text-[10px] uppercase font-semibold text-sand tracking-wider block">
+            <div className="p-3 rounded-xl bg-white/[0.05] border border-border text-xs space-y-2 text-left">
+              <span className="text-[10px] uppercase font-semibold text-amber tracking-wider block">
                 Development Test Link:
               </span>
               <Link
                 href={successData.resetLink}
-                className="text-xs text-sand hover:underline font-mono break-all block"
+                className="text-xs text-link hover:underline font-mono break-all block"
               >
                 {successData.resetLink}
               </Link>
@@ -103,11 +103,11 @@ export default function ForgotPasswordPage() {
       ) : (
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="space-y-1.5">
-            <Label htmlFor="forgot-email" className="text-xs font-semibold text-cream/80 uppercase tracking-wider">
+            <Label htmlFor="forgot-email" className="text-xs font-semibold text-foreground/85 uppercase tracking-wider">
               Email Address
             </Label>
             <div className="relative">
-              <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-cream/40" />
+              <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
               <Input
                 id="forgot-email"
                 type="email"
@@ -115,7 +115,7 @@ export default function ForgotPasswordPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="name@university.edu"
-                className="pl-10 h-11 bg-white/[0.05] border-cream/15 text-cream placeholder:text-cream/35 rounded-xl focus:border-sand"
+                className="pl-10 h-11 bg-white/[0.05] border-border bg-white/[0.05] text-foreground placeholder:text-muted-foreground/80 rounded-xl focus:border-ring"
               />
             </div>
           </div>
@@ -125,7 +125,7 @@ export default function ForgotPasswordPage() {
             variant="primary"
             size="lg"
             disabled={loading}
-            className="w-full justify-center text-sm font-semibold shadow-lg shadow-sand/15 cursor-pointer"
+            className="w-full justify-center text-sm font-semibold shadow-lg shadow-primary/20 cursor-pointer"
             icon={<ArrowRight className="size-4" />}
           >
             {loading ? "Generating Link..." : "Send Reset Link"}

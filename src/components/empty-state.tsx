@@ -27,24 +27,24 @@ export function EmptyState({
   return (
     <div
       className={cn(
-        "flex flex-col items-center justify-center text-center p-8 sm:p-12 rounded-[20px] border border-cream/[0.1] bg-white/[0.02]",
+        "flex flex-col items-center justify-center text-center p-8 sm:p-12 rounded-[20px] border border-border bg-card",
         className
       )}
       {...props}
     >
-      <div className="flex items-center justify-center w-14 h-14 rounded-full bg-sand/10 text-sand mb-4 ring-1 ring-sand/20">
+      <div className="flex items-center justify-center w-14 h-14 rounded-full bg-accent/15 text-accent-text mb-4 ring-1 ring-accent/25">
         {icon ? (
           icon
         ) : (
-          <PackageOpen className="w-7 h-7 text-sand" aria-hidden="true" />
+          <PackageOpen className="w-7 h-7 text-accent-text" aria-hidden="true" />
         )}
       </div>
 
-      <h3 className="text-lg font-heading font-semibold text-cream tracking-tight mb-1.5">
+      <h3 className="text-lg font-heading font-semibold text-foreground tracking-tight mb-1.5">
         {title}
       </h3>
 
-      <p className="text-sm text-cream/65 max-w-sm font-body leading-relaxed mb-6">
+      <p className="text-sm text-muted-foreground max-w-sm font-body leading-relaxed mb-6">
         {description}
       </p>
 

@@ -129,19 +129,19 @@ export default function StudentAssessmentsPage() {
   return (
     <div className="space-y-8 max-w-7xl mx-auto pb-12">
       {/* Hero Banner */}
-      <div className="rounded-2xl bg-gradient-to-r from-ink via-slate to-ink border border-cream/15 p-6 md:p-8 text-cream shadow-xl relative overflow-hidden">
-        <div className="absolute right-0 top-0 bottom-0 w-1/3 bg-radial from-sand/15 to-transparent pointer-events-none" />
+      <div className="rounded-2xl bg-gradient-to-r from-background via-muted to-background border border-border/15 p-6 md:p-8 text-foreground shadow-xl relative overflow-hidden">
+        <div className="absolute right-0 top-0 bottom-0 w-1/3 bg-radial from-accent/20/15 to-transparent pointer-events-none" />
         <div className="relative z-10 max-w-2xl space-y-3">
-          <Badge className="bg-sand/20 text-sand border-sand/40 hover:bg-sand/25">
+          <Badge className="bg-accent/15/20 text-accent-text border-accent/40 hover:bg-accent/15/25">
             Skill Verification Layer
           </Badge>
-          <h1 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-cream">
+          <h1 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
             Diagnostic Domain Assessments
           </h1>
-          <p className="text-sm text-cream/70 leading-relaxed">
+          <p className="text-sm text-foreground/70 leading-relaxed">
             Validate your technical proficiency through scenario-based assessments. Passing an
             assessment (&ge;70%) instantly promotes your profile skill from{" "}
-            <span className="text-sand font-medium">Self-declared</span> to{" "}
+            <span className="text-accent-text font-medium">Self-declared</span> to{" "}
             <span className="text-success font-medium">Verified</span>.
           </p>
         </div>
@@ -155,16 +155,16 @@ export default function StudentAssessmentsPage() {
             <h3 className="font-heading font-semibold text-foreground text-sm uppercase tracking-wider">
               Verification Status
             </h3>
-            <ShieldCheck className="size-5 text-sand" />
+            <ShieldCheck className="size-5 text-accent-text" />
           </div>
           <div className="grid grid-cols-2 gap-3 pt-2">
-            <div className="p-3.5 rounded-xl bg-ink/5 border border-border text-center">
+            <div className="p-3.5 rounded-xl bg-background/5 border border-border text-center">
               <div className="text-2xl font-bold text-foreground">
                 {attempts.filter((a) => a.passed).length}
               </div>
               <div className="text-xs text-muted-foreground mt-0.5">Verified Badges</div>
             </div>
-            <div className="p-3.5 rounded-xl bg-ink/5 border border-border text-center">
+            <div className="p-3.5 rounded-xl bg-background/5 border border-border text-center">
               <div className="text-2xl font-bold text-foreground">{attempts.length}</div>
               <div className="text-xs text-muted-foreground mt-0.5">Total Attempts</div>
             </div>
@@ -194,7 +194,7 @@ export default function StudentAssessmentsPage() {
             <div className="h-32 flex items-end gap-3 pt-4 border-b border-border pb-2 px-2 overflow-x-auto">
               {progressTimeline.map((pt, i) => (
                 <div key={i} className="flex-1 min-w-[50px] flex flex-col items-center gap-1.5 group">
-                  <span className="text-[10px] font-semibold text-foreground group-hover:text-sand transition-colors">
+                  <span className="text-[10px] font-semibold text-foreground group-hover:text-accent-text transition-colors">
                     {pt.score}%
                   </span>
                   <div
@@ -236,7 +236,7 @@ export default function StudentAssessmentsPage() {
             {quizzes.map((quiz) => (
               <div
                 key={quiz.id}
-                className="rounded-2xl bg-card border border-border p-5 hover:border-sand/40 transition-all shadow-xs flex flex-col justify-between"
+                className="rounded-2xl bg-card border border-border p-5 hover:border-accent/40 transition-all shadow-xs flex flex-col justify-between"
               >
                 <div className="space-y-2.5">
                   <div className="flex items-start justify-between gap-3">
@@ -280,7 +280,7 @@ export default function StudentAssessmentsPage() {
                   <Button
                     size="sm"
                     onClick={() => handleStartQuiz(quiz)}
-                    className="bg-sand hover:bg-sand/90 text-ink font-semibold rounded-full cursor-pointer text-xs"
+                    className="bg-accent/15 hover:bg-accent/15/90 text-foreground font-semibold rounded-full cursor-pointer text-xs"
                   >
                     {quiz.latestPassed ? "Retake Assessment" : "Start Assessment"}
                     <ArrowRight className="size-3.5 ml-1" />
@@ -306,7 +306,7 @@ export default function StudentAssessmentsPage() {
           <div className="rounded-2xl bg-card border border-border overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
-                <thead className="bg-ink/5 border-b border-border text-muted-foreground uppercase font-semibold">
+                <thead className="bg-background/5 border-b border-border text-muted-foreground uppercase font-semibold">
                   <tr>
                     <th className="py-3 px-4">Skill Evaluated</th>
                     <th className="py-3 px-4">Date</th>
@@ -317,7 +317,7 @@ export default function StudentAssessmentsPage() {
                 </thead>
                 <tbody className="divide-y divide-border">
                   {attempts.map((att) => (
-                    <tr key={att.id} className="hover:bg-ink/[0.02]">
+                    <tr key={att.id} className="hover:bg-background/[0.02]">
                       <td className="py-3.5 px-4 font-semibold text-foreground">
                         {att.skillName}
                       </td>
@@ -335,10 +335,10 @@ export default function StudentAssessmentsPage() {
                         <span
                           className={`inline-block px-2 py-0.5 rounded-full text-[11px] font-semibold ${
                             att.proficiencyLevel === "Advanced"
-                              ? "bg-sand/15 text-sand"
+                              ? "bg-accent/15/15 text-accent-text"
                               : att.proficiencyLevel === "Intermediate"
                               ? "bg-info/15 text-info"
-                              : "bg-ink/10 text-muted-foreground"
+                              : "bg-background/10 text-muted-foreground"
                           }`}
                         >
                           {att.proficiencyLevel}
@@ -371,7 +371,7 @@ export default function StudentAssessmentsPage() {
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
           <div className="bg-card text-foreground border border-border rounded-2xl w-full max-w-3xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
             {/* Modal Header */}
-            <div className="p-5 border-b border-border flex items-center justify-between shrink-0 bg-ink/5">
+            <div className="p-5 border-b border-border flex items-center justify-between shrink-0 bg-background/5">
               <div>
                 <Badge variant="outline" className="text-[10px] uppercase tracking-wider mb-1">
                   {selectedQuiz.skillName} Assessment
@@ -393,15 +393,15 @@ export default function StudentAssessmentsPage() {
             <div className="p-6 overflow-y-auto space-y-6">
               {!submissionResult ? (
                 <>
-                  <div className="p-3 rounded-xl bg-sand/10 border border-sand/30 text-xs text-sand flex items-center gap-2">
+                  <div className="p-3 rounded-xl bg-accent/15/10 border border-accent/30 text-xs text-accent-text flex items-center gap-2">
                     <Sparkles className="size-4 shrink-0" />
                     Answer all {selectedQuiz.questions.length} questions. Achieve &ge; 70% to instantly promote this skill to Verified.
                   </div>
 
                   {selectedQuiz.questions.map((q, qIndex) => (
-                    <div key={q.id} className="space-y-3 p-4 rounded-xl border border-border bg-ink/[0.01]">
+                    <div key={q.id} className="space-y-3 p-4 rounded-xl border border-border bg-background/[0.01]">
                       <div className="flex items-start gap-2">
-                        <span className="font-bold text-xs text-sand">Q{qIndex + 1}.</span>
+                        <span className="font-bold text-xs text-accent-text">Q{qIndex + 1}.</span>
                         <p className="text-sm font-medium text-foreground leading-snug">
                           {q.question}
                         </p>
@@ -417,14 +417,14 @@ export default function StudentAssessmentsPage() {
                               onClick={() => handleSelectOption(q.id, optIndex)}
                               className={`w-full text-left p-3 rounded-lg border text-xs font-medium transition-colors cursor-pointer flex items-center justify-between ${
                                 isSelected
-                                  ? "border-sand bg-sand/15 text-foreground"
-                                  : "border-border hover:border-sand/40 hover:bg-ink/[0.02] text-muted-foreground"
+                                  ? "border-accent bg-accent/15/15 text-foreground"
+                                  : "border-border hover:border-accent/40 hover:bg-background/[0.02] text-muted-foreground"
                               }`}
                             >
                               <span>{opt}</span>
                               <span
                                 className={`size-4 rounded-full border flex items-center justify-center text-[10px] ${
-                                  isSelected ? "border-sand bg-sand text-ink font-bold" : "border-border"
+                                  isSelected ? "border-accent bg-accent/15 text-foreground font-bold" : "border-border"
                                 }`}
                               >
                                 {isSelected ? "✓" : ""}
@@ -439,7 +439,7 @@ export default function StudentAssessmentsPage() {
               ) : (
                 /* Submission Result Screen */
                 <div className="space-y-6 text-center py-4">
-                  <div className="size-16 rounded-full mx-auto flex items-center justify-center bg-sand/20 text-sand border border-sand/40">
+                  <div className="size-16 rounded-full mx-auto flex items-center justify-center bg-accent/15/20 text-accent-text border border-accent/40">
                     {submissionResult.attempt.passed ? (
                       <Award className="size-8 text-success" />
                     ) : (
@@ -493,7 +493,7 @@ export default function StudentAssessmentsPage() {
             </div>
 
             {/* Modal Footer */}
-            <div className="p-4 border-t border-border flex items-center justify-end gap-3 bg-ink/5">
+            <div className="p-4 border-t border-border flex items-center justify-end gap-3 bg-background/5">
               {!submissionResult ? (
                 <>
                   <Button
@@ -508,7 +508,7 @@ export default function StudentAssessmentsPage() {
                     size="sm"
                     disabled={isSubmitting || Object.keys(userAnswers).length < selectedQuiz.questions.length}
                     onClick={handleSubmitQuiz}
-                    className="bg-sand hover:bg-sand/90 text-ink font-semibold rounded-full cursor-pointer text-xs"
+                    className="bg-accent/15 hover:bg-accent/15/90 text-foreground font-semibold rounded-full cursor-pointer text-xs"
                   >
                     {isSubmitting ? "Evaluating Answers..." : "Submit Assessment"}
                   </Button>
@@ -517,7 +517,7 @@ export default function StudentAssessmentsPage() {
                 <Button
                   size="sm"
                   onClick={() => setSelectedQuiz(null)}
-                  className="bg-sand hover:bg-sand/90 text-ink font-semibold rounded-full cursor-pointer text-xs"
+                  className="bg-accent/15 hover:bg-accent/15/90 text-foreground font-semibold rounded-full cursor-pointer text-xs"
                 >
                   Done
                 </Button>

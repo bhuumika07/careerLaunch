@@ -114,7 +114,7 @@ export function Sidebar({ role, className }: SidebarProps) {
   return (
     <aside
       className={cn(
-        "relative flex flex-col justify-between h-screen shrink-0 bg-ink border-r border-cream/10 text-cream transition-all duration-200 ease-in-out select-none z-30",
+        "relative flex flex-col justify-between h-screen shrink-0 bg-navy border-r border-sky/15 text-sky-50 transition-all duration-200 ease-in-out select-none z-30",
         isCollapsed ? "w-16" : "w-64",
         className
       )}
@@ -124,23 +124,23 @@ export function Sidebar({ role, className }: SidebarProps) {
       <div className="flex flex-col">
         <div
           className={cn(
-            "flex items-center h-16 border-b border-cream/10 px-3.5",
+            "flex items-center h-16 border-b border-sky/15 px-3.5",
             isCollapsed ? "justify-center" : "justify-between"
           )}
         >
           <Link
             href={`/${role}/dashboard`}
-            className="flex items-center gap-2.5 overflow-hidden group focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-sand rounded-md p-1"
+            className="flex items-center gap-2.5 overflow-hidden group focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring rounded-md p-1"
           >
-            <div className="flex items-center justify-center size-9 rounded-lg bg-sand text-ink shrink-0 font-bold shadow-sm">
-              <Compass className="size-5 text-ink transition-transform duration-200 group-hover:rotate-45" />
+            <div className="flex items-center justify-center size-9 rounded-lg bg-primary text-primary-foreground shrink-0 font-bold shadow-sm">
+              <Compass className="size-5 text-primary-foreground transition-transform duration-200 group-hover:rotate-45" />
             </div>
             {!isCollapsed && (
               <div className="flex flex-col min-w-0">
-                <span className="font-heading font-bold text-base tracking-tight text-cream whitespace-nowrap">
-                  Career<span className="text-sand">Launch</span>
+                <span className="font-heading font-bold text-base tracking-tight text-sky-50 whitespace-nowrap">
+                  Career<span className="text-amber">Launch</span>
                 </span>
-                <span className="text-[10px] uppercase font-medium tracking-wider text-cream/40 -mt-1">
+                <span className="text-[10px] uppercase font-medium tracking-wider text-sky/70 -mt-1">
                   {role} portal
                 </span>
               </div>
@@ -152,7 +152,7 @@ export function Sidebar({ role, className }: SidebarProps) {
               type="button"
               onClick={toggleSidebar}
               aria-label="Collapse sidebar"
-              className="flex items-center justify-center size-7 rounded-md text-cream/60 hover:text-cream hover:bg-cream/10 transition-colors cursor-pointer"
+              className="flex items-center justify-center size-7 rounded-md text-sky/75 hover:text-sky-50 hover:bg-sky/10 transition-colors cursor-pointer"
             >
               <ChevronLeft className="size-4" />
             </button>
@@ -161,12 +161,12 @@ export function Sidebar({ role, className }: SidebarProps) {
 
         {/* Collapsed Expand Toggle Button when collapsed */}
         {isCollapsed && (
-          <div className="flex justify-center py-2 border-b border-cream/10">
+          <div className="flex justify-center py-2 border-b border-sky/15">
             <button
               type="button"
               onClick={toggleSidebar}
               aria-label="Expand sidebar"
-              className="flex items-center justify-center size-8 rounded-md text-cream/60 hover:text-cream hover:bg-cream/10 transition-colors cursor-pointer"
+              className="flex items-center justify-center size-8 rounded-md text-sky/75 hover:text-sky-50 hover:bg-sky/10 transition-colors cursor-pointer"
             >
               <ChevronRight className="size-4" />
             </button>
@@ -189,15 +189,15 @@ export function Sidebar({ role, className }: SidebarProps) {
                 className={cn(
                   "flex items-center gap-3 px-3 py-2.5 text-sm font-medium transition-colors cursor-pointer",
                   isActive
-                    ? "bg-sand/15 text-sand rounded-lg"
-                    : "text-cream/65 hover:text-cream hover:bg-cream/5 rounded-lg",
+                    ? "bg-sky/15 text-sky-50 font-semibold rounded-lg border-l-2 border-amber"
+                    : "text-sky/75 hover:text-sky-50 hover:bg-sky/[0.08] rounded-lg",
                   isCollapsed && "justify-center px-0"
                 )}
               >
                 <IconComponent
                   className={cn(
                     "size-5 shrink-0 transition-colors",
-                    isActive ? "text-sand" : "text-cream/70 group-hover:text-cream"
+                    isActive ? "text-amber" : "text-sky/70 group-hover:text-sky-50"
                   )}
                 />
                 {!isCollapsed && (
@@ -210,12 +210,12 @@ export function Sidebar({ role, className }: SidebarProps) {
       </div>
 
       {/* Bottom section with Sign Out */}
-      <div className="p-2 border-t border-cream/10 bg-ink/50">
+      <div className="p-2 border-t border-sky/15 bg-navy-950/60">
         <Link
           href="/login"
           title={isCollapsed ? "Sign Out" : undefined}
           className={cn(
-            "flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-cream/65 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors cursor-pointer",
+            "flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-sky/75 hover:text-danger-foreground hover:bg-danger/85 rounded-lg transition-colors cursor-pointer",
             isCollapsed && "justify-center px-0"
           )}
         >
@@ -226,3 +226,5 @@ export function Sidebar({ role, className }: SidebarProps) {
     </aside>
   );
 }
+
+export default Sidebar;

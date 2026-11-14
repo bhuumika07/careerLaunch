@@ -78,13 +78,13 @@ export default function NotificationsCenterPage() {
   const getIcon = (type: NotificationType) => {
     switch (type) {
       case "application_update":
-        return <Briefcase className="size-4 text-sand" />;
+        return <Briefcase className="size-4 text-info" />;
       case "deadline_reminder":
         return <Calendar className="size-4 text-warning" />;
       case "matching_opportunity":
         return <Sparkles className="size-4 text-info" />;
       case "learning_reminder":
-        return <BookOpen className="size-4 text-sand" />;
+        return <BookOpen className="size-4 text-info" />;
       case "new_applicant":
         return <Users className="size-4 text-success" />;
       default:
@@ -93,15 +93,19 @@ export default function NotificationsCenterPage() {
   };
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto pb-12 p-4 sm:p-6">
+    <div data-theme="light" className="min-h-screen bg-background text-foreground p-4 sm:p-6">
+    <div className="space-y-6 max-w-5xl mx-auto pb-12">
       {/* Header */}
-      <div className="rounded-2xl bg-gradient-to-r from-ink via-slate to-ink border border-cream/15 p-6 md:p-8 text-cream shadow-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div
+        data-theme="dark"
+        className="rounded-2xl bg-gradient-to-r from-navy via-navy-800 to-navy border border-sky/20 p-6 md:p-8 text-sky-50 shadow-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+      >
         <div className="space-y-2">
-          <Badge className="bg-sand/20 text-sand border-sand/40">Real-Time Event Center</Badge>
-          <h1 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-cream">
+          <Badge className="bg-amber/20 text-amber border-amber/40">Real-Time Event Center</Badge>
+          <h1 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-sky-50">
             Notifications Center
           </h1>
-          <p className="text-xs sm:text-sm text-cream/70">
+          <p className="text-xs sm:text-sm text-sky/75">
             Real-time telemetry on application statuses, deadline alerts, match highlights, and learning updates.
           </p>
         </div>
@@ -110,7 +114,7 @@ export default function NotificationsCenterPage() {
           onClick={handleMarkAllRead}
           variant="outline"
           size="sm"
-          className="border-cream/20 text-cream hover:bg-white/10 rounded-full text-xs"
+          className="border-sky/25 text-sky-50 hover:bg-sky/10 rounded-full text-xs"
         >
           <CheckCheck className="size-3.5 mr-1.5" />
           Mark All as Read
@@ -132,7 +136,7 @@ export default function NotificationsCenterPage() {
             onClick={() => setSelectedFilter(f.id)}
             className={`px-3.5 py-1.5 rounded-full font-medium transition-colors cursor-pointer shrink-0 ${
               selectedFilter === f.id
-                ? "bg-sand text-ink font-bold shadow-xs"
+                ? "bg-primary text-primary-foreground font-bold shadow-xs"
                 : "text-muted-foreground hover:text-foreground"
             }`}
           >
@@ -159,11 +163,11 @@ export default function NotificationsCenterPage() {
             <div
               key={notif.id}
               className={`p-4 sm:p-5 flex items-start justify-between gap-4 transition-colors ${
-                !notif.read ? "bg-sand/[0.04]" : "hover:bg-ink/[0.01]"
+                !notif.read ? "bg-sky-50" : "hover:bg-sky-50/60"
               }`}
             >
               <div className="flex items-start gap-3.5">
-                <div className="size-9 rounded-xl bg-ink/5 border border-border flex items-center justify-center shrink-0 mt-0.5">
+                <div className="size-9 rounded-xl bg-sky-50 border border-border flex items-center justify-center shrink-0 mt-0.5">
                   {getIcon(notif.type)}
                 </div>
                 <div className="space-y-1">
@@ -172,7 +176,7 @@ export default function NotificationsCenterPage() {
                       {notif.title}
                     </span>
                     {!notif.read && (
-                      <span className="size-2 rounded-full bg-sand shrink-0" />
+                      <span className="size-2 rounded-full bg-accent shrink-0" />
                     )}
                   </div>
                   <p className="text-xs text-muted-foreground leading-relaxed">
@@ -190,7 +194,7 @@ export default function NotificationsCenterPage() {
                     {notif.link && (
                       <Link
                         href={notif.link}
-                        className="text-sand font-semibold hover:underline inline-flex items-center gap-1"
+                        className="text-link font-semibold hover:underline inline-flex items-center gap-1"
                       >
                         View Details &rarr;
                       </Link>
@@ -214,6 +218,7 @@ export default function NotificationsCenterPage() {
           ))}
         </div>
       )}
+    </div>
     </div>
   );
 }

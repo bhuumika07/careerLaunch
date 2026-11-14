@@ -81,15 +81,15 @@ export default function SkillGapPage() {
   return (
     <div className="space-y-8 max-w-7xl mx-auto pb-12">
       {/* Page Header */}
-      <div className="rounded-2xl bg-gradient-to-r from-ink via-slate to-ink border border-cream/15 p-6 md:p-8 text-cream shadow-xl relative overflow-hidden">
+      <div className="rounded-2xl bg-gradient-to-r from-background via-muted to-background border border-border/15 p-6 md:p-8 text-foreground shadow-xl relative overflow-hidden">
         <div className="relative z-10 max-w-2xl space-y-3">
-          <Badge className="bg-sand/20 text-sand border-sand/40 hover:bg-sand/25">
+          <Badge className="bg-accent/15/20 text-accent-text border-accent/40 hover:bg-accent/15/25">
             Role Benchmark Telemetry
           </Badge>
-          <h1 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-cream">
+          <h1 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
             Career Skill-Gap Analysis
           </h1>
-          <p className="text-sm text-cream/70 leading-relaxed">
+          <p className="text-sm text-foreground/70 leading-relaxed">
             Compare your verified and self-declared skillset against production-grade industry expectations
             for your target role, followed by a personalized bridge plan.
           </p>
@@ -99,14 +99,14 @@ export default function SkillGapPage() {
       {/* Role Selector Controls */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-2xl bg-card border border-border">
         <div className="flex items-center gap-3">
-          <Target className="size-5 text-sand shrink-0" />
+          <Target className="size-5 text-accent-text shrink-0" />
           <div>
             <span className="text-xs text-muted-foreground uppercase font-semibold">Select Target Role:</span>
             <div className="flex items-center gap-2 mt-1">
               <select
                 value={selectedRoleId}
                 onChange={(e) => setSelectedRoleId(e.target.value)}
-                className="bg-ink/5 border border-border rounded-lg px-3 py-1.5 text-xs font-semibold text-foreground focus:outline-hidden focus:border-sand"
+                className="bg-background/5 border border-border rounded-lg px-3 py-1.5 text-xs font-semibold text-foreground focus:outline-hidden focus:border-accent"
               >
                 {availableRoles.map((role) => (
                   <option key={role.id} value={role.id}>
@@ -120,9 +120,9 @@ export default function SkillGapPage() {
 
         {data && (
           <div className="flex items-center gap-4 text-xs">
-            <div className="flex items-center gap-2 bg-ink/5 px-3 py-1.5 rounded-lg border border-border">
+            <div className="flex items-center gap-2 bg-background/5 px-3 py-1.5 rounded-lg border border-border">
               <span className="text-muted-foreground">Overall Readiness:</span>
-              <span className="font-bold text-sand text-sm">{data.readinessPercentage}%</span>
+              <span className="font-bold text-accent-text text-sm">{data.readinessPercentage}%</span>
             </div>
             <div className="hidden md:flex items-center gap-2 text-muted-foreground">
               <span>{data.gapSummary.targetMet} Met</span>
@@ -155,7 +155,7 @@ export default function SkillGapPage() {
 
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
-                <thead className="bg-ink/5 border-b border-border text-muted-foreground uppercase font-semibold">
+                <thead className="bg-background/5 border-b border-border text-muted-foreground uppercase font-semibold">
                   <tr>
                     <th className="py-3 px-4">Required Skill</th>
                     <th className="py-3 px-4">Priority</th>
@@ -167,7 +167,7 @@ export default function SkillGapPage() {
                 </thead>
                 <tbody className="divide-y divide-border">
                   {data.table.map((row, idx) => (
-                    <tr key={idx} className="hover:bg-ink/[0.02]">
+                    <tr key={idx} className="hover:bg-background/[0.02]">
                       <td className="py-3.5 px-4">
                         <div className="font-semibold text-foreground">{row.skillName}</div>
                         <div className="text-[10px] text-muted-foreground">{row.category}</div>
@@ -179,7 +179,7 @@ export default function SkillGapPage() {
                               ? "bg-danger/10 text-danger border border-danger/20"
                               : row.priority === "High"
                               ? "bg-warning/10 text-warning border border-warning/20"
-                              : "bg-ink/5 text-muted-foreground border border-border"
+                              : "bg-background/5 text-muted-foreground border border-border"
                           }`}
                         >
                           {row.priority}
@@ -203,7 +203,7 @@ export default function SkillGapPage() {
                             Self-declared
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1 text-muted-foreground bg-ink/5 px-2 py-0.5 rounded-full text-[11px]">
+                          <span className="inline-flex items-center gap-1 text-muted-foreground bg-background/5 px-2 py-0.5 rounded-full text-[11px]">
                             Not assessed
                           </span>
                         )}
@@ -218,7 +218,7 @@ export default function SkillGapPage() {
                               <Button
                                 size="sm"
                                 variant="outline"
-                                className="h-6 px-2 text-[10px] font-semibold border-sand text-sand hover:bg-sand/10 rounded-full shrink-0"
+                                className="h-6 px-2 text-[10px] font-semibold border-accent text-accent-text hover:bg-accent/15/10 rounded-full shrink-0"
                               >
                                 Take Quiz
                               </Button>
@@ -244,22 +244,22 @@ export default function SkillGapPage() {
                   Direct learning steps calculated to close your critical skill gaps
                 </p>
               </div>
-              <Compass className="size-5 text-sand" />
+              <Compass className="size-5 text-accent-text" />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {data.actionPlan.map((action) => (
                 <div
                   key={action.id}
-                  className="rounded-2xl bg-card border border-border p-5 space-y-3 flex flex-col justify-between hover:border-sand/40 transition-colors"
+                  className="rounded-2xl bg-card border border-border p-5 space-y-3 flex flex-col justify-between hover:border-accent/40 transition-colors"
                 >
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-semibold uppercase tracking-wider text-sand bg-sand/10 px-2 py-0.5 rounded-full">
+                      <span className="text-[10px] font-semibold uppercase tracking-wider text-accent-text bg-accent/15/10 px-2 py-0.5 rounded-full">
                         {action.priority}
                       </span>
                       {action.type === "quiz" ? (
-                        <Award className="size-4 text-sand" />
+                        <Award className="size-4 text-accent-text" />
                       ) : (
                         <Compass className="size-4 text-info" />
                       )}
@@ -275,7 +275,7 @@ export default function SkillGapPage() {
                   <Link href={action.link} className="pt-2">
                     <Button
                       size="sm"
-                      className="w-full bg-sand hover:bg-sand/90 text-ink font-semibold rounded-full cursor-pointer text-xs"
+                      className="w-full bg-accent/15 hover:bg-accent/15/90 text-foreground font-semibold rounded-full cursor-pointer text-xs"
                     >
                       {action.type === "quiz" ? "Start Assessment" : "Open Learning Module"}
                       <ArrowRight className="size-3.5 ml-1" />

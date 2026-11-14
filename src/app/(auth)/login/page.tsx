@@ -84,23 +84,23 @@ function LoginForm() {
   return (
     <div className="w-full space-y-6">
       <div className="space-y-1">
-        <h1 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-cream">
+        <h1 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
           Sign In
         </h1>
-        <p className="text-xs sm:text-sm text-cream/60">
+        <p className="text-xs sm:text-sm text-muted-foreground">
           Access your personalized career telemetry and readiness workspace.
         </p>
       </div>
 
       {/* Error or Rate Limit Alert */}
       {error && (
-        <div className="p-3.5 rounded-xl border border-danger/40 bg-danger/10 text-cream text-xs space-y-1">
+        <div className="p-3.5 rounded-xl border border-danger/50 bg-danger/15 text-foreground text-xs space-y-1">
           <div className="flex items-center gap-2">
             <AlertCircle className="size-4 text-danger shrink-0" />
             <span className="font-semibold">{error}</span>
           </div>
           {remainingAttempts !== null && remainingAttempts > 0 && (
-            <p className="text-[11px] text-cream/60 pl-6">
+            <p className="text-[11px] text-muted-foreground pl-6">
               You have {remainingAttempts} attempt(s) remaining before account lockout.
             </p>
           )}
@@ -113,8 +113,8 @@ function LoginForm() {
       )}
 
       {/* Quick Demo Login Fillers */}
-      <div className="p-4 rounded-2xl border border-cream/15 bg-white/[0.03] space-y-2.5">
-        <div className="flex items-center gap-1.5 text-xs font-semibold text-sand">
+      <div className="p-4 rounded-2xl border border-border bg-white/[0.03] space-y-2.5">
+        <div className="flex items-center gap-1.5 text-xs font-semibold text-amber">
           <Sparkles className="size-3.5" />
           <span>Quick Demo One-Click Fill (Password: Password123!)</span>
         </div>
@@ -124,7 +124,7 @@ function LoginForm() {
               key={acc.role}
               type="button"
               onClick={() => fillDemoAccount(acc.email)}
-              className="px-2.5 py-1 rounded-lg text-xs font-medium border border-cream/15 bg-white/[0.04] text-cream/80 hover:text-cream hover:border-sand/50 hover:bg-white/[0.08] transition-colors cursor-pointer"
+              className="px-2.5 py-1 rounded-lg text-xs font-medium border border-border bg-white/[0.04] text-foreground/85 hover:text-foreground hover:border-amber/50 hover:bg-white/[0.08] transition-colors cursor-pointer"
             >
               {acc.label}
             </button>
@@ -135,11 +135,11 @@ function LoginForm() {
       <form onSubmit={handleLogin} className="space-y-5">
         {/* Email input */}
         <div className="space-y-1.5">
-          <Label htmlFor="login-email" className="text-xs font-semibold text-cream/80 uppercase tracking-wider">
+          <Label htmlFor="login-email" className="text-xs font-semibold text-foreground/85 uppercase tracking-wider">
             Email Address
           </Label>
           <div className="relative">
-            <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-cream/40" />
+            <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
             <Input
               id="login-email"
               type="email"
@@ -147,7 +147,7 @@ function LoginForm() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="name@university.edu"
-              className="pl-10 h-11 bg-white/[0.05] border-cream/15 text-cream placeholder:text-cream/35 rounded-xl focus:border-sand"
+              className="pl-10 h-11 bg-white/[0.05] border-border bg-white/[0.05] text-foreground placeholder:text-muted-foreground/80 rounded-xl focus:border-ring"
             />
           </div>
         </div>
@@ -155,18 +155,18 @@ function LoginForm() {
         {/* Password input */}
         <div className="space-y-1.5">
           <div className="flex items-center justify-between">
-            <Label htmlFor="login-password" className="text-xs font-semibold text-cream/80 uppercase tracking-wider">
+            <Label htmlFor="login-password" className="text-xs font-semibold text-foreground/85 uppercase tracking-wider">
               Password
             </Label>
             <Link
               href="/forgot-password"
-              className="text-xs text-sand hover:underline font-medium"
+              className="text-xs text-link hover:underline font-medium"
             >
               Forgot password?
             </Link>
           </div>
           <div className="relative">
-            <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-cream/40" />
+            <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
             <Input
               id="login-password"
               type={showPassword ? "text" : "password"}
@@ -174,12 +174,12 @@ function LoginForm() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
-              className="pl-10 pr-10 h-11 bg-white/[0.05] border-cream/15 text-cream placeholder:text-cream/35 rounded-xl focus:border-sand"
+              className="pl-10 pr-10 h-11 bg-white/[0.05] border-border bg-white/[0.05] text-foreground placeholder:text-muted-foreground/80 rounded-xl focus:border-ring"
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-cream/40 hover:text-cream cursor-pointer"
+              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer"
               aria-label={showPassword ? "Hide password" : "Show password"}
             >
               {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
@@ -189,12 +189,12 @@ function LoginForm() {
 
         {/* Remember me */}
         <div className="flex items-center justify-between text-xs">
-          <label className="flex items-center gap-2 text-cream/70 cursor-pointer">
+          <label className="flex items-center gap-2 text-muted-foreground cursor-pointer">
             <input
               type="checkbox"
               checked={rememberMe}
               onChange={(e) => setRememberMe(e.target.checked)}
-              className="size-4 rounded-sm border-cream/30 bg-white/5 text-sand accent-sand cursor-pointer"
+              className="size-4 rounded-sm border-sky/30 bg-white/5 text-amber accent-amber cursor-pointer"
             />
             <span>Remember this device for 7 days</span>
           </label>
@@ -206,15 +206,15 @@ function LoginForm() {
           variant="primary"
           size="lg"
           disabled={loading || (lockoutSeconds !== null && lockoutSeconds > 0)}
-          className="w-full justify-center text-sm font-semibold shadow-lg shadow-sand/15 cursor-pointer"
+          className="w-full justify-center text-sm font-semibold shadow-lg shadow-primary/20 cursor-pointer"
           icon={<ArrowRight className="size-4" />}
         >
           {loading ? "Signing In..." : "Sign In to Portal"}
         </PillButton>
 
-        <p className="text-center text-xs text-cream/60 pt-2">
+        <p className="text-center text-xs text-muted-foreground pt-2">
           Don&apos;t have an account yet?{" "}
-          <Link href="/register" className="text-sand hover:underline font-semibold">
+          <Link href="/register" className="text-link hover:underline font-semibold">
             Create an Account
           </Link>
         </p>
@@ -225,7 +225,7 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <React.Suspense fallback={<div className="min-h-[420px] flex items-center justify-center text-cream/40">Loading portal...</div>}>
+    <React.Suspense fallback={<div className="min-h-[420px] flex items-center justify-center text-muted-foreground">Loading portal...</div>}>
       <LoginForm />
     </React.Suspense>
   );

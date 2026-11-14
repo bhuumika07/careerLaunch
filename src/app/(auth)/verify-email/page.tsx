@@ -80,14 +80,14 @@ function VerifyEmailContent() {
     <div className="w-full space-y-6 text-center">
       {/* 1. VERIFYING STATE */}
       {loading && (
-        <div className="p-8 rounded-2xl border border-cream/15 bg-white/[0.04] space-y-4">
-          <div className="size-12 rounded-full bg-sand/20 text-sand flex items-center justify-center mx-auto animate-pulse">
-            <RefreshCw className="size-6 text-sand animate-spin" />
+        <div className="p-8 rounded-2xl border border-border bg-white/[0.04] space-y-4">
+          <div className="size-12 rounded-full bg-amber/20 text-amber flex items-center justify-center mx-auto animate-pulse">
+            <RefreshCw className="size-6 text-amber animate-spin" />
           </div>
-          <h2 className="font-heading text-2xl font-bold text-cream">
+          <h2 className="font-heading text-2xl font-bold text-foreground">
             Verifying Your Email...
           </h2>
-          <p className="text-xs text-cream/70">
+          <p className="text-xs text-muted-foreground">
             Validating institutional security token against the directory.
           </p>
         </div>
@@ -95,15 +95,15 @@ function VerifyEmailContent() {
 
       {/* 2. SUCCESS STATE */}
       {!loading && verified && (
-        <div className="p-8 rounded-2xl border border-sand/40 bg-white/[0.04] space-y-5">
-          <div className="size-14 rounded-full bg-sand/20 text-sand flex items-center justify-center mx-auto">
-            <CheckCircle2 className="size-8 text-sand" />
+        <div className="p-8 rounded-2xl border border-success/40 bg-success/10 space-y-5">
+          <div className="size-14 rounded-full bg-success/20 text-success flex items-center justify-center mx-auto">
+            <CheckCircle2 className="size-8 text-success" />
           </div>
           <div className="space-y-1">
-            <h2 className="font-heading text-2xl sm:text-3xl font-bold text-cream">
+            <h2 className="font-heading text-2xl sm:text-3xl font-bold text-foreground">
               Email Verified Successfully!
             </h2>
-            <p className="text-xs sm:text-sm text-cream/70 max-w-sm mx-auto">
+            <p className="text-xs sm:text-sm text-muted-foreground max-w-sm mx-auto">
               Your institutional credentials have been verified. You can now access your role workspace.
             </p>
           </div>
@@ -125,29 +125,29 @@ function VerifyEmailContent() {
 
       {/* 3. PENDING STATE */}
       {!loading && !verified && (
-        <div className="p-8 rounded-2xl border border-cream/15 bg-white/[0.04] space-y-5">
-          <div className="size-14 rounded-full bg-sand/20 text-sand flex items-center justify-center mx-auto">
-            <Mail className="size-8 text-sand" />
+        <div className="p-8 rounded-2xl border border-border bg-white/[0.04] space-y-5">
+          <div className="size-14 rounded-full bg-amber/20 text-amber flex items-center justify-center mx-auto">
+            <Mail className="size-8 text-amber" />
           </div>
 
           <div className="space-y-1.5">
-            <h2 className="font-heading text-2xl sm:text-3xl font-bold text-cream">
+            <h2 className="font-heading text-2xl sm:text-3xl font-bold text-foreground">
               Verify Your Email Address
             </h2>
-            <p className="text-xs sm:text-sm text-cream/70 max-w-sm mx-auto leading-relaxed">
+            <p className="text-xs sm:text-sm text-muted-foreground max-w-sm mx-auto leading-relaxed">
               We&apos;ve sent a verification link to your registered email address. Click the link to complete verification.
             </p>
           </div>
 
           {error && (
-            <div className="p-3 rounded-xl border border-danger/40 bg-danger/10 text-cream text-xs flex items-center justify-center gap-2">
+            <div className="p-3 rounded-xl border border-danger/50 bg-danger/15 text-foreground text-xs flex items-center justify-center gap-2">
               <AlertCircle className="size-4 text-danger shrink-0" />
               <span>{error}</span>
             </div>
           )}
 
           {resendMessage && (
-            <div className="p-3 rounded-xl border border-sand/30 bg-sand/10 text-cream text-xs break-all">
+            <div className="p-3 rounded-xl border border-amber/30 bg-amber/10 text-foreground text-xs break-all">
               {resendMessage}
             </div>
           )}
@@ -183,7 +183,7 @@ function VerifyEmailContent() {
 
 export default function VerifyEmailPage() {
   return (
-    <React.Suspense fallback={<div className="min-h-[300px] flex items-center justify-center text-cream/40">Loading verification...</div>}>
+    <React.Suspense fallback={<div className="min-h-[300px] flex items-center justify-center text-muted-foreground">Loading verification...</div>}>
       <VerifyEmailContent />
     </React.Suspense>
   );

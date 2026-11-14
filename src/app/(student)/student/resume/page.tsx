@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import * as React from "react";
 import Link from "next/link";
@@ -161,13 +161,13 @@ export default function StudentResumePage() {
   return (
     <div className="space-y-8">
       {/* Top Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-5">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border pb-5">
         <div>
-          <h1 className="font-heading text-2xl sm:text-3xl font-bold text-ink tracking-tight flex items-center gap-2.5">
-            <FileText className="size-7 text-[#C4A885]" />
+          <h1 className="font-heading text-2xl sm:text-3xl font-bold text-foreground tracking-tight flex items-center gap-2.5">
+            <FileText className="size-7 text-primary" />
             Resume Intelligence & Upload
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-2xl">
+          <p className="text-xs sm:text-sm text-muted-foreground mt-1 max-w-2xl">
             Upload your resume to receive an indicative quality assessment, ATS parsing insights, and side-by-side profile prefilling with explicit approval.
           </p>
         </div>
@@ -183,15 +183,15 @@ export default function StudentResumePage() {
 
       {/* Alerts */}
       {error && (
-        <div className="p-4 rounded-xl border border-rose-300 bg-rose-50 text-rose-800 text-xs flex items-center gap-3">
-          <AlertCircle className="size-4 shrink-0 text-rose-600" />
+        <div className="p-4 rounded-xl border border-danger bg-danger/5 text-danger/80 text-xs flex items-center gap-3">
+          <AlertCircle className="size-4 shrink-0 text-danger/80" />
           <span>{error}</span>
         </div>
       )}
 
       {successMessage && (
-        <div className="p-4 rounded-xl border border-emerald-300 bg-emerald-50 text-emerald-800 text-xs flex items-center gap-3">
-          <CheckCircle2 className="size-4 shrink-0 text-emerald-600" />
+        <div className="p-4 rounded-xl border border-success bg-success/5 text-success text-xs flex items-center gap-3">
+          <CheckCircle2 className="size-4 shrink-0 text-success" />
           <span>{successMessage}</span>
         </div>
       )}
@@ -205,8 +205,8 @@ export default function StudentResumePage() {
         className={cn(
           "relative border-2 border-dashed rounded-2xl p-8 sm:p-12 text-center transition-all bg-white shadow-xs cursor-pointer",
           dragActive
-            ? "border-[#C4A885] bg-[#C4A885]/5 scale-[1.01]"
-            : "border-slate-300 hover:border-[#C4A885]/60 hover:bg-slate-50/50"
+            ? "border-primary bg-primary/5 scale-[1.01]"
+            : "border-border hover:border-primary/60 hover:bg-background/50"
         )}
         onClick={() => !uploading && fileInputRef.current?.click()}
       >
@@ -221,32 +221,32 @@ export default function StudentResumePage() {
 
         {uploading ? (
           <div className="max-w-md mx-auto space-y-4 py-4">
-            <div className="size-14 rounded-full bg-[#C4A885]/15 text-[#C4A885] flex items-center justify-center mx-auto animate-pulse">
-              <RefreshCw className="size-7 text-[#C4A885] animate-spin" />
+            <div className="size-14 rounded-full bg-primary/15 text-primary flex items-center justify-center mx-auto animate-pulse">
+              <RefreshCw className="size-7 text-primary animate-spin" />
             </div>
             <div>
-              <h3 className="font-heading text-lg font-bold text-ink">Analyzing Resume Intelligence</h3>
-              <p className="text-xs text-slate-500 mt-1">{uploadStepText}</p>
+              <h3 className="font-heading text-lg font-bold text-foreground">Analyzing Resume Intelligence</h3>
+              <p className="text-xs text-muted-foreground mt-1">{uploadStepText}</p>
             </div>
-            <div className="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+            <div className="w-full bg-muted rounded-full h-2.5 overflow-hidden">
               <div
-                className="bg-[#C4A885] h-2.5 rounded-full transition-all duration-300"
+                className="bg-primary h-2.5 rounded-full transition-all duration-300"
                 style={{ width: `${uploadProgress}%` }}
               />
             </div>
-            <span className="text-xs font-semibold text-slate-600">{uploadProgress}%</span>
+            <span className="text-xs font-semibold text-muted-foreground">{uploadProgress}%</span>
           </div>
         ) : (
           <div className="space-y-3">
-            <div className="size-16 rounded-2xl bg-[#C4A885]/10 text-[#C4A885] flex items-center justify-center mx-auto shadow-xs">
+            <div className="size-16 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mx-auto shadow-xs">
               <UploadCloud className="size-8" />
             </div>
             <div>
-              <h3 className="font-heading text-lg font-bold text-ink">
+              <h3 className="font-heading text-lg font-bold text-foreground">
                 Drag and drop your resume file here
               </h3>
-              <p className="text-xs text-slate-500 mt-1">
-                Supports standard <strong className="text-slate-700">PDF (.pdf)</strong> or <strong className="text-slate-700">Word (.docx)</strong> documents up to 5MB.
+              <p className="text-xs text-muted-foreground mt-1">
+                Supports standard <strong className="text-foreground/90">PDF (.pdf)</strong> or <strong className="text-foreground/90">Word (.docx)</strong> documents up to 5MB.
               </p>
             </div>
             <div className="pt-2">
@@ -266,25 +266,25 @@ export default function StudentResumePage() {
       {/* Uploaded Resumes List */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="font-heading text-lg font-bold text-ink flex items-center gap-2">
-            <FileCheck className="size-5 text-[#C4A885]" />
+          <h2 className="font-heading text-lg font-bold text-foreground flex items-center gap-2">
+            <FileCheck className="size-5 text-primary" />
             Uploaded Documents ({resumes.length})
           </h2>
-          <span className="text-xs text-slate-500">
+          <span className="text-xs text-muted-foreground">
             Click on any resume to view the 4-section intelligence audit
           </span>
         </div>
 
         {loading ? (
-          <div className="p-12 text-center text-slate-400 bg-white rounded-2xl border border-slate-200">
-            <RefreshCw className="size-6 text-[#C4A885] animate-spin mx-auto mb-2" />
+          <div className="p-12 text-center text-muted-foreground bg-white rounded-2xl border border-border">
+            <RefreshCw className="size-6 text-primary animate-spin mx-auto mb-2" />
             Loading uploaded documents...
           </div>
         ) : resumes.length === 0 ? (
-          <div className="p-12 text-center bg-white rounded-2xl border border-slate-200 space-y-3">
-            <FileText className="size-10 text-slate-300 mx-auto" />
-            <h3 className="font-heading font-semibold text-ink text-base">No resumes uploaded yet</h3>
-            <p className="text-xs text-slate-500 max-w-sm mx-auto">
+          <div className="p-12 text-center bg-white rounded-2xl border border-border space-y-3">
+            <FileText className="size-10 text-foreground/60 mx-auto" />
+            <h3 className="font-heading font-semibold text-foreground text-base">No resumes uploaded yet</h3>
+            <p className="text-xs text-muted-foreground max-w-sm mx-auto">
               Upload your resume above to extract technical skills, audit ATS readability, and import verified project details.
             </p>
           </div>
@@ -293,47 +293,47 @@ export default function StudentResumePage() {
             {resumes.map((resume) => (
               <div
                 key={resume.id}
-                className="p-5 bg-white rounded-2xl border border-slate-200 hover:border-[#C4A885]/60 hover:shadow-sm transition-all flex flex-col md:flex-row md:items-center justify-between gap-4"
+                className="p-5 bg-white rounded-2xl border border-border hover:border-primary/60 hover:shadow-sm transition-all flex flex-col md:flex-row md:items-center justify-between gap-4"
               >
                 <div className="flex items-start gap-4">
-                  <div className="size-12 rounded-xl bg-slate-100 flex items-center justify-center shrink-0 text-[#22343D]">
-                    <FileText className="size-6 text-[#C4A885]" />
+                  <div className="size-12 rounded-xl bg-muted flex items-center justify-center shrink-0 text-danger/80">
+                    <FileText className="size-6 text-primary" />
                   </div>
                   <div className="space-y-1">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <h4 className="font-heading font-bold text-ink text-sm sm:text-base">
+                      <h4 className="font-heading font-bold text-foreground text-sm sm:text-base">
                         {resume.fileName}
                       </h4>
                       {resume.isPrimary && (
-                        <Badge variant="default" className="text-[10px] bg-[#C4A885] text-ink font-semibold">
+                        <Badge variant="default" className="text-[10px] bg-primary text-foreground font-semibold">
                           Primary
                         </Badge>
                       )}
-                      <Badge variant="outline" className="text-[10px] border-slate-300 text-slate-600">
+                      <Badge variant="outline" className="text-[10px] border-border text-muted-foreground">
                         {(resume.fileSize / 1024).toFixed(0)} KB
                       </Badge>
                     </div>
-                    <p className="text-xs text-slate-400">
+                    <p className="text-xs text-muted-foreground">
                       Uploaded on {new Date(resume.uploadedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
                     </p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-4 flex-wrap md:flex-nowrap justify-between md:justify-end border-t md:border-t-0 pt-3 md:pt-0 border-slate-100">
+                <div className="flex items-center gap-4 flex-wrap md:flex-nowrap justify-between md:justify-end border-t md:border-t-0 pt-3 md:pt-0 border-border/50">
                   {/* Score Indicator */}
-                  <div className="flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200">
+                  <div className="flex items-center gap-2 bg-background px-3 py-1.5 rounded-xl border border-border">
                     <div className="text-right">
-                      <div className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">
+                      <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
                         Indicative Score
                       </div>
-                      <div className="text-sm font-bold text-ink font-heading">
+                      <div className="text-sm font-bold text-foreground font-heading">
                         {resume.quality?.indicativeScore ?? 75}/100
                       </div>
                     </div>
                     <div
                       className={cn(
                         "size-3 rounded-full",
-                        (resume.quality?.indicativeScore ?? 75) >= 80 ? "bg-emerald-500" : "bg-amber-500"
+                        (resume.quality?.indicativeScore ?? 75) >= 80 ? "bg-success/20" : "bg-amber-500"
                       )}
                     />
                   </div>
@@ -349,7 +349,7 @@ export default function StudentResumePage() {
                     <button
                       type="button"
                       onClick={() => !uploading && fileInputRef.current?.click()}
-                      className="p-2 text-slate-400 hover:text-ink hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
+                      className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors cursor-pointer"
                       title="Replace file"
                     >
                       <RefreshCw className="size-4" />
@@ -358,7 +358,7 @@ export default function StudentResumePage() {
                     <button
                       type="button"
                       onClick={() => handleDelete(resume.id, resume.fileName)}
-                      className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
+                      className="p-2 text-muted-foreground hover:text-danger/80 hover:bg-danger/5 rounded-lg transition-colors cursor-pointer"
                       title="Delete resume"
                     >
                       <Trash2 className="size-4" />

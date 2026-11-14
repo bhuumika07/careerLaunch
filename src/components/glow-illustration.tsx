@@ -15,11 +15,12 @@ export interface GlowIllustrationProps {
 }
 
 const GLOW_COLOR_MAP: Record<string, string> = {
-  sand: "rgba(196, 168, 133, 0.2)",
-  cream: "rgba(232, 223, 212, 0.2)",
-  slate: "rgba(34, 52, 61, 0.3)",
-  ink: "rgba(11, 11, 9, 0.4)",
-  umber: "rgba(92, 77, 58, 0.25)",
+  default: "var(--glow-teal)",
+  teal: "var(--glow-teal)",
+  orange: "var(--glow-orange)",
+  amber: "var(--glow-orange)",
+  sky: "var(--glow-teal)",
+  navy: "var(--glow-teal)",
 }
 
 export function GlowIllustration({
@@ -28,11 +29,11 @@ export function GlowIllustration({
   width,
   height,
   className,
-  glowColor = "sand",
+  glowColor = "default",
 }: GlowIllustrationProps) {
   const shouldReduceMotion = useReducedMotion()
   const isSvg = src.toLowerCase().endsWith(".svg")
-  const resolvedGlow = GLOW_COLOR_MAP[glowColor] || glowColor
+  const resolvedGlow = GLOW_COLOR_MAP[glowColor] || "var(--glow-teal)"
 
   return (
     <div
@@ -41,11 +42,11 @@ export function GlowIllustration({
         className
       )}
     >
-      {/* Radial gradient glow behind the illustration */}
+      {/* Radial gradient glow behind the illustration: teal (0.35) mixed with orange (0.15) */}
       <div
         className="absolute inset-0 -z-10 rounded-full blur-3xl pointer-events-none opacity-80"
         style={{
-          background: `radial-gradient(circle at center, ${resolvedGlow} 0%, transparent 70%)`,
+          background: `radial-gradient(circle at center, ${resolvedGlow} 0%, var(--glow-orange) 45%, transparent 72%)`,
         }}
         aria-hidden="true"
       />

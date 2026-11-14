@@ -149,15 +149,15 @@ export default function StudentRoadmapPage() {
   return (
     <div className="space-y-8 max-w-7xl mx-auto pb-12">
       {/* Page Header */}
-      <div className="rounded-2xl bg-gradient-to-r from-ink via-slate to-ink border border-cream/15 p-6 md:p-8 text-cream shadow-xl relative overflow-hidden">
+      <div className="rounded-2xl bg-gradient-to-r from-background via-muted to-background border border-border/15 p-6 md:p-8 text-foreground shadow-xl relative overflow-hidden">
         <div className="relative z-10 max-w-2xl space-y-3">
-          <Badge className="bg-sand/20 text-sand border-sand/40 hover:bg-sand/25">
+          <Badge className="bg-accent/15/20 text-accent-text border-accent/40 hover:bg-accent/15/25">
             Module-Based Learning Path
           </Badge>
-          <h1 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-cream">
+          <h1 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
             {roadmap?.careerRoleTitle || "Career Roadmap & Milestones"}
           </h1>
-          <p className="text-sm text-cream/70 leading-relaxed">
+          <p className="text-sm text-foreground/70 leading-relaxed">
             Step-by-step career acceleration sequence with curated resources, capstone projects,
             and continuous roadmap recalibration as you pass domain certifications.
           </p>
@@ -166,10 +166,10 @@ export default function StudentRoadmapPage() {
 
       {/* Dynamic Adjustment Notice (Prompt 7 requirement) */}
       {adjustments.length > 0 && (
-        <div className="p-4 rounded-2xl bg-sand/10 border border-sand/30 flex items-start gap-3">
-          <Sparkles className="size-5 text-sand shrink-0 mt-0.5" />
+        <div className="p-4 rounded-2xl bg-accent/15/10 border border-accent/30 flex items-start gap-3">
+          <Sparkles className="size-5 text-accent-text shrink-0 mt-0.5" />
           <div className="space-y-1">
-            <h4 className="font-heading font-bold text-xs text-sand uppercase tracking-wider">
+            <h4 className="font-heading font-bold text-xs text-accent-text uppercase tracking-wider">
               Roadmap Calibrated Post-Assessment
             </h4>
             <div className="text-xs text-foreground/80 space-y-1">
@@ -194,9 +194,9 @@ export default function StudentRoadmapPage() {
               </span>
               <span className="text-xs text-muted-foreground">completed</span>
             </div>
-            <div className="w-full bg-ink/10 h-2 rounded-full overflow-hidden">
+            <div className="w-full bg-background/10 h-2 rounded-full overflow-hidden">
               <div
-                className="bg-sand h-full rounded-full transition-all duration-500"
+                className="bg-accent/15 h-full rounded-full transition-all duration-500"
                 style={{ width: `${roadmap.progressPercentage}%` }}
               />
             </div>
@@ -222,9 +222,9 @@ export default function StudentRoadmapPage() {
                 <Button
                   size="sm"
                   variant="outline"
-                  className="w-full text-xs font-semibold border-border hover:border-sand/60"
+                  className="w-full text-xs font-semibold border-border hover:border-accent/60"
                 >
-                  <Award className="size-3.5 mr-1 text-sand" />
+                  <Award className="size-3.5 mr-1 text-accent-text" />
                   Take Quiz
                 </Button>
               </Link>
@@ -232,7 +232,7 @@ export default function StudentRoadmapPage() {
                 <Button
                   size="sm"
                   variant="outline"
-                  className="w-full text-xs font-semibold border-border hover:border-sand/60"
+                  className="w-full text-xs font-semibold border-border hover:border-accent/60"
                 >
                   <Compass className="size-3.5 mr-1 text-info" />
                   Skill-Gap Table
@@ -266,7 +266,7 @@ export default function StudentRoadmapPage() {
                     mod.status === "completed"
                       ? "border-success/30 bg-success/[0.02]"
                       : mod.status === "ongoing"
-                      ? "border-sand/50 shadow-sm"
+                      ? "border-accent/50 shadow-sm"
                       : "border-border"
                   }`}
                 >
@@ -281,8 +281,8 @@ export default function StudentRoadmapPage() {
                           mod.status === "completed"
                             ? "bg-success text-white"
                             : mod.status === "ongoing"
-                            ? "bg-sand text-ink"
-                            : "bg-ink/10 text-muted-foreground"
+                            ? "bg-accent/15 text-foreground"
+                            : "bg-background/10 text-muted-foreground"
                         }`}
                       >
                         {mod.status === "completed" ? "✓" : index + 1}
@@ -298,8 +298,8 @@ export default function StudentRoadmapPage() {
                               mod.status === "completed"
                                 ? "bg-success/15 text-success border-success/30"
                                 : mod.status === "ongoing"
-                                ? "bg-sand/15 text-sand border-sand/40"
-                                : "bg-ink/5 text-muted-foreground border-border"
+                                ? "bg-accent/15/15 text-accent-text border-accent/40"
+                                : "bg-background/5 text-muted-foreground border-border"
                             }`}
                           >
                             {mod.status}
@@ -330,7 +330,7 @@ export default function StudentRoadmapPage() {
                           {mod.skillsCovered.map((s, idx) => (
                             <span
                               key={idx}
-                              className="text-xs bg-ink/5 border border-border px-2.5 py-0.5 rounded-full text-foreground"
+                              className="text-xs bg-background/5 border border-border px-2.5 py-0.5 rounded-full text-foreground"
                             >
                               {s}
                             </span>
@@ -346,7 +346,7 @@ export default function StudentRoadmapPage() {
                         <ul className="text-xs space-y-1.5 text-foreground/80">
                           {mod.objectives.map((obj, i) => (
                             <li key={i} className="flex items-start gap-2">
-                              <span className="text-sand font-bold mt-0.5">•</span>
+                              <span className="text-accent-text font-bold mt-0.5">•</span>
                               <span>{obj}</span>
                             </li>
                           ))}
@@ -365,10 +365,10 @@ export default function StudentRoadmapPage() {
                               href={res.url}
                               target="_blank"
                               rel="noreferrer"
-                              className="p-2.5 rounded-xl border border-border hover:border-sand/40 hover:bg-ink/[0.02] transition-colors flex items-center justify-between text-xs"
+                              className="p-2.5 rounded-xl border border-border hover:border-accent/40 hover:bg-background/[0.02] transition-colors flex items-center justify-between text-xs"
                             >
                               <div className="flex items-center gap-2">
-                                <Code2 className="size-3.5 text-sand" />
+                                <Code2 className="size-3.5 text-accent-text" />
                                 <span className="font-medium text-foreground">{res.title}</span>
                               </div>
                               <ExternalLink className="size-3 text-muted-foreground" />
@@ -379,10 +379,10 @@ export default function StudentRoadmapPage() {
 
                       {/* Capstone Project Card */}
                       {mod.project && (
-                        <div className="p-4 rounded-xl bg-ink/[0.02] border border-border space-y-2">
+                        <div className="p-4 rounded-xl bg-background/[0.02] border border-border space-y-2">
                           <div className="flex items-center justify-between">
                             <span className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                              <FileCheck className="size-4 text-sand" />
+                              <FileCheck className="size-4 text-accent-text" />
                               Capstone Project: {mod.project.title}
                             </span>
                             <span className="text-[10px] text-muted-foreground">
@@ -392,7 +392,7 @@ export default function StudentRoadmapPage() {
                           <p className="text-xs text-muted-foreground leading-relaxed">
                             {mod.project.description}
                           </p>
-                          <div className="text-[11px] text-foreground/80 font-mono bg-ink/5 p-2 rounded-lg border border-border/40">
+                          <div className="text-[11px] text-foreground/80 font-mono bg-background/5 p-2 rounded-lg border border-border/40">
                             Deliverable: {mod.project.deliverables}
                           </div>
                         </div>
@@ -402,7 +402,7 @@ export default function StudentRoadmapPage() {
                       <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-border">
                         <div className="flex items-center gap-2">
                           <span className="text-xs text-muted-foreground">Mark Status:</span>
-                          <div className="inline-flex rounded-lg border border-border p-0.5 bg-ink/5">
+                          <div className="inline-flex rounded-lg border border-border p-0.5 bg-background/5">
                             <button
                               type="button"
                               onClick={() => handleUpdateStatus(mod.id, "pending")}
@@ -416,7 +416,7 @@ export default function StudentRoadmapPage() {
                               type="button"
                               onClick={() => handleUpdateStatus(mod.id, "ongoing")}
                               className={`px-2.5 py-1 text-xs font-medium rounded-md cursor-pointer transition-colors ${
-                                mod.status === "ongoing" ? "bg-sand text-ink font-semibold shadow-xs" : "text-muted-foreground"
+                                mod.status === "ongoing" ? "bg-accent/15 text-foreground font-semibold shadow-xs" : "text-muted-foreground"
                               }`}
                             >
                               Ongoing
@@ -438,7 +438,7 @@ export default function StudentRoadmapPage() {
                             <Button
                               size="sm"
                               variant="outline"
-                              className="text-xs border-sand/40 text-sand hover:bg-sand/10 rounded-full"
+                              className="text-xs border-accent/40 text-accent-text hover:bg-accent/15/10 rounded-full"
                             >
                               <Award className="size-3.5 mr-1" />
                               Take Associated Assessment
@@ -460,7 +460,7 @@ export default function StudentRoadmapPage() {
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-card text-foreground border border-border rounded-2xl w-full max-w-md p-6 space-y-5 shadow-2xl">
             <div className="flex items-start justify-between">
-              <div className="size-12 rounded-full bg-sand/20 text-sand flex items-center justify-center">
+              <div className="size-12 rounded-full bg-accent/15/20 text-accent-text flex items-center justify-center">
                 <PlusCircle className="size-6" />
               </div>
               <button
@@ -480,7 +480,7 @@ export default function StudentRoadmapPage() {
                 You just finished <span className="font-semibold text-foreground">{projectToAddToResume.title}</span>.
                 Would you like to import this verified milestone project into your resume and profile?
               </p>
-              <div className="p-3 rounded-xl bg-ink/5 border border-border text-xs text-muted-foreground">
+              <div className="p-3 rounded-xl bg-background/5 border border-border text-xs text-muted-foreground">
                 <span className="font-medium text-foreground">Rule:</span> Achievements are never
                 fabricated or automatically included without your direct authorization.
               </div>
@@ -505,7 +505,7 @@ export default function StudentRoadmapPage() {
                   size="sm"
                   disabled={addingToResume}
                   onClick={handleConfirmAddToResume}
-                  className="bg-sand hover:bg-sand/90 text-ink font-semibold rounded-full cursor-pointer text-xs"
+                  className="bg-accent/15 hover:bg-accent/15/90 text-foreground font-semibold rounded-full cursor-pointer text-xs"
                 >
                   {addingToResume ? "Adding..." : "Add to Resume"}
                 </Button>

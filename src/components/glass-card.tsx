@@ -25,7 +25,7 @@ export function GlassCard({
   const cardContent = (
     <>
       {chipLabel && (
-        <span className="inline-block bg-sand/20 text-sand text-xs font-medium px-3 py-1 rounded-full mb-4 w-fit">
+        <span className="inline-block bg-accent/15 text-accent-text border border-accent/30 text-xs font-medium px-3 py-1 rounded-full mb-4 w-fit">
           {chipLabel}
         </span>
       )}
@@ -34,7 +34,7 @@ export function GlassCard({
   )
 
   const cardClasses = cn(
-    "bg-white/[0.06] backdrop-blur-xl border border-cream/[0.12] rounded-[20px] p-6 text-cream",
+    "glass-card p-6 text-foreground shadow-sm",
     className
   )
 

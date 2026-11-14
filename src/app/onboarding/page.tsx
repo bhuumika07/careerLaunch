@@ -215,10 +215,10 @@ export default function OnboardingPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-ink text-cream">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-navy to-navy-950 text-foreground">
         <div className="text-center space-y-3">
-          <div className="size-10 border-2 border-sand border-t-transparent rounded-full animate-spin mx-auto" />
-          <p className="text-xs text-cream/70 font-medium">Loading your role onboarding wizard...</p>
+          <div className="size-10 border-2 border-amber border-t-transparent rounded-full animate-spin mx-auto" />
+          <p className="text-xs text-muted-foreground font-medium">Loading your role onboarding wizard...</p>
         </div>
       </div>
     );
@@ -227,16 +227,16 @@ export default function OnboardingPage() {
   const role = user?.role || "student";
 
   return (
-    <div className="min-h-screen bg-ink text-cream selection:bg-sand/30 selection:text-sand py-12 px-6 sm:px-10">
+    <div className="min-h-screen bg-gradient-to-b from-navy to-navy-950 text-foreground selection:bg-amber selection:text-navy py-12 px-6 sm:px-10">
       <div className="max-w-3xl mx-auto space-y-8">
         {/* Top Header */}
-        <div className="flex items-center justify-between border-b border-cream/10 pb-6">
+        <div className="flex items-center justify-between border-b border-border pb-6">
           <Link href="/" className="flex items-center gap-2.5">
-            <div className="size-8 rounded-full bg-sand text-ink flex items-center justify-center font-bold">
-              <Compass className="size-4 text-ink" />
+            <div className="size-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold">
+              <Compass className="size-4 text-primary-foreground" />
             </div>
-            <span className="font-heading font-bold text-lg text-cream">
-              Career<span className="text-sand">Launch</span>
+            <span className="font-heading font-bold text-lg text-foreground">
+              Career<span className="text-amber">Launch</span>
             </span>
           </Link>
 
@@ -244,7 +244,7 @@ export default function OnboardingPage() {
             type="button"
             onClick={() => saveOnboarding(false)}
             disabled={submitting}
-            className="flex items-center gap-1.5 text-xs text-cream/70 hover:text-sand transition-colors font-medium cursor-pointer"
+            className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-amber transition-colors font-medium cursor-pointer"
           >
             <Save className="size-3.5" />
             <span>Save & continue later</span>
@@ -253,27 +253,27 @@ export default function OnboardingPage() {
 
         {/* Progress Stepper */}
         <div className="space-y-2.5">
-          <div className="flex items-center justify-between text-xs font-semibold text-cream/60">
+          <div className="flex items-center justify-between text-xs font-semibold text-muted-foreground">
             <span className="capitalize">{role} Onboarding Wizard</span>
-            <span className="text-sand">Step {step} of 2</span>
+            <span className="text-amber">Step {step} of 2</span>
           </div>
           <div className="h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
             <div
-              className="h-full bg-sand transition-all duration-300"
+              className="h-full bg-accent transition-all duration-300"
               style={{ width: step === 1 ? "50%" : "100%" }}
             />
           </div>
         </div>
 
         {error && (
-          <div className="p-3.5 rounded-xl border border-danger/40 bg-danger/10 text-cream text-xs flex items-center gap-2.5">
+          <div className="p-3.5 rounded-xl border border-danger/50 bg-danger/15 text-foreground text-xs flex items-center gap-2.5">
             <AlertCircle className="size-4 text-danger shrink-0" />
             <span>{error}</span>
           </div>
         )}
 
         {/* Wizard Container Glass Card */}
-        <div className="p-8 sm:p-10 rounded-[24px] border border-cream/15 bg-white/[0.04] backdrop-blur-xl shadow-2xl space-y-8">
+        <div className="p-8 sm:p-10 rounded-[24px] border border-border bg-white/[0.04] backdrop-blur-xl shadow-2xl space-y-8">
           {/* ================================================================ */}
           {/* 1. STUDENT ONBOARDING                                            */}
           {/* ================================================================ */}
@@ -282,71 +282,71 @@ export default function OnboardingPage() {
               {step === 1 && (
                 <div className="space-y-6">
                   <div className="space-y-1">
-                    <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-sand/15 text-sand text-[11px] font-semibold mb-1">
+                    <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber/15 text-amber text-[11px] font-semibold mb-1">
                       <GraduationCap className="size-3.5" />
                       <span>Student Profile Setup</span>
                     </div>
-                    <h2 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-cream">
+                    <h2 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
                       Personal & Contact Information
                     </h2>
-                    <p className="text-xs sm:text-sm text-cream/60">
+                    <p className="text-xs sm:text-sm text-muted-foreground">
                       Introduce yourself to recruiters and faculty advisors with clean contact details.
                     </p>
                   </div>
 
                   {/* Profile Picture Upload */}
-                  <div className="flex items-center gap-5 p-4 rounded-xl border border-cream/10 bg-white/[0.02]">
-                    <div className="size-16 rounded-full bg-slate flex items-center justify-center text-cream font-bold overflow-hidden border border-cream/20 shrink-0">
+                  <div className="flex items-center gap-5 p-4 rounded-xl border border-border bg-white/[0.02]">
+                    <div className="size-16 rounded-full bg-navy-800 flex items-center justify-center text-foreground font-bold overflow-hidden border border-border shrink-0">
                       {avatarUrl ? (
                         <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
                       ) : (
-                        <span className="text-lg text-sand">{user?.name?.charAt(0) || "S"}</span>
+                        <span className="text-lg text-amber">{user?.name?.charAt(0) || "S"}</span>
                       )}
                     </div>
                     <div className="space-y-1 flex-1">
-                      <Label htmlFor="student-avatar" className="text-xs font-semibold text-cream cursor-pointer">
+                      <Label htmlFor="student-avatar" className="text-xs font-semibold text-foreground cursor-pointer">
                         Upload Profile Photo
                       </Label>
-                      <p className="text-[11px] text-cream/50">JPG, PNG or GIF up to 5MB.</p>
+                      <p className="text-[11px] text-muted-foreground">JPG, PNG or GIF up to 5MB.</p>
                       <input
                         id="student-avatar"
                         type="file"
                         accept="image/*"
                         onChange={handleAvatarUpload}
-                        className="text-xs text-cream/60 file:mr-3 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-sand/20 file:text-sand cursor-pointer"
+                        className="text-xs text-muted-foreground file:mr-3 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-amber/20 file:text-amber cursor-pointer"
                       />
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-1.5">
-                      <Label className="text-xs text-cream/80 font-medium">Contact Phone</Label>
+                      <Label className="text-xs text-foreground/85 font-medium">Contact Phone</Label>
                       <Input
                         value={studentPhone}
                         onChange={(e) => setStudentPhone(e.target.value)}
                         placeholder="+1 (555) 000-0000"
-                        className="bg-white/[0.05] border-cream/15 text-cream rounded-xl"
+                        className="bg-white/[0.05] border-border text-foreground rounded-xl"
                       />
                     </div>
                     <div className="space-y-1.5">
-                      <Label className="text-xs text-cream/80 font-medium">Current Location</Label>
+                      <Label className="text-xs text-foreground/85 font-medium">Current Location</Label>
                       <Input
                         value={studentLocation}
                         onChange={(e) => setStudentLocation(e.target.value)}
                         placeholder="City, State"
-                        className="bg-white/[0.05] border-cream/15 text-cream rounded-xl"
+                        className="bg-white/[0.05] border-border text-foreground rounded-xl"
                       />
                     </div>
                   </div>
 
                   <div className="space-y-1.5">
-                    <Label className="text-xs text-cream/80 font-medium">Headline / Bio</Label>
+                    <Label className="text-xs text-foreground/85 font-medium">Headline / Bio</Label>
                     <Textarea
                       rows={3}
                       value={studentBio}
                       onChange={(e) => setStudentBio(e.target.value)}
                       placeholder="Aspiring software engineer passionate about machine learning systems..."
-                      className="bg-white/[0.05] border-cream/15 text-cream rounded-xl resize-none"
+                      className="bg-white/[0.05] border-border text-foreground rounded-xl resize-none"
                     />
                   </div>
 
@@ -369,77 +369,77 @@ export default function OnboardingPage() {
                     <button
                       type="button"
                       onClick={() => setStep(1)}
-                      className="inline-flex items-center gap-1 text-xs text-cream/60 hover:text-cream mb-1"
+                      className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground mb-1"
                     >
                       <ArrowLeft className="size-3.5" />
                       <span>Back to Personal</span>
                     </button>
-                    <h2 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-cream">
+                    <h2 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
                       Academic Credentials
                     </h2>
-                    <p className="text-xs sm:text-sm text-cream/60">
+                    <p className="text-xs sm:text-sm text-muted-foreground">
                       Specify your institution and department so verified coursework can be populated.
                     </p>
                   </div>
 
                   <div className="space-y-4">
                     <div className="space-y-1.5">
-                      <Label className="text-xs text-cream/80 font-medium">Institution Name</Label>
+                      <Label className="text-xs text-foreground/85 font-medium">Institution Name</Label>
                       <Input
                         value={studentInstitution}
                         onChange={(e) => setStudentInstitution(e.target.value)}
                         placeholder="University or College"
-                        className="bg-white/[0.05] border-cream/15 text-cream rounded-xl"
+                        className="bg-white/[0.05] border-border text-foreground rounded-xl"
                       />
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="space-y-1.5">
-                        <Label className="text-xs text-cream/80 font-medium">Department</Label>
+                        <Label className="text-xs text-foreground/85 font-medium">Department</Label>
                         <Input
                           value={studentDepartment}
                           onChange={(e) => setStudentDepartment(e.target.value)}
                           placeholder="e.g. Computer Science"
-                          className="bg-white/[0.05] border-cream/15 text-cream rounded-xl"
+                          className="bg-white/[0.05] border-border text-foreground rounded-xl"
                         />
                       </div>
                       <div className="space-y-1.5">
-                        <Label className="text-xs text-cream/80 font-medium">Degree Program</Label>
+                        <Label className="text-xs text-foreground/85 font-medium">Degree Program</Label>
                         <Input
                           value={studentDegree}
                           onChange={(e) => setStudentDegree(e.target.value)}
                           placeholder="e.g. B.Tech / B.S."
-                          className="bg-white/[0.05] border-cream/15 text-cream rounded-xl"
+                          className="bg-white/[0.05] border-border text-foreground rounded-xl"
                         />
                       </div>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="space-y-1.5">
-                        <Label className="text-xs text-cream/80 font-medium">Graduation Year</Label>
+                        <Label className="text-xs text-foreground/85 font-medium">Graduation Year</Label>
                         <Input
                           type="number"
                           value={studentGradYear}
                           onChange={(e) => setStudentGradYear(e.target.value)}
                           placeholder="2026"
-                          className="bg-white/[0.05] border-cream/15 text-cream rounded-xl"
+                          className="bg-white/[0.05] border-border text-foreground rounded-xl"
                         />
                       </div>
                       <div className="space-y-1.5">
-                        <Label className="text-xs text-cream/80 font-medium">Cumulative CGPA / GPA</Label>
+                        <Label className="text-xs text-foreground/85 font-medium">Cumulative CGPA / GPA</Label>
                         <Input
                           type="number"
                           step="0.01"
                           value={studentCgpa}
                           onChange={(e) => setStudentCgpa(e.target.value)}
                           placeholder="e.g. 8.75"
-                          className="bg-white/[0.05] border-cream/15 text-cream rounded-xl"
+                          className="bg-white/[0.05] border-border text-foreground rounded-xl"
                         />
                       </div>
                     </div>
                   </div>
 
-                  <div className="pt-4 flex items-center justify-between border-t border-cream/10">
+                  <div className="pt-4 flex items-center justify-between border-t border-border">
                     <PillButton variant="ghost" size="md" onClick={() => setStep(1)}>
                       Back
                     </PillButton>
@@ -466,23 +466,23 @@ export default function OnboardingPage() {
               {step === 1 && (
                 <div className="space-y-6">
                   <div className="space-y-1">
-                    <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-sand/15 text-sand text-[11px] font-semibold mb-1">
+                    <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber/15 text-amber text-[11px] font-semibold mb-1">
                       <Users className="size-3.5" />
                       <span>Faculty Onboarding</span>
                     </div>
-                    <h2 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-cream">
+                    <h2 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
                       Institutional Affiliation
                     </h2>
-                    <p className="text-xs sm:text-sm text-cream/60">
+                    <p className="text-xs sm:text-sm text-muted-foreground">
                       Specify your current academic appointment and department.
                     </p>
                   </div>
 
                   <div className="space-y-4">
                     <div className="space-y-1.5">
-                      <Label className="text-xs text-cream/80 font-medium">Academic Designation</Label>
+                      <Label className="text-xs text-foreground/85 font-medium">Academic Designation</Label>
                       <Select value={facultyDesignation} onValueChange={setFacultyDesignation}>
-                        <SelectTrigger className="bg-white/[0.05] border-cream/15 text-cream rounded-xl">
+                        <SelectTrigger className="bg-white/[0.05] border-border text-foreground rounded-xl">
                           <SelectValue placeholder="Select designation" />
                         </SelectTrigger>
                         <SelectContent className="bg-card border-border text-foreground">
@@ -497,21 +497,21 @@ export default function OnboardingPage() {
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="space-y-1.5">
-                        <Label className="text-xs text-cream/80 font-medium">Department</Label>
+                        <Label className="text-xs text-foreground/85 font-medium">Department</Label>
                         <Input
                           value={facultyDepartment}
                           onChange={(e) => setFacultyDepartment(e.target.value)}
                           placeholder="e.g. Computer Science & Engineering"
-                          className="bg-white/[0.05] border-cream/15 text-cream rounded-xl"
+                          className="bg-white/[0.05] border-border text-foreground rounded-xl"
                         />
                       </div>
                       <div className="space-y-1.5">
-                        <Label className="text-xs text-cream/80 font-medium">Institution</Label>
+                        <Label className="text-xs text-foreground/85 font-medium">Institution</Label>
                         <Input
                           value={facultyInstitution}
                           onChange={(e) => setFacultyInstitution(e.target.value)}
                           placeholder="e.g. St. Jude Institute of Technology"
-                          className="bg-white/[0.05] border-cream/15 text-cream rounded-xl"
+                          className="bg-white/[0.05] border-border text-foreground rounded-xl"
                         />
                       </div>
                     </div>
@@ -536,46 +536,46 @@ export default function OnboardingPage() {
                     <button
                       type="button"
                       onClick={() => setStep(1)}
-                      className="inline-flex items-center gap-1 text-xs text-cream/60 hover:text-cream mb-1"
+                      className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground mb-1"
                     >
                       <ArrowLeft className="size-3.5" />
                       <span>Back to Affiliation</span>
                     </button>
-                    <h2 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-cream">
+                    <h2 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
                       Qualifications & Research Expertise
                     </h2>
-                    <p className="text-xs sm:text-sm text-cream/60">
+                    <p className="text-xs sm:text-sm text-muted-foreground">
                       Add degrees and specialization tags to guide student mentorship and project evaluations.
                     </p>
                   </div>
 
                   <div className="space-y-4">
                     <div className="space-y-1.5">
-                      <Label className="text-xs text-cream/80 font-medium">
+                      <Label className="text-xs text-foreground/85 font-medium">
                         Academic Qualifications (comma separated)
                       </Label>
                       <Input
                         value={facultyQualifications}
                         onChange={(e) => setFacultyQualifications(e.target.value)}
                         placeholder="e.g. Ph.D. in Computer Science, M.Tech in Software Systems"
-                        className="bg-white/[0.05] border-cream/15 text-cream rounded-xl"
+                        className="bg-white/[0.05] border-border text-foreground rounded-xl"
                       />
                     </div>
 
                     <div className="space-y-1.5">
-                      <Label className="text-xs text-cream/80 font-medium">
+                      <Label className="text-xs text-foreground/85 font-medium">
                         Subject Matter Expertise (comma separated)
                       </Label>
                       <Input
                         value={facultyExpertise}
                         onChange={(e) => setFacultyExpertise(e.target.value)}
                         placeholder="e.g. Distributed Systems, Machine Learning, Cloud Security"
-                        className="bg-white/[0.05] border-cream/15 text-cream rounded-xl"
+                        className="bg-white/[0.05] border-border text-foreground rounded-xl"
                       />
                     </div>
                   </div>
 
-                  <div className="pt-4 flex items-center justify-between border-t border-cream/10">
+                  <div className="pt-4 flex items-center justify-between border-t border-border">
                     <PillButton variant="ghost" size="md" onClick={() => setStep(1)}>
                       Back
                     </PillButton>
@@ -602,46 +602,46 @@ export default function OnboardingPage() {
               {step === 1 && (
                 <div className="space-y-6">
                   <div className="space-y-1">
-                    <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-sand/15 text-sand text-[11px] font-semibold mb-1">
+                    <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber/15 text-amber text-[11px] font-semibold mb-1">
                       <Briefcase className="size-3.5" />
                       <span>Corporate Recruiter Onboarding</span>
                     </div>
-                    <h2 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-cream">
+                    <h2 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
                       Company & Organization Profile
                     </h2>
-                    <p className="text-xs sm:text-sm text-cream/60">
+                    <p className="text-xs sm:text-sm text-muted-foreground">
                       Tell students about your company, industry domain, and organizational scale.
                     </p>
                   </div>
 
                   <div className="space-y-4">
                     <div className="space-y-1.5">
-                      <Label className="text-xs text-cream/80 font-medium">Company Name</Label>
+                      <Label className="text-xs text-foreground/85 font-medium">Company Name</Label>
                       <Input
                         value={companyName}
                         onChange={(e) => setCompanyName(e.target.value)}
                         placeholder="Apex Cloud Solutions"
-                        className="bg-white/[0.05] border-cream/15 text-cream rounded-xl"
+                        className="bg-white/[0.05] border-border text-foreground rounded-xl"
                       />
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="space-y-1.5">
-                        <Label className="text-xs text-cream/80 font-medium">Company Website</Label>
+                        <Label className="text-xs text-foreground/85 font-medium">Company Website</Label>
                         <Input
                           value={companyWebsite}
                           onChange={(e) => setCompanyWebsite(e.target.value)}
                           placeholder="https://company.com"
-                          className="bg-white/[0.05] border-cream/15 text-cream rounded-xl"
+                          className="bg-white/[0.05] border-border text-foreground rounded-xl"
                         />
                       </div>
                       <div className="space-y-1.5">
-                        <Label className="text-xs text-cream/80 font-medium">Industry Domain</Label>
+                        <Label className="text-xs text-foreground/85 font-medium">Industry Domain</Label>
                         <Input
                           value={companyIndustry}
                           onChange={(e) => setCompanyIndustry(e.target.value)}
                           placeholder="Cloud & AI Infrastructure"
-                          className="bg-white/[0.05] border-cream/15 text-cream rounded-xl"
+                          className="bg-white/[0.05] border-border text-foreground rounded-xl"
                         />
                       </div>
                     </div>
@@ -666,15 +666,15 @@ export default function OnboardingPage() {
                     <button
                       type="button"
                       onClick={() => setStep(1)}
-                      className="inline-flex items-center gap-1 text-xs text-cream/60 hover:text-cream mb-1"
+                      className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground mb-1"
                     >
                       <ArrowLeft className="size-3.5" />
                       <span>Back to Company Details</span>
                     </button>
-                    <h2 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-cream">
+                    <h2 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
                       Recruiter Credentials & Verification
                     </h2>
-                    <p className="text-xs sm:text-sm text-cream/60">
+                    <p className="text-xs sm:text-sm text-muted-foreground">
                       Submit corporate verification documents for institutional campus drive authorization.
                     </p>
                   </div>
@@ -682,29 +682,29 @@ export default function OnboardingPage() {
                   <div className="space-y-4">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="space-y-1.5">
-                        <Label className="text-xs text-cream/80 font-medium">Recruiter Designation</Label>
+                        <Label className="text-xs text-foreground/85 font-medium">Recruiter Designation</Label>
                         <Input
                           value={recruiterDesignation}
                           onChange={(e) => setRecruiterDesignation(e.target.value)}
                           placeholder="e.g. Senior Talent Partner"
-                          className="bg-white/[0.05] border-cream/15 text-cream rounded-xl"
+                          className="bg-white/[0.05] border-border text-foreground rounded-xl"
                         />
                       </div>
                       <div className="space-y-1.5">
-                        <Label className="text-xs text-cream/80 font-medium">Official Work Email</Label>
+                        <Label className="text-xs text-foreground/85 font-medium">Official Work Email</Label>
                         <Input
                           type="email"
                           value={officialEmail}
                           onChange={(e) => setOfficialEmail(e.target.value)}
                           placeholder="name@company.com"
-                          className="bg-white/[0.05] border-cream/15 text-cream rounded-xl"
+                          className="bg-white/[0.05] border-border text-foreground rounded-xl"
                         />
                       </div>
                     </div>
 
                     {/* Document Upload Area */}
                     <div className="space-y-2">
-                      <Label className="text-xs text-cream/80 font-medium">
+                      <Label className="text-xs text-foreground/85 font-medium">
                         Corporate Verification Document (Certificate of Incorporation / Work ID)
                       </Label>
                       <div
@@ -712,27 +712,27 @@ export default function OnboardingPage() {
                         className={cn(
                           "p-6 rounded-2xl border-2 border-dashed transition-all duration-200 cursor-pointer text-center space-y-2",
                           recruiterDocUploaded
-                            ? "border-sand bg-sand/10"
-                            : "border-cream/20 bg-white/[0.02] hover:border-sand/40"
+                            ? "border-amber bg-amber/10"
+                            : "border-border bg-white/[0.02] hover:border-amber/40"
                         )}
                       >
                         {recruiterDocUploaded ? (
                           <>
-                            <FileCheck className="size-8 text-sand mx-auto" />
-                            <div className="text-xs font-semibold text-sand">
+                            <FileCheck className="size-8 text-amber mx-auto" />
+                            <div className="text-xs font-semibold text-amber">
                               Document Attached: corporate_registration_cert.pdf
                             </div>
-                            <span className="text-[10px] text-cream/50 block">
+                            <span className="text-[10px] text-muted-foreground block">
                               Click to remove or re-upload. Status will be marked: Pending Verification.
                             </span>
                           </>
                         ) : (
                           <>
-                            <Upload className="size-8 text-cream/40 mx-auto" />
-                            <div className="text-xs font-medium text-cream">
+                            <Upload className="size-8 text-muted-foreground mx-auto" />
+                            <div className="text-xs font-medium text-foreground">
                               Click to simulate uploading verification document
                             </div>
-                            <span className="text-[10px] text-cream/40 block">
+                            <span className="text-[10px] text-muted-foreground block">
                               PDF, PNG, JPG up to 10MB (Verification status: Pending)
                             </span>
                           </>
@@ -741,7 +741,7 @@ export default function OnboardingPage() {
                     </div>
                   </div>
 
-                  <div className="pt-4 flex items-center justify-between border-t border-cream/10">
+                  <div className="pt-4 flex items-center justify-between border-t border-border">
                     <PillButton variant="ghost" size="md" onClick={() => setStep(1)}>
                       Back
                     </PillButton>
@@ -768,37 +768,37 @@ export default function OnboardingPage() {
               {step === 1 && (
                 <div className="space-y-6">
                   <div className="space-y-1">
-                    <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-sand/15 text-sand text-[11px] font-semibold mb-1">
+                    <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber/15 text-amber text-[11px] font-semibold mb-1">
                       <Building2 className="size-3.5" />
                       <span>Institution Onboarding</span>
                     </div>
-                    <h2 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-cream">
+                    <h2 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
                       University & College Profile
                     </h2>
-                    <p className="text-xs sm:text-sm text-cream/60">
+                    <p className="text-xs sm:text-sm text-muted-foreground">
                       Configure your institutional domain, accreditation status, and campus location.
                     </p>
                   </div>
 
                   <div className="space-y-4">
                     <div className="space-y-1.5">
-                      <Label className="text-xs text-cream/80 font-medium">Institution Name</Label>
+                      <Label className="text-xs text-foreground/85 font-medium">Institution Name</Label>
                       <Input
                         value={instName}
                         onChange={(e) => setInstName(e.target.value)}
                         placeholder="St. Jude Institute of Technology"
-                        className="bg-white/[0.05] border-cream/15 text-cream rounded-xl"
+                        className="bg-white/[0.05] border-border text-foreground rounded-xl"
                       />
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="space-y-1.5">
-                        <Label className="text-xs text-cream/80 font-medium">Institution Type</Label>
+                        <Label className="text-xs text-foreground/85 font-medium">Institution Type</Label>
                         <Select
                           value={instType}
                           onValueChange={(val: any) => setInstType(val)}
                         >
-                          <SelectTrigger className="bg-white/[0.05] border-cream/15 text-cream rounded-xl">
+                          <SelectTrigger className="bg-white/[0.05] border-border text-foreground rounded-xl">
                             <SelectValue placeholder="Select type" />
                           </SelectTrigger>
                           <SelectContent className="bg-card border-border text-foreground">
@@ -810,23 +810,23 @@ export default function OnboardingPage() {
                         </Select>
                       </div>
                       <div className="space-y-1.5">
-                        <Label className="text-xs text-cream/80 font-medium">Campus Location</Label>
+                        <Label className="text-xs text-foreground/85 font-medium">Campus Location</Label>
                         <Input
                           value={instLocation}
                           onChange={(e) => setInstLocation(e.target.value)}
                           placeholder="e.g. Austin, Texas"
-                          className="bg-white/[0.05] border-cream/15 text-cream rounded-xl"
+                          className="bg-white/[0.05] border-border text-foreground rounded-xl"
                         />
                       </div>
                     </div>
 
                     <div className="space-y-1.5">
-                      <Label className="text-xs text-cream/80 font-medium">Official Website</Label>
+                      <Label className="text-xs text-foreground/85 font-medium">Official Website</Label>
                       <Input
                         value={instWebsite}
                         onChange={(e) => setInstWebsite(e.target.value)}
                         placeholder="https://university.edu"
-                        className="bg-white/[0.05] border-cream/15 text-cream rounded-xl"
+                        className="bg-white/[0.05] border-border text-foreground rounded-xl"
                       />
                     </div>
                   </div>
@@ -850,15 +850,15 @@ export default function OnboardingPage() {
                     <button
                       type="button"
                       onClick={() => setStep(1)}
-                      className="inline-flex items-center gap-1 text-xs text-cream/60 hover:text-cream mb-1"
+                      className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground mb-1"
                     >
                       <ArrowLeft className="size-3.5" />
                       <span>Back to Institution Details</span>
                     </button>
-                    <h2 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-cream">
+                    <h2 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
                       Admin Authorization & Accreditation
                     </h2>
-                    <p className="text-xs sm:text-sm text-cream/60">
+                    <p className="text-xs sm:text-sm text-muted-foreground">
                       Authorize placement officers and provide university charter verification.
                     </p>
                   </div>
@@ -866,38 +866,38 @@ export default function OnboardingPage() {
                   <div className="space-y-4">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="space-y-1.5">
-                        <Label className="text-xs text-cream/80 font-medium">Admin Full Name</Label>
+                        <Label className="text-xs text-foreground/85 font-medium">Admin Full Name</Label>
                         <Input
                           value={adminName}
                           onChange={(e) => setAdminName(e.target.value)}
                           placeholder="Dr. Arthur Pendelton"
-                          className="bg-white/[0.05] border-cream/15 text-cream rounded-xl"
+                          className="bg-white/[0.05] border-border text-foreground rounded-xl"
                         />
                       </div>
                       <div className="space-y-1.5">
-                        <Label className="text-xs text-cream/80 font-medium">Admin Designation</Label>
+                        <Label className="text-xs text-foreground/85 font-medium">Admin Designation</Label>
                         <Input
                           value={adminDesignation}
                           onChange={(e) => setAdminDesignation(e.target.value)}
                           placeholder="Dean of Placement & Academic Affairs"
-                          className="bg-white/[0.05] border-cream/15 text-cream rounded-xl"
+                          className="bg-white/[0.05] border-border text-foreground rounded-xl"
                         />
                       </div>
                     </div>
 
                     <div className="space-y-1.5">
-                      <Label className="text-xs text-cream/80 font-medium">Admin Contact Phone</Label>
+                      <Label className="text-xs text-foreground/85 font-medium">Admin Contact Phone</Label>
                       <Input
                         value={adminContact}
                         onChange={(e) => setAdminContact(e.target.value)}
                         placeholder="+1 (555) 902-1849"
-                        className="bg-white/[0.05] border-cream/15 text-cream rounded-xl"
+                        className="bg-white/[0.05] border-border text-foreground rounded-xl"
                       />
                     </div>
 
                     {/* Document Upload Area */}
                     <div className="space-y-2">
-                      <Label className="text-xs text-cream/80 font-medium">
+                      <Label className="text-xs text-foreground/85 font-medium">
                         Institutional Accreditation / Charter Document
                       </Label>
                       <div
@@ -905,27 +905,27 @@ export default function OnboardingPage() {
                         className={cn(
                           "p-6 rounded-2xl border-2 border-dashed transition-all duration-200 cursor-pointer text-center space-y-2",
                           instDocUploaded
-                            ? "border-sand bg-sand/10"
-                            : "border-cream/20 bg-white/[0.02] hover:border-sand/40"
+                            ? "border-amber bg-amber/10"
+                            : "border-border bg-white/[0.02] hover:border-amber/40"
                         )}
                       >
                         {instDocUploaded ? (
                           <>
-                            <FileCheck className="size-8 text-sand mx-auto" />
-                            <div className="text-xs font-semibold text-sand">
+                            <FileCheck className="size-8 text-amber mx-auto" />
+                            <div className="text-xs font-semibold text-amber">
                               Document Attached: university_charter_naac_accreditation.pdf
                             </div>
-                            <span className="text-[10px] text-cream/50 block">
+                            <span className="text-[10px] text-muted-foreground block">
                               Click to remove. Status: Pending Verification.
                             </span>
                           </>
                         ) : (
                           <>
-                            <Upload className="size-8 text-cream/40 mx-auto" />
-                            <div className="text-xs font-medium text-cream">
+                            <Upload className="size-8 text-muted-foreground mx-auto" />
+                            <div className="text-xs font-medium text-foreground">
                               Click to upload official institutional accreditation document
                             </div>
-                            <span className="text-[10px] text-cream/40 block">
+                            <span className="text-[10px] text-muted-foreground block">
                               PDF or Scanned Certificate (Verification status: Pending)
                             </span>
                           </>
@@ -934,7 +934,7 @@ export default function OnboardingPage() {
                     </div>
                   </div>
 
-                  <div className="pt-4 flex items-center justify-between border-t border-cream/10">
+                  <div className="pt-4 flex items-center justify-between border-t border-border">
                     <PillButton variant="ghost" size="md" onClick={() => setStep(1)}>
                       Back
                     </PillButton>

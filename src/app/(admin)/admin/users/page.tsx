@@ -86,21 +86,21 @@ export default function AdminUsersPage() {
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-12">
-      <div className="rounded-2xl bg-gradient-to-r from-ink via-slate to-ink border border-cream/15 p-6 md:p-8 text-cream shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div className="rounded-2xl bg-gradient-to-r from-background via-muted to-background border border-border/15 p-6 md:p-8 text-foreground shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div className="space-y-2">
-          <Badge className="bg-sand/20 text-sand border-sand/40">Access Control & Security</Badge>
-          <h1 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-cream">
+          <Badge className="bg-accent/15/20 text-accent-text border-accent/40">Access Control & Security</Badge>
+          <h1 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
             User Account Management
           </h1>
-          <p className="text-xs sm:text-sm text-cream/70">
+          <p className="text-xs sm:text-sm text-foreground/70">
             Audit registered student, recruiter, faculty, and institutional accounts across the ecosystem.
           </p>
         </div>
       </div>
 
       {actionSuccess && (
-        <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold flex items-center gap-2">
-          <CheckCircle2 className="size-4 text-emerald-600" />
+        <div className="p-4 rounded-2xl bg-success/5 border border-success text-success text-xs font-semibold flex items-center gap-2">
+          <CheckCircle2 className="size-4 text-success" />
           {actionSuccess}
         </div>
       )}
@@ -114,7 +114,7 @@ export default function AdminUsersPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by name or email address..."
-            className="w-full h-9 pl-9 pr-3 rounded-lg border border-border bg-ink/5 text-xs text-foreground placeholder:text-muted-foreground focus:outline-hidden focus:border-sand"
+            className="w-full h-9 pl-9 pr-3 rounded-lg border border-border bg-background/5 text-xs text-foreground placeholder:text-muted-foreground focus:outline-hidden focus:border-accent"
           />
         </div>
 
@@ -139,7 +139,7 @@ export default function AdminUsersPage() {
       <div className="rounded-2xl bg-card border border-border overflow-hidden shadow-xs">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-ink/5 border-b border-border text-muted-foreground uppercase font-semibold">
+            <thead className="bg-background/5 border-b border-border text-muted-foreground uppercase font-semibold">
               <tr>
                 <th className="py-3.5 px-4">User</th>
                 <th className="py-3.5 px-4">Role</th>
@@ -151,7 +151,7 @@ export default function AdminUsersPage() {
             </thead>
             <tbody className="divide-y divide-border">
               {filtered.map((user) => (
-                <tr key={user.id} className="hover:bg-ink/[0.01]">
+                <tr key={user.id} className="hover:bg-background/[0.01]">
                   <td className="py-3.5 px-4 font-semibold text-foreground">
                     {user.name}
                     <div className="text-[10px] text-muted-foreground font-normal">{user.email}</div>
@@ -179,7 +179,7 @@ export default function AdminUsersPage() {
                           ? "bg-success/15 text-success"
                           : user.status === "suspended"
                           ? "bg-danger/15 text-danger"
-                          : "bg-ink/10 text-muted-foreground"
+                          : "bg-background/10 text-muted-foreground"
                       }`}
                     >
                       {user.status}
@@ -197,7 +197,7 @@ export default function AdminUsersPage() {
                         className={`h-7 text-[10px] rounded-full font-semibold ${
                           user.status === "active"
                             ? "border-danger text-danger hover:bg-danger/10"
-                            : "bg-sand hover:bg-sand/90 text-ink"
+                            : "bg-accent/15 hover:bg-accent/15/90 text-foreground"
                         }`}
                       >
                         {user.status === "active" ? (

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import * as React from "react";
 import Link from "next/link";
@@ -80,15 +80,15 @@ export default function StudentApplicationsPage() {
   const getStatusBadge = (status: ApplicationStatus) => {
     switch (status) {
       case "Submitted":
-        return <Badge variant="outline" className="border-slate-300 text-slate-700 bg-slate-50 text-xs">Submitted</Badge>;
+        return <Badge variant="outline" className="border-border text-foreground/90 bg-background text-xs">Submitted</Badge>;
       case "Under review":
         return <Badge variant="outline" className="border-amber-300 text-amber-800 bg-amber-50 text-xs font-semibold">Under Review</Badge>;
       case "Shortlisted":
-        return <Badge className="bg-[#C4A885] text-ink text-xs font-semibold">Shortlisted 🎉</Badge>;
+        return <Badge className="bg-primary text-foreground text-xs font-semibold">Shortlisted 🎉</Badge>;
       case "Selected":
-        return <Badge className="bg-emerald-600 text-white text-xs font-semibold">Selected / Offer Made 🌟</Badge>;
+        return <Badge className="bg-success/20 text-white text-xs font-semibold">Selected / Offer Made 🌟</Badge>;
       case "Rejected":
-        return <Badge variant="outline" className="border-rose-300 text-rose-700 bg-rose-50 text-xs">Not Moving Forward</Badge>;
+        return <Badge variant="outline" className="border-danger text-danger/80 bg-danger/5 text-xs">Not Moving Forward</Badge>;
       default:
         return null;
     }
@@ -101,13 +101,13 @@ export default function StudentApplicationsPage() {
   return (
     <div className="space-y-8">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-5">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-5">
         <div>
-          <h1 className="font-heading text-2xl sm:text-3xl font-bold text-ink tracking-tight flex items-center gap-2.5">
-            <Send className="size-7 text-[#C4A885]" />
+          <h1 className="font-heading text-2xl sm:text-3xl font-bold text-foreground tracking-tight flex items-center gap-2.5">
+            <Send className="size-7 text-primary" />
             Application Pipeline
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500 mt-1">
+          <p className="text-xs sm:text-sm text-muted-foreground mt-1">
             Track real-time candidate progression across screening, interview rounds, and selection offers.
           </p>
         </div>
@@ -129,8 +129,8 @@ export default function StudentApplicationsPage() {
             className={cn(
               "px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all border cursor-pointer",
               selectedFilter === filter
-                ? "bg-[#C4A885] border-[#C4A885] text-ink shadow-xs"
-                : "bg-white border-slate-200 text-slate-600 hover:border-slate-300"
+                ? "bg-primary border-primary text-foreground shadow-xs"
+                : "bg-white border-border text-muted-foreground hover:border-border"
             )}
           >
             {filter} ({filter === "All" ? applications.length : applications.filter((a) => a.status === filter).length})
@@ -140,15 +140,15 @@ export default function StudentApplicationsPage() {
 
       {/* Applications List */}
       {loading ? (
-        <div className="p-16 text-center text-slate-400 bg-white rounded-3xl border border-slate-200">
-          <RefreshCw className="size-6 text-[#C4A885] animate-spin mx-auto mb-2" />
+        <div className="p-16 text-center text-muted-foreground bg-white rounded-3xl border border-border">
+          <RefreshCw className="size-6 text-primary animate-spin mx-auto mb-2" />
           Loading your active applications...
         </div>
       ) : filtered.length === 0 ? (
-        <div className="p-16 text-center bg-white rounded-3xl border border-slate-200 space-y-4">
-          <Send className="size-10 text-slate-300 mx-auto" />
-          <h3 className="font-heading font-bold text-ink text-base">No applications in this category</h3>
-          <p className="text-xs text-slate-500 max-w-sm mx-auto">
+        <div className="p-16 text-center bg-white rounded-3xl border border-border space-y-4">
+          <Send className="size-10 text-foreground/60 mx-auto" />
+          <h3 className="font-heading font-bold text-foreground text-base">No applications in this category</h3>
+          <p className="text-xs text-muted-foreground max-w-sm mx-auto">
             Browse our opportunities directory and submit your verified student profile to start tracking your applications.
           </p>
           <Link href="/opportunities">
@@ -162,25 +162,25 @@ export default function StudentApplicationsPage() {
           {filtered.map((app) => (
             <div
               key={app.id}
-              className="p-6 sm:p-7 rounded-3xl bg-white border border-slate-200 shadow-xs space-y-6 hover:border-slate-300 transition-all"
+              className="p-6 sm:p-7 rounded-3xl bg-white border border-border shadow-xs space-y-6 hover:border-border transition-all"
             >
               {/* Top Row: Org, Role, Status, and Withdraw CTA */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="flex items-start gap-4">
-                  <div className="size-12 rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-center font-heading font-extrabold text-[#22343D] text-sm shrink-0">
+                  <div className="size-12 rounded-2xl bg-muted border border-border flex items-center justify-center font-heading font-extrabold text-danger/80 text-sm shrink-0">
                     {app.opportunity?.org.substring(0, 2).toUpperCase() || "OR"}
                   </div>
                   <div>
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="font-semibold text-xs text-slate-600">{app.opportunity?.org}</span>
-                      <span className="text-slate-300">•</span>
-                      <span className="text-xs text-slate-400">
+                      <span className="font-semibold text-xs text-muted-foreground">{app.opportunity?.org}</span>
+                      <span className="text-foreground/60">•</span>
+                      <span className="text-xs text-muted-foreground">
                         Applied {new Date(app.appliedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
                       </span>
                     </div>
                     <Link
                       href={`/opportunities/${app.opportunityId}`}
-                      className="font-heading text-lg font-bold text-ink hover:text-[#C4A885] transition-colors"
+                      className="font-heading text-lg font-bold text-foreground hover:text-primary transition-colors"
                     >
                       {app.opportunity?.title || "Role Application"}
                     </Link>
@@ -193,7 +193,7 @@ export default function StudentApplicationsPage() {
                     <button
                       type="button"
                       onClick={() => handleWithdraw(app.id, app.opportunity?.title || "this role")}
-                      className="text-xs text-slate-400 hover:text-rose-600 font-medium cursor-pointer"
+                      className="text-xs text-muted-foreground hover:text-danger/80 font-medium cursor-pointer"
                     >
                       Withdraw
                     </button>
@@ -203,7 +203,7 @@ export default function StudentApplicationsPage() {
 
               {/* Status Stepper Progression */}
               {app.status !== "Rejected" && (
-                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                <div className="p-4 rounded-2xl bg-background border border-border/50">
                   <div className="grid grid-cols-4 gap-2 text-center">
                     {PIPELINE_STAGES.map((stage, idx) => {
                       const currentIdx = PIPELINE_STAGES.indexOf(app.status);
@@ -215,13 +215,13 @@ export default function StudentApplicationsPage() {
                           <div
                             className={cn(
                               "h-1.5 rounded-full transition-colors",
-                              isComplete ? "bg-[#C4A885]" : "bg-slate-200"
+                              isComplete ? "bg-primary" : "bg-muted"
                             )}
                           />
                           <span
                             className={cn(
                               "text-[11px] block truncate",
-                              isCurrent ? "font-bold text-ink" : isComplete ? "text-slate-600 font-medium" : "text-slate-400"
+                              isCurrent ? "font-bold text-foreground" : isComplete ? "text-muted-foreground font-medium" : "text-muted-foreground"
                             )}
                           >
                             {stage}
@@ -235,25 +235,25 @@ export default function StudentApplicationsPage() {
 
               {/* Scheduled Interview Round Alert (If scheduled) */}
               {app.interviewRound && (
-                <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-xs text-slate-800 space-y-2">
+                <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-xs text-foreground/90 space-y-2">
                   <div className="flex items-center gap-2 font-bold text-amber-950">
                     <Video className="size-4 text-amber-700" />
                     <span>Interview Scheduled: {app.interviewRound.date} ({app.interviewRound.mode})</span>
                   </div>
-                  <p className="text-slate-700 leading-relaxed pl-6">
+                  <p className="text-foreground/90 leading-relaxed pl-6">
                     {app.interviewRound.instructions}
                   </p>
                 </div>
               )}
 
               {/* Application History Accordion Strip */}
-              <div className="border-t border-slate-100 pt-3 text-xs text-slate-500 flex items-center justify-between flex-wrap gap-2">
+              <div className="border-t border-border/50 pt-3 text-xs text-muted-foreground flex items-center justify-between flex-wrap gap-2">
                 <span className="flex items-center gap-1.5">
-                  <FileText className="size-3.5 text-[#C4A885]" />
+                  <FileText className="size-3.5 text-primary" />
                   Attached Document: <strong>{app.resumeName}</strong>
                 </span>
 
-                <span className="text-slate-400">
+                <span className="text-muted-foreground">
                   Latest Event: {app.history[app.history.length - 1]?.note || "Status updated"}
                 </span>
               </div>

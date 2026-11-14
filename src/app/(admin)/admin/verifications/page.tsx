@@ -91,21 +91,21 @@ export default function AdminVerificationsPage() {
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto pb-12">
-      <div className="rounded-2xl bg-gradient-to-r from-ink via-slate to-ink border border-cream/15 p-6 md:p-8 text-cream shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div className="rounded-2xl bg-gradient-to-r from-background via-muted to-background border border-border/15 p-6 md:p-8 text-foreground shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div className="space-y-2">
-          <Badge className="bg-sand/20 text-sand border-sand/40">Trust & Verification</Badge>
-          <h1 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-cream">
+          <Badge className="bg-accent/15/20 text-accent-text border-accent/40">Trust & Verification</Badge>
+          <h1 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
             Company & Institution Verification Queues
           </h1>
-          <p className="text-xs sm:text-sm text-cream/70">
+          <p className="text-xs sm:text-sm text-foreground/70">
             Review corporate credentials, university accreditation licenses, and authorized contact attestations.
           </p>
         </div>
       </div>
 
       {actionSuccess && (
-        <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold flex items-center gap-2">
-          <CheckCircle2 className="size-4 text-emerald-600" />
+        <div className="p-4 rounded-2xl bg-success/5 border border-success text-success text-xs font-semibold flex items-center gap-2">
+          <CheckCircle2 className="size-4 text-success" />
           {actionSuccess}
         </div>
       )}
@@ -114,7 +114,7 @@ export default function AdminVerificationsPage() {
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Building2 className="size-4 text-sand" />
+            <Building2 className="size-4 text-accent-text" />
             <h2 className="font-heading font-bold text-base text-foreground">
               Corporate Employers & Recruiters Queue
             </h2>
@@ -125,7 +125,7 @@ export default function AdminVerificationsPage() {
         <div className="rounded-2xl bg-card border border-border overflow-hidden shadow-xs">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-ink/5 border-b border-border text-muted-foreground uppercase font-semibold">
+              <thead className="bg-background/5 border-b border-border text-muted-foreground uppercase font-semibold">
                 <tr>
                   <th className="py-3.5 px-4">Company Name</th>
                   <th className="py-3.5 px-4">Official Contact</th>
@@ -136,7 +136,7 @@ export default function AdminVerificationsPage() {
               </thead>
               <tbody className="divide-y divide-border">
                 {recruiters.map((rec) => (
-                  <tr key={rec.userId} className="hover:bg-ink/[0.01]">
+                  <tr key={rec.userId} className="hover:bg-background/[0.01]">
                     <td className="py-3.5 px-4 font-semibold text-foreground">
                       {rec.companyName}
                       <div className="text-[10px] text-muted-foreground font-normal">{rec.recruiterDesignation}</div>
@@ -147,7 +147,7 @@ export default function AdminVerificationsPage() {
                     </td>
                     <td className="py-3.5 px-4">
                       <div className="text-foreground">{rec.industry}</div>
-                      <a href={rec.website} target="_blank" rel="noreferrer" className="text-[10px] text-sand hover:underline inline-flex items-center gap-0.5">
+                      <a href={rec.website} target="_blank" rel="noreferrer" className="text-[10px] text-accent-text hover:underline inline-flex items-center gap-0.5">
                         {rec.website} <ExternalLink className="size-2.5" />
                       </a>
                     </td>
@@ -170,7 +170,7 @@ export default function AdminVerificationsPage() {
                           <Button
                             size="sm"
                             onClick={() => handleApprove(rec.userId, "recruiter", rec.companyName)}
-                            className="h-7 text-[10px] bg-sand hover:bg-sand/90 text-ink font-semibold rounded-full"
+                            className="h-7 text-[10px] bg-accent/15 hover:bg-accent/15/90 text-foreground font-semibold rounded-full"
                           >
                             Approve
                           </Button>
@@ -207,7 +207,7 @@ export default function AdminVerificationsPage() {
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <GraduationCap className="size-4 text-sand" />
+            <GraduationCap className="size-4 text-accent-text" />
             <h2 className="font-heading font-bold text-base text-foreground">
               Colleges & Higher Education Institutions Queue
             </h2>
@@ -218,7 +218,7 @@ export default function AdminVerificationsPage() {
         <div className="rounded-2xl bg-card border border-border overflow-hidden shadow-xs">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-ink/5 border-b border-border text-muted-foreground uppercase font-semibold">
+              <thead className="bg-background/5 border-b border-border text-muted-foreground uppercase font-semibold">
                 <tr>
                   <th className="py-3.5 px-4">Institution Name</th>
                   <th className="py-3.5 px-4">Dean / Administrator</th>
@@ -229,7 +229,7 @@ export default function AdminVerificationsPage() {
               </thead>
               <tbody className="divide-y divide-border">
                 {institutions.map((inst) => (
-                  <tr key={inst.userId} className="hover:bg-ink/[0.01]">
+                  <tr key={inst.userId} className="hover:bg-background/[0.01]">
                     <td className="py-3.5 px-4 font-semibold text-foreground">
                       {inst.name}
                       <div className="text-[10px] text-muted-foreground font-normal">{inst.location}</div>
@@ -260,7 +260,7 @@ export default function AdminVerificationsPage() {
                           <Button
                             size="sm"
                             onClick={() => handleApprove(inst.userId, "institution", inst.name)}
-                            className="h-7 text-[10px] bg-sand hover:bg-sand/90 text-ink font-semibold rounded-full"
+                            className="h-7 text-[10px] bg-accent/15 hover:bg-accent/15/90 text-foreground font-semibold rounded-full"
                           >
                             Approve
                           </Button>
@@ -321,7 +321,7 @@ export default function AdminVerificationsPage() {
               value={rejectionReason}
               onChange={(e) => setRejectionReason(e.target.value)}
               placeholder="e.g. Incomplete institutional documentation or unofficial domain address provided..."
-              className="w-full text-xs p-3 rounded-xl border border-border bg-ink/5 text-foreground focus:outline-hidden focus:border-sand"
+              className="w-full text-xs p-3 rounded-xl border border-border bg-background/5 text-foreground focus:outline-hidden focus:border-accent"
             />
 
             <div className="flex items-center justify-end gap-2 pt-2">

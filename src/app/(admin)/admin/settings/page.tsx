@@ -59,21 +59,21 @@ export default function AdminSettingsPage() {
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto pb-12">
-      <div className="rounded-2xl bg-gradient-to-r from-ink via-slate to-ink border border-cream/15 p-6 md:p-8 text-cream shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div className="rounded-2xl bg-gradient-to-r from-background via-muted to-background border border-border/15 p-6 md:p-8 text-foreground shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div className="space-y-2">
-          <Badge className="bg-sand/20 text-sand border-sand/40">Platform Configuration</Badge>
-          <h1 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-cream">
+          <Badge className="bg-accent/15/20 text-accent-text border-accent/40">Platform Configuration</Badge>
+          <h1 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
             Data Sources & System Settings
           </h1>
-          <p className="text-xs sm:text-sm text-cream/70">
+          <p className="text-xs sm:text-sm text-foreground/70">
             Configure isolated service engines, duplicate detection sensitivity, and inspect administrative audit logs.
           </p>
         </div>
       </div>
 
       {saveSuccess && (
-        <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold flex items-center gap-2">
-          <CheckCircle2 className="size-4 text-emerald-600" />
+        <div className="p-4 rounded-2xl bg-success/5 border border-success text-success text-xs font-semibold flex items-center gap-2">
+          <CheckCircle2 className="size-4 text-success" />
           System configuration saved and synced across microservice gateways!
         </div>
       )}
@@ -81,7 +81,7 @@ export default function AdminSettingsPage() {
       {/* Settings Form */}
       <form onSubmit={handleSaveSettings} className="p-6 sm:p-8 rounded-3xl bg-card border border-border shadow-xs space-y-6">
         <h2 className="font-heading text-base font-bold text-foreground border-b border-border pb-3 flex items-center gap-2">
-          <Server className="size-4 text-sand" />
+          <Server className="size-4 text-accent-text" />
           Intelligence Engine Connectors
         </h2>
 
@@ -127,7 +127,7 @@ export default function AdminSettingsPage() {
               type="checkbox"
               checked={duplicateAutoFlag}
               onChange={(e) => setDuplicateAutoFlag(e.target.checked)}
-              className="rounded-sm border-border text-sand focus:ring-sand"
+              className="rounded-sm border-border text-accent-text focus:ring-accent"
             />
             <span>Enable real-time duplicate warning during recruiter opportunity draft creation</span>
           </label>
@@ -136,7 +136,7 @@ export default function AdminSettingsPage() {
         <div className="pt-4 border-t border-border flex justify-end">
           <Button
             type="submit"
-            className="bg-sand hover:bg-sand/90 text-ink font-semibold rounded-full text-xs"
+            className="bg-accent/15 hover:bg-accent/15/90 text-foreground font-semibold rounded-full text-xs"
           >
             <Save className="size-3.5 mr-1.5" />
             Save Platform Settings
@@ -148,7 +148,7 @@ export default function AdminSettingsPage() {
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <History className="size-4 text-sand" />
+            <History className="size-4 text-accent-text" />
             <h2 className="font-heading font-bold text-base text-foreground">
               Administrative Audit Logs Telemetry
             </h2>
@@ -159,7 +159,7 @@ export default function AdminSettingsPage() {
         <div className="rounded-2xl bg-card border border-border overflow-hidden shadow-xs">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-ink/5 border-b border-border text-muted-foreground uppercase font-semibold">
+              <thead className="bg-background/5 border-b border-border text-muted-foreground uppercase font-semibold">
                 <tr>
                   <th className="py-3 px-4">Event Type</th>
                   <th className="py-3 px-4">Admin Performer</th>
@@ -169,7 +169,7 @@ export default function AdminSettingsPage() {
               </thead>
               <tbody className="divide-y divide-border">
                 {auditLogs.map((log) => (
-                  <tr key={log.id} className="hover:bg-ink/[0.01]">
+                  <tr key={log.id} className="hover:bg-background/[0.01]">
                     <td className="py-3 px-4">
                       <Badge variant="outline" className="font-mono text-[10px]">
                         {log.action}

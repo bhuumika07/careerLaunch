@@ -51,20 +51,20 @@ function PublicStudentProfileContent() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-ink text-cream">
-        <div className="size-8 border-2 border-sand border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-navy to-navy-950 text-foreground">
+        <div className="size-8 border-2 border-accent border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
   if (!data?.user) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-ink text-cream px-6 text-center space-y-4">
-        <div className="size-16 rounded-full bg-sand/10 text-sand flex items-center justify-center">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-navy to-navy-950 text-foreground px-6 text-center space-y-4">
+        <div className="size-16 rounded-full bg-amber/10 text-amber flex items-center justify-center">
           <GraduationCap className="size-8" />
         </div>
         <h1 className="font-heading text-2xl font-bold">Candidate Profile Not Found</h1>
-        <p className="text-xs text-cream/60 max-w-sm">
+        <p className="text-xs text-muted-foreground max-w-sm">
           This candidate profile is private, inactive, or the link may be invalid.
         </p>
         <Link href="/">
@@ -81,29 +81,29 @@ function PublicStudentProfileContent() {
   const selfSkills = profile?.skills.filter((s) => s.status !== "verified") || [];
 
   return (
-    <div className="min-h-screen bg-ink text-cream selection:bg-sand/30 selection:text-sand py-12 px-6 sm:px-10">
+    <div className="min-h-screen bg-gradient-to-b from-navy to-navy-950 text-foreground selection:bg-amber selection:text-navy py-12 px-6 sm:px-10">
       <div className="max-w-4xl mx-auto space-y-10">
         {/* Navigation header */}
-        <div className="flex items-center justify-between border-b border-cream/10 pb-5">
+        <div className="flex items-center justify-between border-b border-border pb-5">
           <Link href="/" className="flex items-center gap-2.5">
-            <div className="size-8 rounded-full bg-sand text-ink flex items-center justify-center font-bold">
-              <Compass className="size-4 text-ink" />
+            <div className="size-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold">
+              <Compass className="size-4 text-primary-foreground" />
             </div>
-            <span className="font-heading font-bold text-lg text-cream">
-              Career<span className="text-sand">Launch</span>
+            <span className="font-heading font-bold text-lg text-foreground">
+              Career<span className="text-amber">Launch</span>
             </span>
           </Link>
 
-          <span className="text-[11px] font-semibold text-sand uppercase tracking-wider">
+          <span className="text-[11px] font-semibold text-amber uppercase tracking-wider">
             Verified Talent Telemetry
           </span>
         </div>
 
         {/* Hero Card */}
-        <div className="p-8 sm:p-10 rounded-[28px] border border-cream/15 bg-white/[0.04] backdrop-blur-xl relative overflow-hidden space-y-6">
+        <div className="p-8 sm:p-10 rounded-[28px] border border-border bg-white/[0.04] backdrop-blur-xl relative overflow-hidden space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
             <div className="flex items-center gap-5">
-              <div className="size-20 rounded-2xl bg-slate border-2 border-sand/40 text-sand font-bold text-3xl flex items-center justify-center shrink-0">
+              <div className="size-20 rounded-2xl bg-navy-800 border-2 border-amber/40 text-amber font-bold text-3xl flex items-center justify-center shrink-0">
                 {profile?.avatarUrl ? (
                   <img src={profile.avatarUrl} alt="Avatar" className="w-full h-full object-cover rounded-2xl" />
                 ) : (
@@ -112,18 +112,18 @@ function PublicStudentProfileContent() {
               </div>
               <div className="space-y-1">
                 <div className="flex items-center gap-2.5">
-                  <h1 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-cream">
+                  <h1 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
                     {user.name}
                   </h1>
-                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-sand/20 text-sand border border-sand/30">
-                    <ShieldCheck className="size-3.5 text-sand" />
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber/20 text-amber border border-amber/30">
+                    <ShieldCheck className="size-3.5 text-amber" />
                     Verified Candidate
                   </span>
                 </div>
-                <p className="text-xs sm:text-sm text-cream/70">
+                <p className="text-xs sm:text-sm text-muted-foreground">
                   {profile?.degree || "Undergraduate Candidate"} • {profile?.department}
                 </p>
-                <p className="text-xs text-cream/50">{profile?.institution}</p>
+                <p className="text-xs text-muted-foreground">{profile?.institution}</p>
               </div>
             </div>
 
@@ -133,7 +133,7 @@ function PublicStudentProfileContent() {
                   href={profile.githubUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="size-9 rounded-full bg-white/[0.06] border border-cream/15 flex items-center justify-center text-cream/80 hover:text-sand hover:border-sand/40 transition-colors"
+                  className="size-9 rounded-full bg-white/[0.06] border border-border flex items-center justify-center text-foreground/85 hover:text-amber hover:border-amber/40 transition-colors"
                   aria-label="GitHub"
                 >
                   <svg className="size-4 fill-current" viewBox="0 0 24 24">
@@ -146,7 +146,7 @@ function PublicStudentProfileContent() {
                   href={profile.linkedinUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="size-9 rounded-full bg-white/[0.06] border border-cream/15 flex items-center justify-center text-cream/80 hover:text-sand hover:border-sand/40 transition-colors"
+                  className="size-9 rounded-full bg-white/[0.06] border border-border flex items-center justify-center text-foreground/85 hover:text-amber hover:border-amber/40 transition-colors"
                   aria-label="LinkedIn"
                 >
                   <svg className="size-4 fill-current" viewBox="0 0 24 24">
@@ -159,7 +159,7 @@ function PublicStudentProfileContent() {
                   href={profile.portfolioUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="size-9 rounded-full bg-white/[0.06] border border-cream/15 flex items-center justify-center text-cream/80 hover:text-sand hover:border-sand/40 transition-colors"
+                  className="size-9 rounded-full bg-white/[0.06] border border-border flex items-center justify-center text-foreground/85 hover:text-amber hover:border-amber/40 transition-colors"
                 >
                   <Globe className="size-4" />
                 </a>
@@ -168,31 +168,31 @@ function PublicStudentProfileContent() {
           </div>
 
           {profile?.bio && (
-            <p className="text-sm text-cream/80 leading-relaxed border-t border-cream/10 pt-4">
+            <p className="text-sm text-foreground/85 leading-relaxed border-t border-border pt-4">
               {profile.bio}
             </p>
           )}
         </div>
 
         {/* Skills Section */}
-        <div className="p-8 rounded-[24px] border border-cream/15 bg-white/[0.03] space-y-6">
-          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-sand">
-            <Code2 className="size-4 text-sand" />
+        <div className="p-8 rounded-[24px] border border-border bg-white/[0.03] space-y-6">
+          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-amber">
+            <Code2 className="size-4 text-amber" />
             <span>Demonstrated Competencies & Skill Telemetry</span>
           </div>
 
           <div className="space-y-4">
             <div>
-              <span className="text-xs text-cream/60 block mb-2 font-medium">
+              <span className="text-xs text-muted-foreground block mb-2 font-medium">
                 Verified Assessments & Coursework ({verifiedSkills.length})
               </span>
               <div className="flex flex-wrap gap-2">
                 {verifiedSkills.map((sk) => (
                   <span
                     key={sk.id}
-                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30"
+                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-success/15 text-success border border-success/40"
                   >
-                    <CheckCircle2 className="size-3.5 text-emerald-400" />
+                    <CheckCircle2 className="size-3.5 text-success" />
                     <span>{sk.name}</span>
                   </span>
                 ))}
@@ -201,14 +201,14 @@ function PublicStudentProfileContent() {
 
             {selfSkills.length > 0 && (
               <div>
-                <span className="text-xs text-cream/60 block mb-2 font-medium">
+                <span className="text-xs text-muted-foreground block mb-2 font-medium">
                   Self-Declared Skills ({selfSkills.length})
                 </span>
                 <div className="flex flex-wrap gap-2">
                   {selfSkills.map((sk) => (
                     <span
                       key={sk.id}
-                      className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-white/[0.05] text-cream/80 border border-cream/15"
+                      className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-white/[0.05] text-foreground/85 border border-border"
                     >
                       <span>{sk.name}</span>
                     </span>
@@ -222,8 +222,8 @@ function PublicStudentProfileContent() {
         {/* Projects Showcase */}
         {profile?.projects && profile.projects.length > 0 && (
           <div className="space-y-4">
-            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-sand">
-              <FolderGit2 className="size-4 text-sand" />
+            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-amber">
+              <FolderGit2 className="size-4 text-amber" />
               <span>Featured Engineering Projects ({profile.projects.length})</span>
             </div>
 
@@ -231,11 +231,11 @@ function PublicStudentProfileContent() {
               {profile.projects.map((proj) => (
                 <div
                   key={proj.id}
-                  className="p-6 rounded-[22px] border border-cream/15 bg-white/[0.04] flex flex-col justify-between space-y-4"
+                  className="p-6 rounded-[22px] border border-border bg-white/[0.04] flex flex-col justify-between space-y-4"
                 >
                   <div className="space-y-2">
-                    <h3 className="font-heading font-bold text-base text-cream">{proj.title}</h3>
-                    <p className="text-xs text-cream/70 leading-relaxed">{proj.description}</p>
+                    <h3 className="font-heading font-bold text-base text-foreground">{proj.title}</h3>
+                    <p className="text-xs text-muted-foreground leading-relaxed">{proj.description}</p>
                   </div>
 
                   <div className="space-y-3 pt-2">
@@ -243,20 +243,20 @@ function PublicStudentProfileContent() {
                       {proj.technologies.map((t) => (
                         <span
                           key={t}
-                          className="px-2.5 py-0.5 rounded-full bg-white/[0.06] border border-cream/10 text-[10px] font-medium text-cream/80"
+                          className="px-2.5 py-0.5 rounded-full bg-white/[0.06] border border-border text-[10px] font-medium text-foreground/85"
                         >
                           {t}
                         </span>
                       ))}
                     </div>
 
-                    <div className="flex items-center gap-3 pt-2 border-t border-cream/10 text-xs">
+                    <div className="flex items-center gap-3 pt-2 border-t border-border text-xs">
                       {proj.githubUrl && (
                         <a
                           href={proj.githubUrl}
                           target="_blank"
                           rel="noreferrer"
-                          className="inline-flex items-center gap-1.5 text-cream/70 hover:text-sand font-medium"
+                          className="inline-flex items-center gap-1.5 text-muted-foreground hover:text-link font-medium"
                         >
                           <svg className="size-3.5 fill-current" viewBox="0 0 24 24">
                             <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
@@ -269,7 +269,7 @@ function PublicStudentProfileContent() {
                           href={proj.deploymentUrl}
                           target="_blank"
                           rel="noreferrer"
-                          className="inline-flex items-center gap-1.5 text-sand hover:underline font-semibold"
+                          className="inline-flex items-center gap-1.5 text-link hover:underline font-semibold"
                         >
                           <ExternalLink className="size-3.5" />
                           <span>Launch Live Demo</span>
@@ -289,7 +289,7 @@ function PublicStudentProfileContent() {
 
 export default function PublicStudentProfilePage() {
   return (
-    <React.Suspense fallback={<div className="min-h-screen bg-ink flex items-center justify-center text-cream/40">Loading profile portfolio...</div>}>
+    <React.Suspense fallback={<div className="min-h-screen bg-background flex items-center justify-center text-muted-foreground">Loading profile portfolio...</div>}>
       <PublicStudentProfileContent />
     </React.Suspense>
   );

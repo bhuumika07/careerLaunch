@@ -12,6 +12,7 @@ import {
   Info,
   XCircle,
   Compass,
+  BarChart3,
 } from "lucide-react";
 import { useTheme } from "@/components/theme-provider";
 import { PillButton } from "@/components/ui/pill-button";
@@ -55,17 +56,49 @@ export default function DesignSystemPage() {
     }, 3500);
   };
 
+  const summerFunPalette = [
+    { token: "--navy-950", hex: "#01202F", label: "Dark Gradient End", textDark: false },
+    { token: "--navy",     hex: "#023047", label: "Deep Navy (Dark BG)", textDark: false },
+    { token: "--navy-800", hex: "#0A4560", label: "Nav / Sidebar", textDark: false },
+    { token: "--navy-700", hex: "#0F5A7A", label: "Chart Series 5", textDark: false },
+    { token: "--teal",     hex: "#219EBC", label: "Teal (Primary CTA bg)", textDark: false },
+    { token: "--teal-600", hex: "#1A7F96", label: "Teal Links (Light)", textDark: false },
+    { token: "--sky",      hex: "#8ECAE6", label: "Sky (Foreground Dark)", textDark: true },
+    { token: "--sky-200",  hex: "#BFE2F2", label: "Sky Border Light", textDark: true },
+    { token: "--sky-100",  hex: "#DCEFF8", label: "Sky Tint", textDark: true },
+    { token: "--sky-50",   hex: "#F1F9FD", label: "Light BG / Page", textDark: true },
+    { token: "--amber",    hex: "#FFB703", label: "Golden Amber (Accent)", textDark: true },
+    { token: "--amber-300",hex: "#FFD25A", label: "Amber Hover", textDark: true },
+    { token: "--orange",   hex: "#FB8500", label: "Vivid Orange (CTA fill)", textDark: true },
+    { token: "--orange-600",hex:"#D96F00", label: "Orange Pressed", textDark: false },
+  ];
+
+  const statusColors = [
+    { token: "--success", hex: theme === "light" ? "#2E7D5B" : "#3FA37A", label: "Success (Muted Green)" },
+    { token: "--warning", hex: "#E0A33B", label: "Warning (Muted Amber)" },
+    { token: "--danger",  hex: "#D62839", label: "Danger (Deep Red)" },
+    { token: "--info",    hex: "#6F8FAF", label: "Info (Muted Blue-Grey)" },
+  ];
+
+  const chartSeries = [
+    { label: "Series 1: Systems Architecture", color: "#219EBC", token: "--teal", value: 88, pattern: "Solid Bar" },
+    { label: "Series 2: Machine Learning", color: "#FB8500", token: "--orange", value: 74, pattern: "Striped / Dashed" },
+    { label: "Series 3: Distributed Data", color: "#BFE2F2", token: "--sky-200", value: 65, pattern: "Light Tint" },
+    { label: "Series 4: Security Verification", color: "#FFB703", token: "--amber", value: 52, pattern: "Deep Velvet" },
+    { label: "Series 5: Cloud DevOps", color: "#8ECAE6", token: "--sky", value: 39, pattern: "Bordered Pill" },
+  ];
+
   return (
     <div className="min-h-screen bg-background text-foreground transition-colors duration-300 pb-32">
       {/* Toast Notification Container */}
       {activeToast && (
         <div className="fixed bottom-6 right-6 z-50 animate-in fade-in slide-in-from-bottom-4 duration-300">
-          <div className="flex items-center gap-3 px-5 py-3.5 rounded-full bg-slate border border-sand/40 text-cream shadow-2xl backdrop-blur-xl">
-            <Sparkles className="size-4 text-sand" />
+          <div className="flex items-center gap-3 px-5 py-3.5 rounded-full bg-danger/20 border border-primary/40 text-foreground shadow-2xl backdrop-blur-xl">
+            <Sparkles className="size-4 text-primary" />
             <span className="text-sm font-medium">{activeToast}</span>
             <button
               onClick={() => setActiveToast(null)}
-              className="ml-2 text-cream/50 hover:text-cream text-xs"
+              className="ml-2 text-muted-foreground hover:text-foreground text-xs cursor-pointer"
             >
               ✕
             </button>
@@ -78,15 +111,15 @@ export default function DesignSystemPage() {
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Link href="/" className="flex items-center gap-2 group">
-              <div className="size-8 rounded-full bg-sand flex items-center justify-center text-ink font-bold">
-                <Compass className="size-4 text-ink" />
+              <div className="size-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-bold">
+                <Compass className="size-4 text-primary-foreground" />
               </div>
               <span className="font-heading font-bold text-lg text-foreground">
                 CareerLaunch
               </span>
             </Link>
             <span className="text-muted-foreground text-sm hidden sm:inline">
-              / Design System Preview
+              / Design System Preview (Rose Crimson Ramp)
             </span>
           </div>
 
@@ -94,16 +127,16 @@ export default function DesignSystemPage() {
             <button
               type="button"
               onClick={toggleTheme}
-              className="flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-border bg-card text-foreground hover:border-sand/50 transition-colors text-xs font-medium cursor-pointer"
+              className="flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-border bg-card text-foreground hover:border-primary/50 transition-colors text-xs font-medium cursor-pointer"
             >
               {theme === "dark" ? (
                 <>
-                  <Sun className="size-3.5 text-sand" />
+                  <Sun className="size-3.5 text-primary" />
                   <span>Light Mode</span>
                 </>
               ) : (
                 <>
-                  <Moon className="size-3.5 text-slate" />
+                  <Moon className="size-3.5 text-primary" />
                   <span>Dark Mode</span>
                 </>
               )}
@@ -120,112 +153,146 @@ export default function DesignSystemPage() {
       <div className="max-w-7xl mx-auto px-6 sm:px-10 pt-10 space-y-20">
         {/* Title */}
         <div className="space-y-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sand/15 text-sand text-xs font-semibold">
-            <span>Theme Tokens & Primitives</span>
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/15 text-primary border border-primary/20 text-xs font-semibold">
+            <span>Theme Tokens &amp; Rose Crimson Primitives</span>
           </div>
           <h1 className="font-heading text-4xl sm:text-5xl font-extrabold tracking-tight text-foreground">
-            Design System <span className="text-sand">Catalog</span>
+            Design System <span className="text-primary">Catalog</span>
           </h1>
           <p className="text-muted-foreground max-w-2xl text-base">
-            Earth-tone palette tokens, WCAG AA typography scale, pill controls, glass surfaces, and responsive interactive feedback states.
+            10-step Rose Crimson ramp palette tokens, WCAG AA typography scale, pill controls, glass surfaces, chart series, and responsive interactive feedback states.
           </p>
         </div>
 
         {/* ------------------------------------------------------------------ */}
-        {/* SECTION 1: COLOR TOKENS                                            */}
+        {/* SECTION 1: COLOR TOKENS (ROSE CRIMSON RAMP)                         */}
         {/* ------------------------------------------------------------------ */}
         <section className="space-y-6">
           <div className="border-b border-border pb-3">
             <h2 className="font-heading text-2xl font-bold text-foreground">
-              01. Color Palette Tokens (&quot;Neutral Earth Tones&quot;)
+              01. Color Palette Tokens (&quot;Rose Crimson Ramp&quot;)
             </h2>
             <p className="text-sm text-muted-foreground">
-              CSS variables configured as Tailwind colors. Used throughout all platforms.
+              10-step dark-to-light ramp plus background gradient tint. All components driven by semantic CSS variables.
             </p>
           </div>
 
-          {/* Primary Tokens */}
+          {/* Rose Crimson Swatches */}
           <div className="space-y-2">
             <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Core Brand Swatches
+              Rose Crimson 10-Step Ramp (Darkest to Lightest)
             </h3>
-            <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
-              <div className="p-4 rounded-xl border border-border bg-card space-y-2">
-                <div className="h-16 rounded-lg bg-[#0B0B09] border border-white/10 shadow-inner" />
-                <div className="font-mono text-xs font-semibold text-foreground">--ink</div>
-                <div className="text-xs text-muted-foreground">#0B0B09 (Darkest BG)</div>
-              </div>
-              <div className="p-4 rounded-xl border border-border bg-card space-y-2">
-                <div className="h-16 rounded-lg bg-[#22343D] border border-white/10 shadow-inner" />
-                <div className="font-mono text-xs font-semibold text-foreground">--slate</div>
-                <div className="text-xs text-muted-foreground">#22343D (Deep Neutral)</div>
-              </div>
-              <div className="p-4 rounded-xl border border-border bg-card space-y-2">
-                <div className="h-16 rounded-lg bg-[#E8DFD4] border border-black/10 shadow-inner" />
-                <div className="font-mono text-xs font-semibold text-foreground">--cream</div>
-                <div className="text-xs text-muted-foreground">#E8DFD4 (Light Text / BG)</div>
-              </div>
-              <div className="p-4 rounded-xl border border-border bg-card space-y-2">
-                <div className="h-16 rounded-lg bg-[#C4A885] border border-black/10 shadow-inner" />
-                <div className="font-mono text-xs font-semibold text-foreground">--sand</div>
-                <div className="text-xs text-muted-foreground">#C4A885 (Accent Highlight)</div>
-              </div>
-              <div className="p-4 rounded-xl border border-border bg-card space-y-2">
-                <div className="h-16 rounded-lg bg-[#5C4D3A] border border-white/10 shadow-inner" />
-                <div className="font-mono text-xs font-semibold text-foreground">--umber</div>
-                <div className="text-xs text-muted-foreground">#5C4D3A (Muted Accent)</div>
-              </div>
+            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3">
+              {roseRamp.map((swatch) => (
+                <div key={swatch.token} className="p-3.5 rounded-xl border border-border bg-card space-y-2 shadow-xs">
+                  <div
+                    className="h-14 rounded-lg border border-black/10 shadow-inner flex items-end p-1.5"
+                    style={{ backgroundColor: swatch.hex }}
+                  >
+                    <span
+                      className={`text-[10px] font-mono font-bold px-1 rounded ${
+                        swatch.textDark ? "text-[#5A0F24] bg-white/70" : "text-[#FFEEF2] bg-black/40"
+                      }`}
+                    >
+                      {swatch.hex}
+                    </span>
+                  </div>
+                  <div className="font-mono text-xs font-semibold text-foreground">{swatch.token}</div>
+                  <div className="text-[11px] text-muted-foreground">{swatch.label}</div>
+                </div>
+              ))}
             </div>
           </div>
 
-          {/* Semantic Derived Colors */}
+          {/* Semantic Status Colors */}
           <div className="space-y-2 pt-2">
             <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Harmonized Semantic Colors
+              Harmonized Semantic Status Colors (Distinct Hues)
             </h3>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              <div className="p-4 rounded-xl border border-border bg-card space-y-2">
-                <div className="h-12 rounded-lg bg-[#7B9E6B]" />
-                <div className="font-mono text-xs font-semibold text-foreground">--success</div>
-                <div className="text-xs text-muted-foreground">#7B9E6B (Muted Olive)</div>
-              </div>
-              <div className="p-4 rounded-xl border border-border bg-card space-y-2">
-                <div className="h-12 rounded-lg bg-[#D4A843]" />
-                <div className="font-mono text-xs font-semibold text-foreground">--warning</div>
-                <div className="text-xs text-muted-foreground">#D4A843 (Warm Amber)</div>
-              </div>
-              <div className="p-4 rounded-xl border border-border bg-card space-y-2">
-                <div className="h-12 rounded-lg bg-[#C26B5A]" />
-                <div className="font-mono text-xs font-semibold text-foreground">--danger</div>
-                <div className="text-xs text-muted-foreground">#C26B5A (Terracotta)</div>
-              </div>
-              <div className="p-4 rounded-xl border border-border bg-card space-y-2">
-                <div className="h-12 rounded-lg bg-[#6B8EA5]" />
-                <div className="font-mono text-xs font-semibold text-foreground">--info</div>
-                <div className="text-xs text-muted-foreground">#6B8EA5 (Dusty Slate)</div>
-              </div>
+              {statusColors.map((sc) => (
+                <div key={sc.token} className="p-4 rounded-xl border border-border bg-card space-y-2 shadow-xs">
+                  <div
+                    className="h-12 rounded-lg flex items-center justify-center font-mono text-xs font-bold text-white shadow-inner"
+                    style={{ backgroundColor: sc.hex }}
+                  >
+                    {sc.hex}
+                  </div>
+                  <div className="font-mono text-xs font-semibold text-foreground">{sc.token}</div>
+                  <div className="text-xs text-muted-foreground">{sc.label}</div>
+                </div>
+              ))}
             </div>
           </div>
         </section>
 
         {/* ------------------------------------------------------------------ */}
-        {/* SECTION 2: TYPOGRAPHY                                              */}
+        {/* SECTION 2: CHARTS & TELEMETRY RAMP                                 */}
+        {/* ------------------------------------------------------------------ */}
+        <section className="space-y-6">
+          <div className="border-b border-border pb-3 flex items-center justify-between">
+            <div>
+              <h2 className="font-heading text-2xl font-bold text-foreground">
+                02. Data Charts &amp; Series Visualization
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                Ordered ramp: teal-600, orange-400, sky-200, amber-400, sky-300 with secondary pattern/label indicators.
+              </p>
+            </div>
+            <BarChart3 className="size-5 text-primary" />
+          </div>
+
+          <div className="p-6 rounded-[20px] border border-border bg-card space-y-5">
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
+              {chartSeries.map((s, idx) => (
+                <div key={idx} className="p-3 rounded-xl border border-border bg-background/50 space-y-1.5">
+                  <div className="flex items-center gap-2">
+                    <span className="size-3 rounded-full shrink-0" style={{ backgroundColor: s.color }} />
+                    <span className="text-xs font-bold text-foreground truncate">{s.token}</span>
+                  </div>
+                  <div className="text-[11px] text-muted-foreground truncate">{s.pattern}</div>
+                  <div className="text-sm font-extrabold font-mono text-foreground">{s.value}%</div>
+                </div>
+              ))}
+            </div>
+
+            <div className="space-y-3 pt-3">
+              {chartSeries.map((s, idx) => (
+                <div key={idx} className="space-y-1">
+                  <div className="flex justify-between text-xs font-semibold">
+                    <span className="text-foreground">{s.label} ({s.pattern})</span>
+                    <span className="font-mono font-bold" style={{ color: s.color }}>{s.value}%</span>
+                  </div>
+                  <div className="w-full bg-foreground/10 h-2.5 rounded-full overflow-hidden">
+                    <div
+                      className="h-full rounded-full transition-all duration-500"
+                      style={{ width: `${s.value}%`, backgroundColor: s.color }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ------------------------------------------------------------------ */}
+        {/* SECTION 3: TYPOGRAPHY                                              */}
         {/* ------------------------------------------------------------------ */}
         <section className="space-y-6">
           <div className="border-b border-border pb-3">
             <h2 className="font-heading text-2xl font-bold text-foreground">
-              02. Typography Scale (Plus Jakarta Sans & Inter)
+              03. Typography Scale (Plus Jakarta Sans &amp; Inter)
             </h2>
             <p className="text-sm text-muted-foreground">
-              Tight tracking on headings with clamp-based hero scaling; clean legibility for body copy.
+              Tight tracking on headings with clamp-based hero scaling; WCAG AA contrast on both dark and light surfaces.
             </p>
           </div>
 
           <div className="p-8 rounded-[20px] border border-border bg-card space-y-6">
             <div className="border-b border-border pb-4 space-y-1">
-              <span className="text-xs font-mono text-sand">Hero Display Scale (clamp)</span>
+              <span className="text-xs font-mono text-primary">Hero Display Scale (clamp)</span>
               <div className="font-heading font-extrabold text-4xl sm:text-6xl tracking-tight text-foreground">
-                Turn your learning <span className="text-sand">into a career</span>
+                Turn your learning <span className="text-primary">into a career</span>
               </div>
             </div>
 
@@ -265,8 +332,8 @@ export default function DesignSystemPage() {
                   </p>
                 </div>
                 <div>
-                  <span className="text-xs font-mono text-muted-foreground">Caption & Microcopy (WCAG AA compliant)</span>
-                  <p className="text-xs text-muted-foreground/80 font-sans">
+                  <span className="text-xs font-mono text-muted-foreground">Caption &amp; Microcopy (WCAG AA compliant)</span>
+                  <p className="text-xs text-muted-foreground font-sans">
                     * Attestation hash: 0x9f4a...8e21 • Verified via Institutional Academic Registry
                   </p>
                 </div>
@@ -276,22 +343,22 @@ export default function DesignSystemPage() {
         </section>
 
         {/* ------------------------------------------------------------------ */}
-        {/* SECTION 3: PILL BUTTONS & CONTROLS                                 */}
+        {/* SECTION 4: PILL BUTTONS & CONTROLS                                 */}
         {/* ------------------------------------------------------------------ */}
         <section className="space-y-6">
           <div className="border-b border-border pb-3">
             <h2 className="font-heading text-2xl font-bold text-foreground">
-              03. Pill Buttons & Micro-Interactions
+              04. Pill Buttons &amp; Micro-Interactions
             </h2>
             <p className="text-sm text-muted-foreground">
-              Primary sand fill + ink text; secondary outlined cream pill with arrow; hover scale with motion.
+              Primary --rose-500 fill with --rose-900 text; secondary outlined pill; active state --teal-600; focus ring --sky-300.
             </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             <div className="p-6 rounded-2xl border border-border bg-card space-y-4">
-              <span className="text-xs font-semibold text-sand uppercase tracking-wider block">
-                Primary Pill (Sand Fill + Ink Text)
+              <span className="text-xs font-semibold text-primary uppercase tracking-wider block">
+                Primary Pill (Rose-500 Fill + Rose-900 Text)
               </span>
               <div className="flex flex-col gap-3">
                 <PillButton variant="primary" size="lg" className="w-full">
@@ -307,8 +374,8 @@ export default function DesignSystemPage() {
             </div>
 
             <div className="p-6 rounded-2xl border border-border bg-card space-y-4">
-              <span className="text-xs font-semibold text-sand uppercase tracking-wider block">
-                Secondary Pill (Outlined + Arrow)
+              <span className="text-xs font-semibold text-primary uppercase tracking-wider block">
+                Secondary Pill (Outlined Rose-100 / Rose-700)
               </span>
               <div className="flex flex-col gap-3">
                 <PillButton
@@ -339,8 +406,8 @@ export default function DesignSystemPage() {
             </div>
 
             <div className="p-6 rounded-2xl border border-border bg-card space-y-4">
-              <span className="text-xs font-semibold text-sand uppercase tracking-wider block">
-                States & Ghosts
+              <span className="text-xs font-semibold text-primary uppercase tracking-wider block">
+                States &amp; Ghosts
               </span>
               <div className="flex flex-col gap-3">
                 <PillButton variant="ghost" size="md" className="w-full">
@@ -358,15 +425,15 @@ export default function DesignSystemPage() {
         </section>
 
         {/* ------------------------------------------------------------------ */}
-        {/* SECTION 4: STAT TILES & GLASS CARDS                                */}
+        {/* SECTION 5: STAT TILES & GLASS CARDS                                */}
         {/* ------------------------------------------------------------------ */}
         <section className="space-y-6">
           <div className="border-b border-border pb-3">
             <h2 className="font-heading text-2xl font-bold text-foreground">
-              04. Stat Tiles & Glass Surfaces
+              05. Stat Tiles &amp; Glass Surfaces
             </h2>
             <p className="text-sm text-muted-foreground">
-              1.5px sand border metric tiles and 20-24px radius translucent glass cards with backdrop blur.
+              1.5px --rose-500 border metric tiles and 20-24px radius translucent --amber-400 glass cards.
             </p>
           </div>
 
@@ -383,11 +450,11 @@ export default function DesignSystemPage() {
                 Cryptographic Skill Credentialing
               </h3>
               <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
-                Standard glass card with 6-8% translucent slate fill, 1px subtle border, backdrop blur filter, and rounded-20px radius.
+                Standard glass card with --amber-400 translucent fill, subtle --rose-100 border, backdrop blur filter, and rounded-20px radius.
               </p>
               <div className="mt-4 pt-4 border-t border-border flex items-center justify-between text-xs text-muted-foreground">
                 <span>Verified by Institution</span>
-                <span className="text-sand font-medium">Active Status</span>
+                <span className="text-primary font-medium">Active Status</span>
               </div>
             </GlassCard>
 
@@ -400,22 +467,22 @@ export default function DesignSystemPage() {
               </p>
               <div className="mt-4 pt-4 border-t border-border flex items-center justify-between text-xs text-muted-foreground">
                 <span>Coverage: 92%</span>
-                <span className="text-sand font-medium">High Match</span>
+                <span className="text-primary font-medium">High Match</span>
               </div>
             </GlassCard>
           </div>
         </section>
 
         {/* ------------------------------------------------------------------ */}
-        {/* SECTION 5: PRICING-STYLE PROGRAM CARD (CAREER JOURNEY)             */}
+        {/* SECTION 6: PROGRAM CARD (CAREER JOURNEY)                           */}
         {/* ------------------------------------------------------------------ */}
         <section className="space-y-6">
           <div className="border-b border-border pb-3">
             <h2 className="font-heading text-2xl font-bold text-foreground">
-              05. Pricing-Style Program Card (Journey Milestone)
+              06. Program Cards (Journey Milestones)
             </h2>
             <p className="text-sm text-muted-foreground">
-              Step badge at bottom, cream label chip, and mini 3-item checklist.
+              Step badge at bottom, semantic label chip, and mini 3-item checklist.
             </p>
           </div>
 
@@ -457,12 +524,12 @@ export default function DesignSystemPage() {
         </section>
 
         {/* ------------------------------------------------------------------ */}
-        {/* SECTION 6: INPUTS, FORM CARD & BADGES                              */}
+        {/* SECTION 7: INPUTS, FORM CARD & BADGES                              */}
         {/* ------------------------------------------------------------------ */}
         <section className="space-y-6">
           <div className="border-b border-border pb-3">
             <h2 className="font-heading text-2xl font-bold text-foreground">
-              06. Inputs, Form Cards & Badges
+              07. Inputs, Form Cards &amp; Badges
             </h2>
             <p className="text-sm text-muted-foreground">
               Form controls with dark/light adaptive styling and role-specific badges.
@@ -489,7 +556,7 @@ export default function DesignSystemPage() {
                   <Input
                     id="demo-name"
                     placeholder="Alex Morgan"
-                    className="bg-background/60 border-border text-foreground"
+                    className="bg-background/60 border-border text-foreground focus-visible:ring-ring"
                   />
                 </div>
                 <div className="space-y-2">
@@ -500,7 +567,7 @@ export default function DesignSystemPage() {
                     id="demo-email"
                     type="email"
                     placeholder="alex@university.edu"
-                    className="bg-background/60 border-border text-foreground"
+                    className="bg-background/60 border-border text-foreground focus-visible:ring-ring"
                   />
                 </div>
               </div>
@@ -513,7 +580,7 @@ export default function DesignSystemPage() {
                   <Input
                     id="demo-phone"
                     placeholder="+1 (555) 000-0000"
-                    className="bg-background/60 border-border text-foreground"
+                    className="bg-background/60 border-border text-foreground focus-visible:ring-ring"
                   />
                 </div>
                 <div className="space-y-2">
@@ -541,7 +608,7 @@ export default function DesignSystemPage() {
                   id="demo-bio"
                   rows={3}
                   placeholder="Tell us about your background or institutional focus..."
-                  className="bg-background/60 border-border text-foreground resize-none"
+                  className="bg-background/60 border-border text-foreground resize-none focus-visible:ring-ring"
                 />
               </div>
 
@@ -553,46 +620,46 @@ export default function DesignSystemPage() {
             {/* Badges & Indicators */}
             <div className="lg:col-span-5 space-y-6">
               <div className="p-6 rounded-[20px] border border-border bg-card space-y-4">
-                <span className="text-xs font-semibold text-sand uppercase tracking-wider block">
+                <span className="text-xs font-semibold text-primary uppercase tracking-wider block">
                   Role Badges
                 </span>
                 <div className="flex flex-wrap gap-2">
-                  <Badge className="bg-sand/20 text-sand hover:bg-sand/30 border border-sand/30 px-3 py-1">
+                  <Badge className="bg-primary/20 text-primary border border-primary/30 px-3 py-1">
                     Student
                   </Badge>
-                  <Badge className="bg-slate-500/20 text-cream hover:bg-slate-500/30 border border-cream/20 px-3 py-1">
+                  <Badge className="bg-danger/20 text-danger border border-danger/30 px-3 py-1">
                     Faculty
                   </Badge>
-                  <Badge className="bg-amber-600/20 text-amber-300 hover:bg-amber-600/30 border border-amber-500/30 px-3 py-1">
+                  <Badge className="bg-warning/20 text-warning border border-warning/30 px-3 py-1">
                     Recruiter
                   </Badge>
-                  <Badge className="bg-blue-600/20 text-blue-300 hover:bg-blue-600/30 border border-blue-500/30 px-3 py-1">
+                  <Badge className="bg-info/20 text-info border border-info/30 px-3 py-1">
                     Institution
                   </Badge>
-                  <Badge className="bg-purple-600/20 text-purple-300 hover:bg-purple-600/30 border border-purple-500/30 px-3 py-1">
+                  <Badge className="bg-danger/40 text-danger border border-danger/40 px-3 py-1">
                     Admin
                   </Badge>
                 </div>
               </div>
 
               <div className="p-6 rounded-[20px] border border-border bg-card space-y-4">
-                <span className="text-xs font-semibold text-sand uppercase tracking-wider block">
+                <span className="text-xs font-semibold text-primary uppercase tracking-wider block">
                   Harmonized Status Indicators
                 </span>
                 <div className="flex flex-wrap gap-3">
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-[#7B9E6B]/20 text-[#7B9E6B] border border-[#7B9E6B]/30">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-success/20 text-success border border-success/30">
                     <CheckCircle2 className="size-3.5" />
                     Verified Fit
                   </span>
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-[#D4A843]/20 text-[#D4A843] border border-[#D4A843]/30">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-warning/20 text-warning border border-warning/30">
                     <AlertTriangle className="size-3.5" />
                     Gap Identified
                   </span>
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-[#C26B5A]/20 text-[#C26B5A] border border-[#C26B5A]/30">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-danger/20 text-danger border border-danger/30">
                     <XCircle className="size-3.5" />
                     Action Required
                   </span>
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-[#6B8EA5]/20 text-[#6B8EA5] border border-[#6B8EA5]/30">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-info/20 text-info border border-info/30">
                     <Info className="size-3.5" />
                     In Review
                   </span>
@@ -603,12 +670,12 @@ export default function DesignSystemPage() {
         </section>
 
         {/* ------------------------------------------------------------------ */}
-        {/* SECTION 7: TABS, MODAL & TOASTS                                    */}
+        {/* SECTION 8: TABS, MODAL & TOASTS                                    */}
         {/* ------------------------------------------------------------------ */}
         <section className="space-y-6">
           <div className="border-b border-border pb-3">
             <h2 className="font-heading text-2xl font-bold text-foreground">
-              07. Tabs, Modal Dialog & Toast Feedback
+              08. Tabs, Modal Dialog &amp; Toast Feedback
             </h2>
             <p className="text-sm text-muted-foreground">
               Contextual interaction patterns with accessible overlays.
@@ -618,7 +685,7 @@ export default function DesignSystemPage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
             {/* Tabs Example */}
             <div className="lg:col-span-7 p-6 rounded-[20px] border border-border bg-card space-y-4">
-              <span className="text-xs font-semibold text-sand uppercase tracking-wider block">
+              <span className="text-xs font-semibold text-primary uppercase tracking-wider block">
                 Interactive Tabs
               </span>
               <Tabs defaultValue="jobs" className="w-full">
@@ -668,8 +735,8 @@ export default function DesignSystemPage() {
 
             {/* Modal & Toast triggers */}
             <div className="lg:col-span-5 p-6 rounded-[20px] border border-border bg-card space-y-6">
-              <span className="text-xs font-semibold text-sand uppercase tracking-wider block">
-                Feedback & Overlays
+              <span className="text-xs font-semibold text-primary uppercase tracking-wider block">
+                Feedback &amp; Overlays
               </span>
 
               {/* Modal trigger */}
@@ -691,7 +758,7 @@ export default function DesignSystemPage() {
                     </DialogHeader>
                     <div className="p-4 rounded-xl bg-background/60 border border-border text-xs space-y-1">
                       <div>Recipient: Alex Morgan (Student #29401)</div>
-                      <div>Skill Graph: Advanced Algorithms & Data Structures</div>
+                      <div>Skill Graph: Advanced Algorithms &amp; Data Structures</div>
                     </div>
                     <DialogFooter className="gap-2 sm:gap-0">
                       <PillButton
@@ -709,7 +776,7 @@ export default function DesignSystemPage() {
                           triggerToast("Credential badge successfully issued!");
                         }}
                       >
-                        Confirm & Issue
+                        Confirm &amp; Issue
                       </PillButton>
                     </DialogFooter>
                   </DialogContent>
@@ -743,15 +810,15 @@ export default function DesignSystemPage() {
         </section>
 
         {/* ------------------------------------------------------------------ */}
-        {/* SECTION 8: TABLE & PROGRESS                                        */}
+        {/* SECTION 9: TABLE & PROGRESS                                        */}
         {/* ------------------------------------------------------------------ */}
         <section className="space-y-6">
           <div className="border-b border-border pb-3">
             <h2 className="font-heading text-2xl font-bold text-foreground">
-              08. Data Table & Progress Indicators
+              09. Data Table &amp; Progress Indicators
             </h2>
             <p className="text-sm text-muted-foreground">
-              Telemetry table and multi-stage progress bars in earth tones.
+              Telemetry table and multi-stage progress bars in Rose Crimson.
             </p>
           </div>
 
@@ -771,9 +838,9 @@ export default function DesignSystemPage() {
                   <tr>
                     <td className="py-3 font-medium text-foreground">Sarah Jenkins</td>
                     <td className="py-3 text-muted-foreground text-xs">Full Stack Eng.</td>
-                    <td className="py-3 text-sand font-semibold">92%</td>
+                    <td className="py-3 text-primary font-semibold">92%</td>
                     <td className="py-3">
-                      <span className="px-2.5 py-0.5 rounded-full text-xs bg-[#7B9E6B]/20 text-[#7B9E6B]">
+                      <span className="px-2.5 py-0.5 rounded-full text-xs bg-success/20 text-success border border-success/30">
                         Interview Ready
                       </span>
                     </td>
@@ -781,19 +848,19 @@ export default function DesignSystemPage() {
                   <tr>
                     <td className="py-3 font-medium text-foreground">David Chen</td>
                     <td className="py-3 text-muted-foreground text-xs">Data Platform</td>
-                    <td className="py-3 text-sand font-semibold">78%</td>
+                    <td className="py-3 text-primary font-semibold">78%</td>
                     <td className="py-3">
-                      <span className="px-2.5 py-0.5 rounded-full text-xs bg-[#D4A843]/20 text-[#D4A843]">
+                      <span className="px-2.5 py-0.5 rounded-full text-xs bg-warning/20 text-warning border border-warning/30">
                         In Roadmap
                       </span>
                     </td>
                   </tr>
                   <tr>
                     <td className="py-3 font-medium text-foreground">Amina Yusuf</td>
-                    <td className="py-3 text-muted-foreground text-xs">AI & Cloud</td>
-                    <td className="py-3 text-sand font-semibold">96%</td>
+                    <td className="py-3 text-muted-foreground text-xs">AI &amp; Cloud</td>
+                    <td className="py-3 text-primary font-semibold">96%</td>
                     <td className="py-3">
-                      <span className="px-2.5 py-0.5 rounded-full text-xs bg-[#7B9E6B]/20 text-[#7B9E6B]">
+                      <span className="px-2.5 py-0.5 rounded-full text-xs bg-success/20 text-success border border-success/30">
                         Matched
                       </span>
                     </td>
@@ -804,14 +871,14 @@ export default function DesignSystemPage() {
 
             {/* Progress indicators */}
             <div className="lg:col-span-4 p-6 rounded-[20px] border border-border bg-card space-y-5">
-              <span className="text-xs font-semibold text-sand uppercase tracking-wider block">
+              <span className="text-xs font-semibold text-primary uppercase tracking-wider block">
                 Progress Telemetry
               </span>
 
               <div className="space-y-1.5">
                 <div className="flex justify-between text-xs">
                   <span className="text-foreground font-medium">Core Architecture</span>
-                  <span className="text-sand font-semibold">92%</span>
+                  <span className="text-primary font-semibold">92%</span>
                 </div>
                 <Progress value={92} className="h-2 bg-background" />
               </div>
@@ -819,7 +886,7 @@ export default function DesignSystemPage() {
               <div className="space-y-1.5">
                 <div className="flex justify-between text-xs">
                   <span className="text-foreground font-medium">Skill Gap Remediation</span>
-                  <span className="text-sand font-semibold">65%</span>
+                  <span className="text-primary font-semibold">65%</span>
                 </div>
                 <Progress value={65} className="h-2 bg-background" />
               </div>
@@ -827,7 +894,7 @@ export default function DesignSystemPage() {
               <div className="space-y-1.5">
                 <div className="flex justify-between text-xs">
                   <span className="text-foreground font-medium">Portfolio Verification</span>
-                  <span className="text-sand font-semibold">38%</span>
+                  <span className="text-primary font-semibold">38%</span>
                 </div>
                 <Progress value={38} className="h-2 bg-background" />
               </div>
@@ -836,12 +903,12 @@ export default function DesignSystemPage() {
         </section>
 
         {/* ------------------------------------------------------------------ */}
-        {/* SECTION 9: EMPTY STATE & SKELETON LOADERS                          */}
+        {/* SECTION 10: EMPTY STATE & SKELETON LOADERS                         */}
         {/* ------------------------------------------------------------------ */}
         <section className="space-y-6">
           <div className="border-b border-border pb-3">
             <h2 className="font-heading text-2xl font-bold text-foreground">
-              09. Empty State & Loading Skeletons
+              10. Empty State &amp; Loading Skeletons
             </h2>
             <p className="text-sm text-muted-foreground">
               Graceful zero-data screens and placeholder layout skeletons.
@@ -863,7 +930,7 @@ export default function DesignSystemPage() {
 
             {/* Skeleton state */}
             <div className="p-8 rounded-[20px] border border-border bg-card space-y-4">
-              <span className="text-xs font-semibold text-sand uppercase tracking-wider block">
+              <span className="text-xs font-semibold text-primary uppercase tracking-wider block">
                 Loading Skeleton Placeholders
               </span>
               <div className="flex items-center gap-4">

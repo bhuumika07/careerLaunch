@@ -1,85 +1,182 @@
 @import "tailwindcss";
 
 /* -------------------------------------------------------------------------- */
-/* CareerLaunch Design System Tokens & Themes                                 */
+/* CareerLaunch Design System Tokens & Themes ("Refreshing Summer Fun")       */
 /* -------------------------------------------------------------------------- */
 
 :root {
-  /* Brand color tokens */
-  --ink: #0B0B09;
-  --slate: #22343D;
-  --cream: #E8DFD4;
-  --sand: #C4A885;
-  --umber: #5C4D3A;
+  /* Core Palette: "Refreshing Summer Fun" */
+  --sky: #8ECAE6;    /* light blue */
+  --teal: #219EBC;   /* bright teal-blue */
+  --navy: #023047;   /* deep navy */
+  --amber: #FFB703;  /* golden yellow */
+  --orange: #FB8500; /* vivid orange */
 
-  /* Derived semantic colors (earth tones) */
-  --success: #7B9E6B;
-  --warning: #D4A843;
-  --danger: #C26B5A;
-  --info: #6B8EA5;
+  /* Derived Supporting Shades (same hues only) */
+  --navy-950: #01202F;   /* darker navy for gradient ends */
+  --navy-800: #0A4560;
+  --navy-700: #0F5A7A;
+  --sky-50: #F1F9FD;     /* page tint */
+  --sky-100: #DCEFF8;
+  --sky-200: #BFE2F2;
+  --teal-600: #1A7F96;   /* darker teal for text/links on light backgrounds */
+  --orange-600: #D96F00; /* pressed state */
+  --amber-300: #FFD25A;  /* hover accent */
 
-  /* Dark Theme Mappings (DEFAULT) */
-  /* Contrast: cream (#E8DFD4) on ink (#0B0B09) achieves ~15:1 (well above WCAG AA 4.5:1) */
-  --background: #0B0B09;
-  --foreground: #E8DFD4;
-  --muted: rgba(232, 223, 212, 0.65);
-  --muted-foreground: rgba(232, 223, 212, 0.65);
-  --border: rgba(232, 223, 212, 0.15);
-  --card: rgba(255, 255, 255, 0.06);
-  --card-foreground: #E8DFD4;
+  /* Chart Palette Order: teal, orange, sky, amber, navy-700 */
+  --chart-1: #219EBC;
+  --chart-2: #FB8500;
+  --chart-3: #8ECAE6;
+  --chart-4: #FFB703;
+  --chart-5: #0F5A7A;
 
-  /* UI Component Semantic Mappings */
-  --primary: #C4A885;
-  --primary-foreground: #0B0B09;
-  --secondary: rgba(232, 223, 212, 0.1);
-  --secondary-foreground: #E8DFD4;
-  --accent: #C4A885;
-  --accent-foreground: #0B0B09;
-  --destructive: #C26B5A;
+  /* Semantic Status Colors (Dark Theme Default) */
+  --success: #2FA36B;
+  --success-foreground: #FFFFFF;
+  --warning: #FFB703;
+  --warning-foreground: #023047;
+  --danger: #D62839;
+  --danger-foreground: #FFFFFF;
+  --info: #219EBC;
+  --info-foreground: #023047;
+
+  /* Dark Theme Mappings (DEFAULT for marketing & auth) */
+  --background: #023047;
+  --background-end: #01202F;
+  --foreground: #F1F9FD;
+  --muted: rgba(142, 202, 230, 0.70);
+  --muted-foreground: rgba(142, 202, 230, 0.70);
+  --border: rgba(142, 202, 230, 0.18);
+  --card: rgba(255, 255, 255, 0.07);
+  --card-foreground: #F1F9FD;
+
+  /* Primary Action Button: fill --orange, text --navy, hover --amber, pressed --orange-600 */
+  --primary: #FB8500;
+  --primary-hover: #FFB703;
+  --primary-active: #D96F00;
+  --primary-foreground: #023047;
+
+  /* Secondary Button: outlined --sky pill on dark */
+  --secondary: rgba(142, 202, 230, 0.12);
+  --secondary-foreground: #F1F9FD;
+  --secondary-border: #8ECAE6;
+
+  /* Accent: --amber on dark (headlines, stat-tile borders, progress, active underline) */
+  --accent: #FFB703;
+  --accent-hover: #FFD25A;
+  --accent-foreground: #023047;
+  --accent-text: #FFB703;
+
+  /* Links: --sky on dark */
+  --link: #8ECAE6;
+
+  /* Active nav pill: sky-50 fill with navy text */
+  --nav-active: #F1F9FD;
+  --nav-active-foreground: #023047;
+
+  --destructive: #D62839;
   --destructive-foreground: #FFFFFF;
-  --input: rgba(232, 223, 212, 0.15);
-  --ring: #C4A885;
+  --input: rgba(142, 202, 230, 0.18);
+  --ring: #FFB703;
+
+  /* Glows behind illustrations: rgba(--teal, 0.35) + rgba(--orange, 0.15) */
+  --glow-teal: rgba(33, 158, 188, 0.35);
+  --glow-orange: rgba(251, 133, 0, 0.15);
 }
 
 [data-theme="light"] {
-  /* Light Theme Mappings */
-  --background: #E8DFD4;
-  --foreground: #0B0B09;
-  --muted: rgba(34, 52, 61, 0.65);
-  --muted-foreground: rgba(34, 52, 61, 0.65);
-  --border: rgba(34, 52, 61, 0.15);
-  --card: rgba(255, 255, 255, 0.85);
-  --card-foreground: #0B0B09;
+  /* Light Theme Mappings (dashboards, tables, forms) */
+  --background: #F1F9FD;
+  --background-end: #F1F9FD;
+  --foreground: #023047;
+  --muted: rgba(2, 48, 71, 0.70);
+  --muted-foreground: rgba(2, 48, 71, 0.70);
+  --border: #BFE2F2;
+  --card: #FFFFFF;
+  --card-foreground: #023047;
 
-  /* Light UI Component Mappings */
-  --primary: #22343D;
-  --primary-foreground: #E8DFD4;
-  --secondary: rgba(34, 52, 61, 0.1);
-  --secondary-foreground: #0B0B09;
-  --accent: #C4A885;
-  --accent-foreground: #0B0B09;
-  --destructive: #C26B5A;
+  /* Primary Action Button: fill --orange, text --navy, hover --amber, pressed --orange-600 */
+  --primary: #FB8500;
+  --primary-hover: #FFB703;
+  --primary-active: #D96F00;
+  --primary-foreground: #023047;
+
+  /* Secondary Button: outlined --teal-600 on light */
+  --secondary: rgba(26, 127, 150, 0.08);
+  --secondary-foreground: #1A7F96;
+  --secondary-border: #1A7F96;
+
+  /* Accent: --orange for borders/fills on light; --teal-600 for accessible text on light */
+  --accent: #FB8500;
+  --accent-hover: #FFB703;
+  --accent-foreground: #023047;
+  --accent-text: #1A7F96;
+
+  /* Links: --teal-600 on light */
+  --link: #1A7F96;
+
+  /* Active nav pill */
+  --nav-active: #F1F9FD;
+  --nav-active-foreground: #023047;
+
+  /* Semantic Status Colors (Light Theme) */
+  --success: #237A50;
+  --success-foreground: #FFFFFF;
+  --warning: #FFB703;
+  --warning-foreground: #023047;
+  --danger: #D62839;
+  --danger-foreground: #FFFFFF;
+  --info: #1A7F96;
+  --info-foreground: #FFFFFF;
+
+  --destructive: #D62839;
   --destructive-foreground: #FFFFFF;
-  --input: rgba(34, 52, 61, 0.15);
-  --ring: #22343D;
+  --input: #BFE2F2;
+  --ring: #FFB703;
+
+  --glow-teal: rgba(33, 158, 188, 0.25);
+  --glow-orange: rgba(251, 133, 0, 0.12);
 }
 
 @theme inline {
-  /* Brand color tokens */
-  --color-ink: var(--ink);
-  --color-slate: var(--slate);
-  --color-cream: var(--cream);
-  --color-sand: var(--sand);
-  --color-umber: var(--umber);
+  /* Core Palette */
+  --color-sky: var(--sky);
+  --color-teal: var(--teal);
+  --color-navy: var(--navy);
+  --color-amber: var(--amber);
+  --color-orange: var(--orange);
 
-  /* Semantic colors */
+  /* Supporting Shades */
+  --color-navy-950: var(--navy-950);
+  --color-navy-800: var(--navy-800);
+  --color-navy-700: var(--navy-700);
+  --color-sky-50: var(--sky-50);
+  --color-sky-100: var(--sky-100);
+  --color-sky-200: var(--sky-200);
+  --color-teal-600: var(--teal-600);
+  --color-orange-600: var(--orange-600);
+  --color-amber-300: var(--amber-300);
+
+  /* Semantic Status Colors */
   --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
   --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
   --color-danger: var(--danger);
+  --color-danger-foreground: var(--danger-foreground);
   --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+
+  /* Chart Colors */
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
 
   /* Background & Foreground */
   --color-background: var(--background);
+  --color-background-end: var(--background-end);
   --color-foreground: var(--foreground);
 
   /* Muted */
@@ -93,13 +190,21 @@
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
 
-  /* Component tokens */
+  /* Component Tokens */
   --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-active: var(--primary-active);
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary-border: var(--secondary-border);
   --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
   --color-accent-foreground: var(--accent-foreground);
+  --color-accent-text: var(--accent-text);
+  --color-link: var(--link);
+  --color-nav-active: var(--nav-active);
+  --color-nav-active-foreground: var(--nav-active-foreground);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-input: var(--input);
@@ -131,19 +236,19 @@ html {
 }
 
 body {
-  background: linear-gradient(180deg, var(--ink) 0%, var(--slate) 100%);
+  background: linear-gradient(180deg, var(--navy) 0%, var(--navy-950) 100%);
   color: var(--foreground);
   font-family: var(--font-sans);
   min-height: 100vh;
 }
 
 [data-theme="light"] body {
-  background: var(--cream);
+  background: var(--sky-50);
 }
 
 ::selection {
-  background-color: var(--sand);
-  color: var(--ink);
+  background-color: var(--amber);
+  color: var(--navy);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -156,28 +261,28 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--ink);
+  background: var(--navy-950);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(232, 223, 212, 0.2);
+  background: rgba(142, 202, 230, 0.25);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(232, 223, 212, 0.35);
+  background: rgba(142, 202, 230, 0.45);
 }
 
 [data-theme="light"] ::-webkit-scrollbar-track {
-  background: var(--cream);
+  background: var(--sky-50);
 }
 
 [data-theme="light"] ::-webkit-scrollbar-thumb {
-  background: rgba(34, 52, 61, 0.2);
+  background: rgba(2, 48, 71, 0.2);
 }
 
 [data-theme="light"] ::-webkit-scrollbar-thumb:hover {
-  background: rgba(34, 52, 61, 0.35);
+  background: rgba(2, 48, 71, 0.35);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -185,16 +290,16 @@ body {
 /* -------------------------------------------------------------------------- */
 
 .glass-card {
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.07);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(232, 223, 212, 0.12);
+  border: 1px solid rgba(142, 202, 230, 0.18);
   border-radius: 20px;
 }
 
 [data-theme="light"] .glass-card {
-  background: rgba(255, 255, 255, 0.7);
-  border: 1px solid rgba(34, 52, 61, 0.12);
+  background: #FFFFFF;
+  border: 1px solid #BFE2F2;
 }
 
 /* -------------------------------------------------------------------------- */

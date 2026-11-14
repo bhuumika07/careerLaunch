@@ -1,0 +1,77 @@
+datasource db {
+  provider = env("PRISMA_PROVIDER")
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// -------------------------------------------------
+// Resume Management Models
+// -------------------------------------------------
+model Resume {
+  id         String          @id @default(uuid())
+  studentId  String
+  title      String
+  createdAt  DateTime        @default(now())
+  versions   ResumeVersion[]
+
+  @@index([studentId])
+}
+
+enum ResumeStatus {
+  uploaded
+  validating
+  extracting
+  parsing
+  ready
+  needs_review
+  failed
+}
+
+model ResumeVersion {
+  id               String        @id @default(uuid())
+  resumeId         String
+  versionNumber    Int
+  originalFileName String
+  mimeType         String
+  fileSize         Int
+  storageKey       String        @unique
+  checksum         String
+  status           ResumeStatus
+  failureReason    String?
+  extractedText    String?
+  parsedData       Json?
+  isActive         Boolean       @default(false)
+  uploadedAt       DateTime      @default(now())
+  parsedAt         DateTime?
+
+  resume           Resume        @relation(fields: [resumeId], references: [id])
+}
+
+enum ReviewStatus {
+  pending
+  accepted
+  edited
+  rejected
+}
+
+model ParsedFieldReview {
+  id               String        @id @default(uuid())
+  resumeVersionId  String
+  fieldPath        String
+  originalValue    String
+  correctedValue   String?
+  status           ReviewStatus
+
+  resumeVersion    ResumeVersion @relation(fields: [resumeVersionId], references: [id])
+}
+
+model ProfileSyncLog {
+  id              String   @id @default(uuid())
+  studentId       String
+  resumeVersionId String
+  fieldsApplied   Json
+  appliedAt       DateTime @default(now())
+}

@@ -23,35 +23,35 @@ export function RoleCard({
   return (
     <Link
       href={href}
-      className="group block h-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sand rounded-[20px]"
+      className="group block h-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-[20px]"
     >
       <motion.div
         whileHover={{ y: -6, transition: { duration: 0.2, ease: "easeOut" } }}
         whileTap={{ scale: 0.98 }}
         className={cn(
-          "h-full flex flex-col justify-between p-6 sm:p-7 bg-white/[0.06] backdrop-blur-xl border border-cream/[0.12] rounded-[20px] transition-colors duration-300 hover:border-sand/40 hover:bg-white/[0.08]",
+          "h-full flex flex-col justify-between p-6 sm:p-7 glass-card transition-colors duration-300 hover:border-accent/50 hover:bg-card",
           className
         )}
       >
         <div>
-          {/* Icon: in sand color, 40x40 */}
-          <div className="w-10 h-10 text-sand flex items-center justify-center shrink-0 mb-4 [&_svg]:w-10 [&_svg]:h-10 [&_svg]:stroke-[1.75]">
+          {/* Icon: in accent color, 40x40 */}
+          <div className="w-10 h-10 text-accent-text flex items-center justify-center shrink-0 mb-4 [&_svg]:w-10 [&_svg]:h-10 [&_svg]:stroke-[1.75]">
             {icon}
           </div>
 
           {/* Title */}
-          <h3 className="text-lg font-heading font-bold text-cream group-hover:text-sand transition-colors">
+          <h3 className="text-lg font-heading font-bold text-foreground group-hover:text-accent-text transition-colors">
             {title}
           </h3>
 
           {/* Description */}
-          <p className="text-sm text-cream/65 leading-relaxed mt-2">
+          <p className="text-sm text-muted-foreground leading-relaxed mt-2">
             {description}
           </p>
         </div>
 
-        {/* Learn More → link text in sand */}
-        <div className="mt-6 flex items-center gap-1 text-sm font-medium text-sand group-hover:gap-2 transition-all">
+        {/* Learn More → link text in primary */}
+        <div className="mt-6 flex items-center gap-1 text-sm font-medium text-link group-hover:gap-2 transition-all">
           <span>Learn More</span>
           <span
             aria-hidden="true"

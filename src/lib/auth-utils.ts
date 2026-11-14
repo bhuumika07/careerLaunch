@@ -46,17 +46,17 @@ export function evaluatePasswordStrength(password: string): PasswordStrength {
   ];
 
   const colors = [
-    "#C26B5A", // Danger (Terracotta)
-    "#E07A5F",
-    "#D4A843", // Warning (Warm Amber)
-    "#9CB380",
-    "#7B9E6B", // Success (Olive Green)
+    "#D62839", // Danger (Red)
+    "#FB8500", // Orange
+    "#FFB703", // Amber
+    "#219EBC", // Teal
+    "#2FA36B", // Success (Green)
   ];
 
   return {
     score,
     label: labels[score] || "Very Weak",
-    color: colors[score] || "#C26B5A",
+    color: colors[score] || "#D62839",
     checks,
   };
 }

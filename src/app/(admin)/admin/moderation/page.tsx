@@ -66,21 +66,21 @@ export default function AdminModerationPage() {
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto pb-12">
-      <div className="rounded-2xl bg-gradient-to-r from-ink via-slate to-ink border border-cream/15 p-6 md:p-8 text-cream shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div className="rounded-2xl bg-gradient-to-r from-background via-muted to-background border border-border/15 p-6 md:p-8 text-foreground shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div className="space-y-2">
-          <Badge className="bg-sand/20 text-sand border-sand/40">Content Integrity & Moderation</Badge>
-          <h1 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-cream">
+          <Badge className="bg-accent/15/20 text-accent-text border-accent/40">Content Integrity & Moderation</Badge>
+          <h1 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
             Opportunity Moderation & Duplicate Review
           </h1>
-          <p className="text-xs sm:text-sm text-cream/70">
+          <p className="text-xs sm:text-sm text-foreground/70">
             Automated duplicate detection (&gt;85% string similarity), community flagged listings, and publication moderation.
           </p>
         </div>
       </div>
 
       {actionSuccess && (
-        <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold flex items-center gap-2">
-          <CheckCircle2 className="size-4 text-emerald-600" />
+        <div className="p-4 rounded-2xl bg-success/5 border border-success text-success text-xs font-semibold flex items-center gap-2">
+          <CheckCircle2 className="size-4 text-success" />
           {actionSuccess}
         </div>
       )}
@@ -119,13 +119,13 @@ export default function AdminModerationPage() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1 text-xs">
-                  <div className="p-3 rounded-xl border border-border bg-ink/[0.01] space-y-1">
+                  <div className="p-3 rounded-xl border border-border bg-background/[0.01] space-y-1">
                     <span className="text-[10px] uppercase font-bold text-muted-foreground">Current Listing:</span>
                     <div className="font-bold text-foreground">{dup.opportunity.title}</div>
                     <div className="text-muted-foreground">{dup.opportunity.org} • {dup.opportunity.category}</div>
                   </div>
 
-                  <div className="p-3 rounded-xl border border-border bg-ink/[0.01] space-y-1">
+                  <div className="p-3 rounded-xl border border-border bg-background/[0.01] space-y-1">
                     <span className="text-[10px] uppercase font-bold text-muted-foreground">Matching Prior Listing:</span>
                     <div className="font-bold text-foreground">{dup.duplicateOf.title}</div>
                     <div className="text-muted-foreground">{dup.duplicateOf.org} • {dup.duplicateOf.category}</div>
@@ -163,7 +163,7 @@ export default function AdminModerationPage() {
         <div className="rounded-2xl bg-card border border-border overflow-hidden shadow-xs">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-ink/5 border-b border-border text-muted-foreground uppercase font-semibold">
+              <thead className="bg-background/5 border-b border-border text-muted-foreground uppercase font-semibold">
                 <tr>
                   <th className="py-3.5 px-4">Opportunity ID</th>
                   <th className="py-3.5 px-4">Report Reason</th>
@@ -174,7 +174,7 @@ export default function AdminModerationPage() {
               </thead>
               <tbody className="divide-y divide-border">
                 {reportedContent.map((rep) => (
-                  <tr key={rep.id} className="hover:bg-ink/[0.01]">
+                  <tr key={rep.id} className="hover:bg-background/[0.01]">
                     <td className="py-3.5 px-4 font-mono font-semibold text-foreground">
                       {rep.opportunityId}
                     </td>
@@ -211,7 +211,7 @@ export default function AdminModerationPage() {
         <div className="rounded-2xl bg-card border border-border overflow-hidden shadow-xs">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-ink/5 border-b border-border text-muted-foreground uppercase font-semibold">
+              <thead className="bg-background/5 border-b border-border text-muted-foreground uppercase font-semibold">
                 <tr>
                   <th className="py-3.5 px-4">Title & Organization</th>
                   <th className="py-3.5 px-4">Category</th>
@@ -223,7 +223,7 @@ export default function AdminModerationPage() {
               </thead>
               <tbody className="divide-y divide-border">
                 {opportunities.map((opp) => (
-                  <tr key={opp.id} className="hover:bg-ink/[0.01]">
+                  <tr key={opp.id} className="hover:bg-background/[0.01]">
                     <td className="py-3.5 px-4 font-semibold text-foreground">
                       {opp.title}
                       <div className="text-[10px] text-muted-foreground font-normal">{opp.org}</div>
@@ -244,7 +244,7 @@ export default function AdminModerationPage() {
                         className={`px-2 py-0.5 rounded-full text-[10px] font-semibold ${
                           opp.status === "active"
                             ? "bg-success/15 text-success"
-                            : "bg-ink/10 text-muted-foreground"
+                            : "bg-background/10 text-muted-foreground"
                         }`}
                       >
                         {opp.status}
@@ -258,7 +258,7 @@ export default function AdminModerationPage() {
                         className={`h-7 text-[10px] rounded-full font-semibold ${
                           opp.status === "active"
                             ? "border-danger text-danger hover:bg-danger/10"
-                            : "bg-sand hover:bg-sand/90 text-ink"
+                            : "bg-accent/15 hover:bg-accent/15/90 text-foreground"
                         }`}
                       >
                         {opp.status === "active" ? "Unpublish" : "Publish"}

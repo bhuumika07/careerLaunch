@@ -195,13 +195,13 @@ export function OpportunityTabs() {
     <section id="opportunities" className="w-full py-12">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <div className="flex flex-col items-center text-center mb-10">
-          <Badge className="bg-sand/15 text-sand border-sand/30 mb-3 px-3 py-1">
+          <Badge className="bg-amber/15 text-amber border-amber/30 mb-3 px-3 py-1">
             <Sparkles className="size-3 mr-1" /> Verified Opportunities
           </Badge>
-          <h2 className="text-3xl sm:text-4xl font-heading font-bold text-cream tracking-tight">
+          <h2 className="text-3xl sm:text-4xl font-heading font-bold text-foreground tracking-tight">
             Explore Curated Opportunities
           </h2>
-          <p className="text-cream/65 text-sm sm:text-base max-w-2xl mt-3 leading-relaxed">
+          <p className="text-muted-foreground text-sm sm:text-base max-w-2xl mt-3 leading-relaxed">
             Browse live listings tailored for your profile. All previews below
             represent active category templates on the platform.
           </p>
@@ -214,12 +214,12 @@ export function OpportunityTabs() {
           className="w-full flex flex-col items-center"
         >
           {/* Tabs Navigation Pill Bar */}
-          <TabsList className="h-auto bg-white/[0.05] border border-cream/10 p-1.5 rounded-full flex flex-wrap justify-center gap-1.5 max-w-full">
+          <TabsList className="h-auto bg-white/[0.06] border border-border p-1.5 rounded-full flex flex-wrap justify-center gap-1.5 max-w-full">
             {TAB_CONFIG.map((tab) => (
               <TabsTrigger
                 key={tab.value}
                 value={tab.value}
-                className="rounded-full px-5 py-2 text-sm text-cream/70 hover:text-cream data-[state=active]:bg-sand data-[state=active]:text-ink data-[state=active]:font-semibold transition-all cursor-pointer"
+                className="rounded-full px-5 py-2 text-sm text-muted-foreground hover:text-foreground data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:font-semibold transition-all cursor-pointer"
               >
                 {tab.label}
               </TabsTrigger>
@@ -242,20 +242,20 @@ export function OpportunityTabs() {
                 {OPPORTUNITY_DATA[tab.value]?.map((item) => (
                   <div
                     key={item.id}
-                    className="flex flex-col justify-between p-6 bg-white/[0.06] backdrop-blur-xl border border-cream/[0.12] rounded-[20px] transition-all duration-300 hover:border-sand/40 hover:bg-white/[0.08]"
+                    className="flex flex-col justify-between p-6 glass-card transition-all duration-300 hover:border-accent/50 hover:bg-white/[0.09]"
                   >
                     <div>
                       {/* Tags */}
                       <div className="flex items-center gap-2 flex-wrap mb-4">
                         <Badge
                           variant="outline"
-                          className="bg-sand/15 text-sand border-sand/30 font-medium text-xs px-2.5 py-0.5 rounded-full"
+                          className="bg-accent/15 text-accent-text border-accent/30 font-medium text-xs px-2.5 py-0.5 rounded-full"
                         >
                           Sample listing
                         </Badge>
                         <Badge
                           variant="outline"
-                          className="bg-cream/10 text-cream/80 border-cream/20 font-medium text-xs px-2.5 py-0.5 rounded-full flex items-center gap-1"
+                          className="bg-sky/10 text-foreground/85 border-border font-medium text-xs px-2.5 py-0.5 rounded-full flex items-center gap-1"
                         >
                           <MapPin className="size-3" />
                           {item.location}
@@ -263,22 +263,22 @@ export function OpportunityTabs() {
                       </div>
 
                       {/* Title: 'Sample [type] Listing' */}
-                      <h3 className="font-heading font-bold text-cream text-lg tracking-tight">
+                      <h3 className="font-heading font-bold text-foreground text-lg tracking-tight">
                         {item.title}
                       </h3>
-                      <p className="text-sand text-xs font-medium mt-1">
+                      <p className="text-link text-xs font-medium mt-1">
                         {item.role} • {item.category}
                       </p>
 
                       {/* Two lines of placeholder description */}
-                      <p className="text-cream/65 text-sm leading-relaxed mt-3 line-clamp-2">
+                      <p className="text-muted-foreground text-sm leading-relaxed mt-3 line-clamp-2">
                         {item.description}
                       </p>
                     </div>
 
                     {/* Bottom Footer & Apply Button */}
-                    <div className="mt-6 pt-4 border-t border-cream/10 flex items-center justify-between gap-3">
-                      <span className="text-xs text-cream/45">
+                    <div className="mt-6 pt-4 border-t border-border flex items-center justify-between gap-3">
+                      <span className="text-xs text-muted-foreground/75">
                         {item.timing}
                       </span>
                       <PillButton

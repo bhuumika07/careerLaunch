@@ -175,8 +175,8 @@ export default function AccountSettingsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-ink text-cream">
-        <div className="size-8 border-2 border-sand border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-navy to-navy-950 text-foreground">
+        <div className="size-8 border-2 border-amber border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -184,19 +184,19 @@ export default function AccountSettingsPage() {
   const role = account?.role || "student";
 
   return (
-    <div className="min-h-screen bg-ink text-cream selection:bg-sand/30 selection:text-sand py-12 px-6 sm:px-10">
+    <div className="min-h-screen bg-gradient-to-b from-navy to-navy-950 text-foreground selection:bg-amber selection:text-navy py-12 px-6 sm:px-10">
       <div className="max-w-3xl mx-auto space-y-8">
         {/* Navigation header */}
-        <div className="flex items-center justify-between border-b border-cream/10 pb-5">
+        <div className="flex items-center justify-between border-b border-border pb-5">
           <Link
             href={`/${role}/dashboard`}
-            className="inline-flex items-center gap-2 text-xs text-cream/70 hover:text-cream transition-colors font-medium"
+            className="inline-flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors font-medium"
           >
             <ArrowLeft className="size-3.5" />
             <span>Return to Dashboard</span>
           </Link>
 
-          <div className="flex items-center gap-2 text-xs text-sand font-semibold uppercase tracking-wider">
+          <div className="flex items-center gap-2 text-xs text-amber font-semibold uppercase tracking-wider">
             <Shield className="size-3.5" />
             <span>Account Security</span>
           </div>
@@ -204,10 +204,10 @@ export default function AccountSettingsPage() {
 
         {/* Title */}
         <div className="space-y-1">
-          <h1 className="font-heading text-3xl font-bold tracking-tight text-cream">
+          <h1 className="font-heading text-3xl font-bold tracking-tight text-foreground">
             Account Settings
           </h1>
-          <p className="text-sm text-cream/60">
+          <p className="text-sm text-muted-foreground">
             Manage your credentials, profile details, and account preferences.
           </p>
         </div>
@@ -217,8 +217,8 @@ export default function AccountSettingsPage() {
           <div
             className={`p-3.5 rounded-xl border text-xs flex items-center gap-2.5 ${
               message.type === "success"
-                ? "border-success/40 bg-success/10 text-cream"
-                : "border-danger/40 bg-danger/10 text-cream"
+                ? "border-success/50 bg-success/15 text-foreground"
+                : "border-danger/50 bg-danger/15 text-foreground"
             }`}
           >
             {message.type === "success" ? (
@@ -233,29 +233,29 @@ export default function AccountSettingsPage() {
         {/* 1. PERSONAL DETAILS CARD */}
         <form
           onSubmit={handleUpdateProfile}
-          className="p-8 rounded-[22px] border border-cream/15 bg-white/[0.04] backdrop-blur-xl space-y-5"
+          className="p-8 rounded-[22px] border border-border bg-white/[0.04] backdrop-blur-xl space-y-5"
         >
-          <div className="flex items-center gap-2.5 text-xs font-semibold text-sand uppercase tracking-wider">
-            <User className="size-4 text-sand" />
+          <div className="flex items-center gap-2.5 text-xs font-semibold text-amber uppercase tracking-wider">
+            <User className="size-4 text-amber" />
             <span>Profile Details</span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <Label className="text-xs text-cream/80 font-medium">Display Name</Label>
+              <Label className="text-xs text-foreground/85 font-medium">Display Name</Label>
               <Input
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
-                className="bg-white/[0.05] border-cream/15 text-cream rounded-xl"
+                className="bg-white/[0.05] border-border text-foreground rounded-xl"
               />
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs text-cream/80 font-medium">Registered Email</Label>
+              <Label className="text-xs text-foreground/85 font-medium">Registered Email</Label>
               <Input
                 value={account?.email || ""}
                 disabled
-                className="bg-white/[0.02] border-cream/10 text-cream/50 rounded-xl cursor-not-allowed"
+                className="bg-white/[0.02] border-border text-muted-foreground rounded-xl cursor-not-allowed"
               />
             </div>
           </div>
@@ -276,47 +276,47 @@ export default function AccountSettingsPage() {
         {/* 2. CHANGE PASSWORD CARD */}
         <form
           onSubmit={handleChangePassword}
-          className="p-8 rounded-[22px] border border-cream/15 bg-white/[0.04] backdrop-blur-xl space-y-5"
+          className="p-8 rounded-[22px] border border-border bg-white/[0.04] backdrop-blur-xl space-y-5"
         >
-          <div className="flex items-center gap-2.5 text-xs font-semibold text-sand uppercase tracking-wider">
-            <Lock className="size-4 text-sand" />
+          <div className="flex items-center gap-2.5 text-xs font-semibold text-amber uppercase tracking-wider">
+            <Lock className="size-4 text-amber" />
             <span>Change Password</span>
           </div>
 
           <div className="space-y-4">
             <div className="space-y-1.5">
-              <Label className="text-xs text-cream/80 font-medium">Current Password</Label>
+              <Label className="text-xs text-foreground/85 font-medium">Current Password</Label>
               <Input
                 type="password"
                 required
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
                 placeholder="Enter current password"
-                className="bg-white/[0.05] border-cream/15 text-cream rounded-xl"
+                className="bg-white/[0.05] border-border text-foreground rounded-xl"
               />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <Label className="text-xs text-cream/80 font-medium">New Password</Label>
+                <Label className="text-xs text-foreground/85 font-medium">New Password</Label>
                 <Input
                   type="password"
                   required
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                   placeholder="Min. 8 characters"
-                  className="bg-white/[0.05] border-cream/15 text-cream rounded-xl"
+                  className="bg-white/[0.05] border-border text-foreground rounded-xl"
                 />
               </div>
               <div className="space-y-1.5">
-                <Label className="text-xs text-cream/80 font-medium">Confirm New Password</Label>
+                <Label className="text-xs text-foreground/85 font-medium">Confirm New Password</Label>
                 <Input
                   type="password"
                   required
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="Repeat new password"
-                  className="bg-white/[0.05] border-cream/15 text-cream rounded-xl"
+                  className="bg-white/[0.05] border-border text-foreground rounded-xl"
                 />
               </div>
             </div>
@@ -344,10 +344,10 @@ export default function AccountSettingsPage() {
 
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="space-y-1 max-w-lg">
-              <h3 className="font-heading font-bold text-base text-cream">
+              <h3 className="font-heading font-bold text-base text-foreground">
                 Deactivate Account
               </h3>
-              <p className="text-xs text-cream/60 leading-relaxed">
+              <p className="text-xs text-muted-foreground leading-relaxed">
                 Deactivating disables your portal access, revokes active sessions, and hides your public telemetry profile.
               </p>
             </div>
@@ -408,7 +408,7 @@ export default function AccountSettingsPage() {
                 size="sm"
                 disabled={deactivating || !deactivatePassword}
                 onClick={handleDeactivate}
-                className="bg-danger text-white hover:bg-danger/90"
+                className="bg-danger text-danger-foreground hover:bg-danger/90"
               >
                 {deactivating ? "Deactivating..." : "Yes, Deactivate My Account"}
               </PillButton>

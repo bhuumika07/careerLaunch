@@ -1,23 +1,28 @@
+"use client";
+
 import * as React from "react";
 import Link from "next/link";
 import { Compass, Mail } from "lucide-react";
 
-export function Footer() {
+export function Footer() { const [year, setYear] = React.useState(0);
+  React.useEffect(() => {
+    setYear(new Date().getFullYear());
+  }, []);
   return (
-    <footer className="w-full bg-ink border-t border-cream/10 text-cream/70 pt-16 pb-12">
+    <footer data-theme="dark" className="w-full bg-navy-950 border-t border-sky/15 text-sky/75 pt-16 pb-12">
       <div className="max-w-7xl mx-auto px-6 sm:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-cream/10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-border">
           {/* Brand info */}
           <div className="lg:col-span-2 space-y-4">
             <Link href="/" className="flex items-center gap-3">
-              <div className="flex items-center justify-center size-9 rounded-xl bg-sand text-ink font-bold">
-                <Compass className="size-5 text-ink" />
+              <div className="flex items-center justify-center size-9 rounded-xl bg-primary text-primary-foreground font-bold shadow-xs">
+                <Compass className="size-5 text-primary-foreground" />
               </div>
-              <span className="font-heading font-bold text-xl tracking-tight text-cream">
-                Career<span className="text-sand">Launch</span>
+              <span className="font-heading font-bold text-xl tracking-tight text-sky-50">
+                Career<span className="text-amber">Launch</span>
               </span>
             </Link>
-            <p className="text-sm leading-relaxed max-w-sm text-cream/65">
+            <p className="text-sm leading-relaxed max-w-sm text-muted-foreground">
               The end-to-end career readiness platform aligning students, educators, and recruiters for modern workforce excellence.
             </p>
             <div className="flex items-center gap-3 pt-2">
@@ -25,7 +30,7 @@ export function Footer() {
                 href="https://twitter.com"
                 target="_blank"
                 rel="noreferrer"
-                className="size-9 rounded-full bg-white/[0.04] border border-cream/10 flex items-center justify-center text-cream/60 hover:text-sand hover:border-sand/40 transition-colors"
+                className="size-9 rounded-full bg-white/[0.04] border border-border flex items-center justify-center text-muted-foreground hover:text-sky hover:border-sky/40 transition-colors"
                 aria-label="Twitter / X"
               >
                 <svg className="size-4 fill-current" viewBox="0 0 24 24">
@@ -36,7 +41,7 @@ export function Footer() {
                 href="https://linkedin.com"
                 target="_blank"
                 rel="noreferrer"
-                className="size-9 rounded-full bg-white/[0.04] border border-cream/10 flex items-center justify-center text-cream/60 hover:text-sand hover:border-sand/40 transition-colors"
+                className="size-9 rounded-full bg-white/[0.04] border border-border flex items-center justify-center text-muted-foreground hover:text-sky hover:border-sky/40 transition-colors"
                 aria-label="LinkedIn"
               >
                 <svg className="size-4 fill-current" viewBox="0 0 24 24">
@@ -47,7 +52,7 @@ export function Footer() {
                 href="https://github.com"
                 target="_blank"
                 rel="noreferrer"
-                className="size-9 rounded-full bg-white/[0.04] border border-cream/10 flex items-center justify-center text-cream/60 hover:text-sand hover:border-sand/40 transition-colors"
+                className="size-9 rounded-full bg-white/[0.04] border border-border flex items-center justify-center text-muted-foreground hover:text-sky hover:border-sky/40 transition-colors"
                 aria-label="GitHub"
               >
                 <svg className="size-4 fill-current" viewBox="0 0 24 24">
@@ -56,7 +61,7 @@ export function Footer() {
               </a>
               <a
                 href="mailto:contact@careerlaunch.com"
-                className="size-9 rounded-full bg-white/[0.04] border border-cream/10 flex items-center justify-center text-cream/60 hover:text-sand hover:border-sand/40 transition-colors"
+                className="size-9 rounded-full bg-white/[0.04] border border-border flex items-center justify-center text-muted-foreground hover:text-sky hover:border-sky/40 transition-colors"
                 aria-label="Email"
               >
                 <Mail className="size-4" />
@@ -66,99 +71,117 @@ export function Footer() {
 
           {/* Solutions / Roles */}
           <div className="space-y-3">
-            <h4 className="font-heading text-sm font-semibold text-cream uppercase tracking-wider">
+            <h4 className="font-heading text-sm font-semibold text-foreground uppercase tracking-wider">
               Audience
             </h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/for-students" className="hover:text-sand transition-colors">
-                  For Students
+                <Link href="/for-students" className="hover:text-sky transition-colors">
+                  Students & Learners
                 </Link>
               </li>
               <li>
-                <Link href="/for-recruiters" className="hover:text-sand transition-colors">
-                  For Recruiters
+                <Link href="/for-recruiters" className="hover:text-sky transition-colors">
+                  Corporate Recruiters
                 </Link>
               </li>
               <li>
-                <Link href="/for-faculty" className="hover:text-sand transition-colors">
-                  For Faculty
+                <Link href="/for-faculty" className="hover:text-sky transition-colors">
+                  Faculty & Mentors
                 </Link>
               </li>
               <li>
-                <Link href="/for-institutions" className="hover:text-sand transition-colors">
-                  For Institutions
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Platform */}
-          <div className="space-y-3">
-            <h4 className="font-heading text-sm font-semibold text-cream uppercase tracking-wider">
-              Portals
-            </h4>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <Link href="/student/dashboard" className="hover:text-sand transition-colors">
-                  Student Portal
-                </Link>
-              </li>
-              <li>
-                <Link href="/faculty/dashboard" className="hover:text-sand transition-colors">
-                  Faculty Portal
-                </Link>
-              </li>
-              <li>
-                <Link href="/recruiter/dashboard" className="hover:text-sand transition-colors">
-                  Recruiter Portal
-                </Link>
-              </li>
-              <li>
-                <Link href="/institution/dashboard" className="hover:text-sand transition-colors">
-                  Institution Portal
-                </Link>
-              </li>
-              <li>
-                <Link href="/admin/dashboard" className="hover:text-sand transition-colors">
-                  Admin Portal
+                <Link href="/for-institutions" className="hover:text-sky transition-colors">
+                  Universities & Deans
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Legal / Company */}
+          {/* Platform Pillars */}
           <div className="space-y-3">
-            <h4 className="font-heading text-sm font-semibold text-cream uppercase tracking-wider">
-              Company
+            <h4 className="font-heading text-sm font-semibold text-foreground uppercase tracking-wider">
+              Features
             </h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/login" className="hover:text-sand transition-colors">
-                  Sign In
+                <Link href="/#features" className="hover:text-sky transition-colors">
+                  Cryptographic Verifications
                 </Link>
               </li>
               <li>
-                <Link href="/register" className="hover:text-sand transition-colors">
-                  Register
+                <Link href="/#features" className="hover:text-sky transition-colors">
+                  AI Dynamic Resume Builder
                 </Link>
               </li>
               <li>
-                <span className="text-cream/40 cursor-not-allowed">Privacy Policy</span>
+                <Link href="/#features" className="hover:text-sky transition-colors">
+                  Diagnostic Benchmarks
+                </Link>
               </li>
               <li>
-                <span className="text-cream/40 cursor-not-allowed">Terms of Service</span>
+                <Link href="/#features" className="hover:text-sky transition-colors">
+                  Explainable Fit Scoring
+                </Link>
+              </li>
+              <li>
+                <Link href="/#opportunities" className="hover:text-sky transition-colors">
+                  Multi-Track Opportunities
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Governance & Institutional Links */}
+          <div className="space-y-3">
+            <h4 className="font-heading text-sm font-semibold text-foreground uppercase tracking-wider">
+              Governance
+            </h4>
+            <ul className="space-y-2 text-sm">
+              <li>
+                <Link href="/design-system" className="hover:text-sky transition-colors">
+                  Design System Preview
+                </Link>
+              </li>
+              <li>
+                <Link href="/login" className="hover:text-sky transition-colors">
+                  Portal Sign In
+                </Link>
+              </li>
+              <li>
+                <Link href="/register" className="hover:text-sky transition-colors">
+                  Institutional Onboarding
+                </Link>
+              </li>
+              <li>
+                <span className="text-muted-foreground/60 text-xs">
+                  Academic Attestation Engine v2.4
+                </span>
               </li>
             </ul>
           </div>
         </div>
 
-        {/* Bottom copyright */}
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-cream/40 gap-4">
-          <p>© 2026 CareerLaunch Inc. All rights reserved.</p>
-          <p>Built with Next.js, Tailwind CSS, &amp; shadcn/ui</p>
+        {/* Bottom bar */}
+        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-muted-foreground/70">
+          <div>
+            © {year} CareerLaunch Ecosystem. All rights reserved.
+          </div>
+          <div className="flex items-center gap-6">
+            <Link href="/" className="hover:text-sky transition-colors">
+              Privacy Policy
+            </Link>
+            <Link href="/" className="hover:text-sky transition-colors">
+              Terms of Attestation
+            </Link>
+            <Link href="/" className="hover:text-sky transition-colors">
+              Security Compliance
+            </Link>
+          </div>
         </div>
       </div>
     </footer>
   );
 }
+
+export default Footer;

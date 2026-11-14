@@ -71,6 +71,30 @@
       "onboardingCompleted": true,
       "createdAt": "2026-11-09T10:59:31.460Z",
       "updatedAt": "2026-11-09T11:00:08.983Z"
+    },
+    {
+      "id": "usr_student_1794379860816",
+      "name": "bhuu",
+      "email": "bhumikaa205@gmail.com",
+      "passwordHash": "$2b$10$rcInz7gxSFYLBQMRtG5tv.5GVU85GbX2ln3Qud4PyA2hV5zoC9s8i",
+      "role": "student",
+      "status": "active",
+      "emailVerified": false,
+      "onboardingCompleted": false,
+      "createdAt": "2026-11-11T06:51:00.815Z",
+      "updatedAt": "2026-11-11T06:51:00.815Z"
+    },
+    {
+      "id": "usr_student_1794670439285",
+      "name": "naman",
+      "email": "naman@lpu.com",
+      "passwordHash": "$2b$10$MLZ7.CphcWqvTAhtuFlXXOJna7LdNjTB0bs.ZZeeiLKYQdfVS3tSC",
+      "role": "student",
+      "status": "active",
+      "emailVerified": false,
+      "onboardingCompleted": true,
+      "createdAt": "2026-11-14T15:33:59.285Z",
+      "updatedAt": "2026-11-14T15:35:10.314Z"
     }
   ],
   "sessions": [
@@ -80,6 +104,20 @@
       "role": "student",
       "expiresAt": 1794826771472,
       "createdAt": "2026-11-09T10:59:31.472Z"
+    },
+    {
+      "id": "sess_c701eb84cb88822a636b029575c154b44210961d569adc3ee74063af7b337fdd",
+      "userId": "usr_student_1794379860816",
+      "role": "student",
+      "expiresAt": 1794984660835,
+      "createdAt": "2026-11-11T06:51:00.835Z"
+    },
+    {
+      "id": "sess_691fe57f35059417df8eaa4ab5e109e80bc79bb9aca2999e80f0e524be44e5b5",
+      "userId": "usr_student_1794670439285",
+      "role": "student",
+      "expiresAt": 1795275239305,
+      "createdAt": "2026-11-14T15:33:59.305Z"
     }
   ],
   "verificationTokens": [
@@ -92,6 +130,26 @@
       "expiresAt": 1794308371462,
       "used": false,
       "createdAt": "2026-11-09T10:59:31.460Z"
+    },
+    {
+      "id": "vt_1794379860818",
+      "token": "7c5d71490d2296788d6aa72a443e11c370ed8c46c70cd7780693e14135d40eb9",
+      "userId": "usr_student_1794379860816",
+      "email": "bhumikaa205@gmail.com",
+      "type": "email_verification",
+      "expiresAt": 1794466260818,
+      "used": false,
+      "createdAt": "2026-11-11T06:51:00.815Z"
+    },
+    {
+      "id": "vt_1794670439287",
+      "token": "61970adc0ba44f602dde3d7607f418c081920401dcfb9090cab8b5a1a1d397db",
+      "userId": "usr_student_1794670439285",
+      "email": "naman@lpu.com",
+      "type": "email_verification",
+      "expiresAt": 1794756839287,
+      "used": false,
+      "createdAt": "2026-11-14T15:33:59.285Z"
     }
   ],
   "rateLimits": [],
@@ -239,6 +297,89 @@
       "updatedAt": "2026-11-09T11:00:08.983Z",
       "phone": "79734865454",
       "bio": "going with flow",
+      "location": "punjab",
+      "institution": "St. Jude Institute of Technology",
+      "department": "Computer Science & Engineering",
+      "degree": "B.Tech in Computer Science",
+      "graduationYear": 2026,
+      "cgpa": 8.8,
+      "avatarUrl": ""
+    },
+    {
+      "userId": "usr_student_1794379860816",
+      "skills": [
+        {
+          "id": "sk_imp_1794395420583_recxjp",
+          "name": "TypeScript",
+          "category": "technical",
+          "level": "intermediate",
+          "status": "self_declared"
+        },
+        {
+          "id": "sk_imp_1794395420583_9kx6w4",
+          "name": "React",
+          "category": "technical",
+          "level": "intermediate",
+          "status": "self_declared"
+        },
+        {
+          "id": "sk_imp_1794395420583_irrw3d",
+          "name": "Next.js",
+          "category": "technical",
+          "level": "intermediate",
+          "status": "self_declared"
+        },
+        {
+          "id": "sk_imp_1794395420583_lcvc3",
+          "name": "Node.js",
+          "category": "technical",
+          "level": "intermediate",
+          "status": "self_declared"
+        }
+      ],
+      "projects": [
+        {
+          "id": "proj_ext_1794395346187_1",
+          "title": "Real-time Collaborative Code Workspace",
+          "description": "Architected a low-latency WebSockets pairing editor with operational transformation, reducing synchronization latency by 42%.",
+          "technologies": [
+            "Next.js",
+            "TypeScript",
+            "WebSockets",
+            "Redis",
+            "Tailwind CSS"
+          ],
+          "githubUrl": "https://github.com/example/collaborative-editor",
+          "deploymentUrl": "https://editor-demo.example.com"
+        },
+        {
+          "id": "proj_ext_1794395346187_2",
+          "title": "Distributed Telemetry & Metrics Aggregator",
+          "description": "Engineered high-throughput event ingestion pipeline processing 12,000 requests/sec with zero packet loss.",
+          "technologies": [
+            "Node.js",
+            "Kafka",
+            "Docker",
+            "PostgreSQL"
+          ],
+          "githubUrl": "https://github.com/example/telemetry-aggregator"
+        }
+      ],
+      "experience": [],
+      "certifications": [],
+      "achievements": [],
+      "updatedAt": "2026-11-11T11:10:20.583Z"
+    },
+    {
+      "userId": "usr_student_1794670439285",
+      "skills": [],
+      "projects": [],
+      "experience": [],
+      "certifications": [],
+      "achievements": [],
+      "updatedAt": "2026-11-14T15:35:10.314Z",
+      "phone": "797\\3486337",
+      "bio": "kuch bhi",
       "location": "punjab",
       "institution": "St. Jude Institute of Technology",
       "department": "Computer Science & Engineering",
@@ -397,7 +538,165 @@
       "updatedAt": "2026-11-09T09:51:19.707Z"
     }
   ],
-  "resumes": [],
+  "resumes": [
+    {
+      "id": "res_1794395346195",
+      "userId": "usr_student_1794379860816",
+      "fileName": "naman8oct.pdf",
+      "fileSize": 111943,
+      "mimeType": "application/pdf",
+      "uploadedAt": "2026-11-11T11:09:06.195Z",
+      "isPrimary": true,
+      "extractedData": {
+        "education": [
+          {
+            "institution": "Indian Institute of Information Technology",
+            "degree": "Bachelor of Technology",
+            "department": "Computer Science & Engineering",
+            "graduationYear": 2026,
+            "cgpa": 8.8
+          }
+        ],
+        "experience": [
+          {
+            "id": "exp_ext_1794395346187_1",
+            "role": "Software Engineering Intern",
+            "company": "HyperScale Tech Labs",
+            "startDate": "2025-05",
+            "endDate": "2025-08",
+            "current": false,
+            "description": "Optimized client-side bundle size by 35% through dynamic imports and route-level code splitting."
+          }
+        ],
+        "projects": [
+          {
+            "id": "proj_ext_1794395346187_1",
+            "title": "Real-time Collaborative Code Workspace",
+            "description": "Architected a low-latency WebSockets pairing editor with operational transformation, reducing synchronization latency by 42%.",
+            "technologies": [
+              "Next.js",
+              "TypeScript",
+              "WebSockets",
+              "Redis",
+              "Tailwind CSS"
+            ],
+            "githubUrl": "https://github.com/example/collaborative-editor",
+            "deploymentUrl": "https://editor-demo.example.com"
+          },
+          {
+            "id": "proj_ext_1794395346187_2",
+            "title": "Distributed Telemetry & Metrics Aggregator",
+            "description": "Engineered high-throughput event ingestion pipeline processing 12,000 requests/sec with zero packet loss.",
+            "technologies": [
+              "Node.js",
+              "Kafka",
+              "Docker",
+              "PostgreSQL"
+            ],
+            "githubUrl": "https://github.com/example/telemetry-aggregator"
+          }
+        ],
+        "skills": [
+          {
+            "name": "TypeScript",
+            "category": "technical",
+            "confidence": 0.95
+          },
+          {
+            "name": "React",
+            "category": "technical",
+            "confidence": 0.95
+          },
+          {
+            "name": "Next.js",
+            "category": "technical",
+            "confidence": 0.95
+          },
+          {
+            "name": "Node.js",
+            "category": "technical",
+            "confidence": 0.95
+          }
+        ],
+        "rawText": "Sample parsed content for naman8oct.pdf detailing technical proficiencies in TypeScript, Next.js, React, Node.js, and distributed architectures."
+      },
+      "quality": {
+        "indicativeScore": 86,
+        "missingSections": [
+          "Comprehensive technical skills matrix"
+        ],
+        "weakBulletPoints": [],
+        "formattingIssues": [
+          {
+            "id": "fmt_1",
+            "type": "dates",
+            "description": "Standardize all date formats to consistent 'Month YYYY' (e.g., 'May 2025' instead of '05/25').",
+            "severity": "minor"
+          },
+          {
+            "id": "fmt_2",
+            "type": "layout",
+            "description": "Ensure margins are between 0.5 and 0.75 inches for optimal single-page readability.",
+            "severity": "minor"
+          }
+        ],
+        "actionVerbsCount": 3,
+        "metricsPresentCount": 3
+      },
+      "skillsIdentified": [
+        {
+          "name": "TypeScript",
+          "category": "technical",
+          "matchedInProfile": false
+        },
+        {
+          "name": "React",
+          "category": "technical",
+          "matchedInProfile": false
+        },
+        {
+          "name": "Next.js",
+          "category": "technical",
+          "matchedInProfile": false
+        },
+        {
+          "name": "Node.js",
+          "category": "technical",
+          "matchedInProfile": false
+        }
+      ],
+      "suggestions": [
+        {
+          "id": "sug_1",
+          "category": "Impact",
+          "title": "Quantify Engineering Outcomes with the Google X-Y-Z Formula",
+          "description": "Frame achievements as 'Accomplished [X], as measured by [Y], by doing [Z]'. Recruiters spend an average of 6 seconds scanning for quantifiable figures.",
+          "action": "Add measurable throughput, latency, user counts, or test coverage numbers to all project bullets."
+        },
+        {
+          "id": "sug_2",
+          "category": "ATS Optimization",
+          "title": "Include Categorized Skills Section for Parser Precision",
+          "description": "Automated ATS parsers classify keywords faster when categorized into 'Languages', 'Frameworks', 'Databases', and 'Developer Tools'.",
+          "action": "Organize skills under clear subsection headers rather than a single comma-separated block."
+        },
+        {
+          "id": "sug_3",
+          "category": "Content",
+          "title": "Add Direct GitHub & Live Deployment Links",
+          "description": "Technical recruiters prioritize candidates with clickable, active repository and demonstration links that verify code quality.",
+          "action": "Include live preview links for your top 2 projects."
+        },
+        {
+          "id": "sug_4",
+          "category": "Structure",
+          "title": "Keep Resume Strictly to One Page",
+          "description": "For students and early-career candidates under 5 years of experience, a single concise page demonstrates prioritization and clarity.",
+          "action": "Trim whitespace, tighten line height, and remove high school achievements."
+        }
+      ]
+    }
+  ],
   "careerDiscoveryResponses": [
     {
       "id": "cd_1794222127286",
@@ -658,6 +957,528 @@
         }
       ],
       "completedAt": "2026-11-09T11:02:07.286Z",
+      "isDraft": false
+    },
+    {
+      "id": "cd_1794380174957",
+      "userId": "usr_student_1794379860816",
+      "answers": {
+        "interests": [
+          "Web Development",
+          "Artificial Intelligence & ML"
+        ],
+        "workPreferences": [
+          "coding",
+          "analysis"
+        ],
+        "existingKnowledge": [
+          "JavaScript",
+          "Python",
+          "Git",
+          "React"
+        ],
+        "collegeProjects": [
+          "Academic Web App",
+          "Data Visualization Mini-Project"
+        ],
+        "preferredIndustries": [
+          "Technology & Software",
+          "Fintech"
+        ],
+        "careerGoals": "Aspiring to become a high-impact Software Engineer at an innovative technology firm.",
+        "updatedAt": "2026-11-11T06:56:14.956Z"
+      },
+      "recommendations": [
+        {
+          "roleId": "role_fullstack",
+          "title": "Fullstack Systems Engineer",
+          "interestCompatibility": 80,
+          "currentJobReadiness": 39,
+          "shortDescription": "Bridges client experiences with robust backend microservices, database schemas, and API contracts.",
+          "skillsToDevelop": [
+            "TypeScript",
+            "Node.js",
+            "PostgreSQL",
+            "REST APIs",
+            "Docker"
+          ],
+          "skillsAlreadyAcquired": [
+            "React",
+            "Git"
+          ],
+          "whyRecommended": [
+            "Your preferred working mode aligns with coding and analysis activities.",
+            "Direct alignment with your selected interest in Web Development.",
+            "You already have familiarity with React, Git, giving you a head-start."
+          ],
+          "typicalRoles": [
+            "Fullstack Engineer",
+            "Software Development Engineer (SDE-1)"
+          ],
+          "averageEntrySalary": "₹10 - 18 LPA",
+          "marketDemand": "Very High"
+        },
+        {
+          "roleId": "role_data_ai",
+          "title": "AI / Machine Learning Engineer",
+          "interestCompatibility": 67,
+          "currentJobReadiness": 30,
+          "shortDescription": "Develops machine learning models, fine-tunes transformers, and deploys high-throughput predictive inference pipelines.",
+          "skillsToDevelop": [
+            "PyTorch",
+            "TensorFlow",
+            "Pandas",
+            "Scikit-Learn",
+            "FastAPI",
+            "SQL"
+          ],
+          "skillsAlreadyAcquired": [
+            "Python"
+          ],
+          "whyRecommended": [
+            "Your preferred working mode aligns with analysis and research and coding activities.",
+            "Direct alignment with your selected interest in Artificial Intelligence & ML.",
+            "You already have familiarity with Python, giving you a head-start."
+          ],
+          "typicalRoles": [
+            "Junior ML Engineer",
+            "Applied AI Scientist",
+            "NLP Researcher"
+          ],
+          "averageEntrySalary": "₹12 - 20 LPA",
+          "marketDemand": "Very High"
+        },
+        {
+          "roleId": "role_frontend",
+          "title": "Frontend Engineer / UI Specialist",
+          "interestCompatibility": 60,
+          "currentJobReadiness": 39,
+          "shortDescription": "Specializes in building responsive web applications, design systems, and client-side performance architectures.",
+          "skillsToDevelop": [
+            "TypeScript",
+            "Next.js",
+            "Tailwind CSS",
+            "HTML5",
+            "CSS3"
+          ],
+          "skillsAlreadyAcquired": [
+            "React",
+            "Git"
+          ],
+          "whyRecommended": [
+            "Your preferred working mode aligns with coding and designing activities.",
+            "Direct alignment with your selected interest in Web Development.",
+            "You already have familiarity with React, Git, giving you a head-start."
+          ],
+          "typicalRoles": [
+            "Junior Frontend Developer",
+            "UI Engineer",
+            "Web Application Developer"
+          ],
+          "averageEntrySalary": "₹8 - 14 LPA",
+          "marketDemand": "Very High"
+        },
+        {
+          "roleId": "role_cloud_devops",
+          "title": "Cloud & DevOps Infrastructure Engineer",
+          "interestCompatibility": 57,
+          "currentJobReadiness": 30,
+          "shortDescription": "Automates CI/CD deployment pipelines, container orchestration, and multi-region cloud resilience.",
+          "skillsToDevelop": [
+            "Docker",
+            "Kubernetes",
+            "Linux",
+            "AWS / GCP",
+            "CI/CD",
+            "Terraform"
+          ],
+          "skillsAlreadyAcquired": [
+            "Bash / Python"
+          ],
+          "whyRecommended": [
+            "Your preferred working mode aligns with coding and management and analysis activities.",
+            "You already have familiarity with Bash / Python, giving you a head-start."
+          ],
+          "typicalRoles": [
+            "Junior Cloud Engineer",
+            "DevOps Engineer",
+            "Site Reliability Engineer (SRE)"
+          ],
+          "averageEntrySalary": "₹9 - 16 LPA",
+          "marketDemand": "Very High"
+        },
+        {
+          "roleId": "role_cybersecurity",
+          "title": "Cybersecurity & Application Security Analyst",
+          "interestCompatibility": 57,
+          "currentJobReadiness": 31,
+          "shortDescription": "Audits software attack surfaces, secures cryptographic protocols, and configures threat detection systems.",
+          "skillsToDevelop": [
+            "Linux",
+            "Network Protocols",
+            "Penetration Testing",
+            "OWASP Top 10",
+            "Cryptography"
+          ],
+          "skillsAlreadyAcquired": [
+            "Python"
+          ],
+          "whyRecommended": [
+            "Your preferred working mode aligns with research and analysis and coding activities.",
+            "You already have familiarity with Python, giving you a head-start."
+          ],
+          "typicalRoles": [
+            "SOC Analyst",
+            "Security Engineer",
+            "Vulnerability Analyst"
+          ],
+          "averageEntrySalary": "₹8 - 15 LPA",
+          "marketDemand": "High"
+        },
+        {
+          "roleId": "role_data_analyst",
+          "title": "Data Analyst & Business Intelligence Specialist",
+          "interestCompatibility": 50,
+          "currentJobReadiness": 31,
+          "shortDescription": "Transforms operational raw data into actionable dashboards, cohort analysis, and executive strategic roadmaps.",
+          "skillsToDevelop": [
+            "SQL",
+            "PowerBI / Tableau",
+            "Statistics",
+            "Excel",
+            "Data Modeling"
+          ],
+          "skillsAlreadyAcquired": [
+            "Python"
+          ],
+          "whyRecommended": [
+            "Your preferred working mode aligns with analysis and research activities.",
+            "You already have familiarity with Python, giving you a head-start."
+          ],
+          "typicalRoles": [
+            "Associate Data Analyst",
+            "Product Analyst",
+            "BI Developer"
+          ],
+          "averageEntrySalary": "₹7 - 12 LPA",
+          "marketDemand": "High"
+        },
+        {
+          "roleId": "role_tech_pm",
+          "title": "Associate Product Manager (Technical PM)",
+          "interestCompatibility": 43,
+          "currentJobReadiness": 22,
+          "shortDescription": "Defines product roadmaps, prioritizes sprint backlogs, and aligns engineering teams with customer needs.",
+          "skillsToDevelop": [
+            "Agile & Scrum",
+            "User Story Mapping",
+            "Data Analysis",
+            "Roadmapping",
+            "Cross-Functional Leadership"
+          ],
+          "skillsAlreadyAcquired": [],
+          "whyRecommended": [
+            "Your preferred working mode aligns with management and analysis and research activities.",
+            "High growth upside: learning Agile & Scrum & User Story Mapping will dramatically accelerate readiness."
+          ],
+          "typicalRoles": [
+            "Associate Product Manager (APM)",
+            "Product Owner",
+            "Tech Program Coordinator"
+          ],
+          "averageEntrySalary": "₹10 - 18 LPA",
+          "marketDemand": "High"
+        },
+        {
+          "roleId": "role_product_designer",
+          "title": "Product Designer (UI/UX)",
+          "interestCompatibility": 30,
+          "currentJobReadiness": 22,
+          "shortDescription": "Designs intuitive user journeys, wireframes, interaction systems, and conducts user research to solve product problems.",
+          "skillsToDevelop": [
+            "Figma",
+            "Design Systems",
+            "Prototyping",
+            "User Research",
+            "Wireframing",
+            "Usability Testing"
+          ],
+          "skillsAlreadyAcquired": [],
+          "whyRecommended": [
+            "Your preferred working mode aligns with designing and research activities.",
+            "High growth upside: learning Figma & Design Systems will dramatically accelerate readiness."
+          ],
+          "typicalRoles": [
+            "Junior Product Designer",
+            "UI/UX Designer",
+            "Interaction Designer"
+          ],
+          "averageEntrySalary": "₹7 - 13 LPA",
+          "marketDemand": "High"
+        }
+      ],
+      "completedAt": "2026-11-11T06:56:14.957Z",
+      "isDraft": false
+    },
+    {
+      "id": "cd_1794671362821",
+      "userId": "usr_student_1794670439285",
+      "answers": {
+        "interests": [
+          "Web Development",
+          "Artificial Intelligence & ML"
+        ],
+        "workPreferences": [
+          "coding",
+          "analysis"
+        ],
+        "existingKnowledge": [
+          "JavaScript",
+          "Python",
+          "Git",
+          "React"
+        ],
+        "collegeProjects": [
+          "Academic Web App",
+          "Data Visualization Mini-Project"
+        ],
+        "preferredIndustries": [
+          "Technology & Software",
+          "Fintech"
+        ],
+        "careerGoals": "Aspiring to become a high-impact Software Engineer at an innovative technology firm.",
+        "updatedAt": "2026-11-14T15:49:22.820Z"
+      },
+      "recommendations": [
+        {
+          "roleId": "role_fullstack",
+          "title": "Fullstack Systems Engineer",
+          "interestCompatibility": 80,
+          "currentJobReadiness": 39,
+          "shortDescription": "Bridges client experiences with robust backend microservices, database schemas, and API contracts.",
+          "skillsToDevelop": [
+            "TypeScript",
+            "Node.js",
+            "PostgreSQL",
+            "REST APIs",
+            "Docker"
+          ],
+          "skillsAlreadyAcquired": [
+            "React",
+            "Git"
+          ],
+          "whyRecommended": [
+            "Your preferred working mode aligns with coding and analysis activities.",
+            "Direct alignment with your selected interest in Web Development.",
+            "You already have familiarity with React, Git, giving you a head-start."
+          ],
+          "typicalRoles": [
+            "Fullstack Engineer",
+            "Software Development Engineer (SDE-1)"
+          ],
+          "averageEntrySalary": "₹10 - 18 LPA",
+          "marketDemand": "Very High"
+        },
+        {
+          "roleId": "role_data_ai",
+          "title": "AI / Machine Learning Engineer",
+          "interestCompatibility": 67,
+          "currentJobReadiness": 30,
+          "shortDescription": "Develops machine learning models, fine-tunes transformers, and deploys high-throughput predictive inference pipelines.",
+          "skillsToDevelop": [
+            "PyTorch",
+            "TensorFlow",
+            "Pandas",
+            "Scikit-Learn",
+            "FastAPI",
+            "SQL"
+          ],
+          "skillsAlreadyAcquired": [
+            "Python"
+          ],
+          "whyRecommended": [
+            "Your preferred working mode aligns with analysis and research and coding activities.",
+            "Direct alignment with your selected interest in Artificial Intelligence & ML.",
+            "You already have familiarity with Python, giving you a head-start."
+          ],
+          "typicalRoles": [
+            "Junior ML Engineer",
+            "Applied AI Scientist",
+            "NLP Researcher"
+          ],
+          "averageEntrySalary": "₹12 - 20 LPA",
+          "marketDemand": "Very High"
+        },
+        {
+          "roleId": "role_frontend",
+          "title": "Frontend Engineer / UI Specialist",
+          "interestCompatibility": 60,
+          "currentJobReadiness": 39,
+          "shortDescription": "Specializes in building responsive web applications, design systems, and client-side performance architectures.",
+          "skillsToDevelop": [
+            "TypeScript",
+            "Next.js",
+            "Tailwind CSS",
+            "HTML5",
+            "CSS3"
+          ],
+          "skillsAlreadyAcquired": [
+            "React",
+            "Git"
+          ],
+          "whyRecommended": [
+            "Your preferred working mode aligns with coding and designing activities.",
+            "Direct alignment with your selected interest in Web Development.",
+            "You already have familiarity with React, Git, giving you a head-start."
+          ],
+          "typicalRoles": [
+            "Junior Frontend Developer",
+            "UI Engineer",
+            "Web Application Developer"
+          ],
+          "averageEntrySalary": "₹8 - 14 LPA",
+          "marketDemand": "Very High"
+        },
+        {
+          "roleId": "role_cloud_devops",
+          "title": "Cloud & DevOps Infrastructure Engineer",
+          "interestCompatibility": 57,
+          "currentJobReadiness": 30,
+          "shortDescription": "Automates CI/CD deployment pipelines, container orchestration, and multi-region cloud resilience.",
+          "skillsToDevelop": [
+            "Docker",
+            "Kubernetes",
+            "Linux",
+            "AWS / GCP",
+            "CI/CD",
+            "Terraform"
+          ],
+          "skillsAlreadyAcquired": [
+            "Bash / Python"
+          ],
+          "whyRecommended": [
+            "Your preferred working mode aligns with coding and management and analysis activities.",
+            "You already have familiarity with Bash / Python, giving you a head-start."
+          ],
+          "typicalRoles": [
+            "Junior Cloud Engineer",
+            "DevOps Engineer",
+            "Site Reliability Engineer (SRE)"
+          ],
+          "averageEntrySalary": "₹9 - 16 LPA",
+          "marketDemand": "Very High"
+        },
+        {
+          "roleId": "role_cybersecurity",
+          "title": "Cybersecurity & Application Security Analyst",
+          "interestCompatibility": 57,
+          "currentJobReadiness": 31,
+          "shortDescription": "Audits software attack surfaces, secures cryptographic protocols, and configures threat detection systems.",
+          "skillsToDevelop": [
+            "Linux",
+            "Network Protocols",
+            "Penetration Testing",
+            "OWASP Top 10",
+            "Cryptography"
+          ],
+          "skillsAlreadyAcquired": [
+            "Python"
+          ],
+          "whyRecommended": [
+            "Your preferred working mode aligns with research and analysis and coding activities.",
+            "You already have familiarity with Python, giving you a head-start."
+          ],
+          "typicalRoles": [
+            "SOC Analyst",
+            "Security Engineer",
+            "Vulnerability Analyst"
+          ],
+          "averageEntrySalary": "₹8 - 15 LPA",
+          "marketDemand": "High"
+        },
+        {
+          "roleId": "role_data_analyst",
+          "title": "Data Analyst & Business Intelligence Specialist",
+          "interestCompatibility": 50,
+          "currentJobReadiness": 31,
+          "shortDescription": "Transforms operational raw data into actionable dashboards, cohort analysis, and executive strategic roadmaps.",
+          "skillsToDevelop": [
+            "SQL",
+            "PowerBI / Tableau",
+            "Statistics",
+            "Excel",
+            "Data Modeling"
+          ],
+          "skillsAlreadyAcquired": [
+            "Python"
+          ],
+          "whyRecommended": [
+            "Your preferred working mode aligns with analysis and research activities.",
+            "You already have familiarity with Python, giving you a head-start."
+          ],
+          "typicalRoles": [
+            "Associate Data Analyst",
+            "Product Analyst",
+            "BI Developer"
+          ],
+          "averageEntrySalary": "₹7 - 12 LPA",
+          "marketDemand": "High"
+        },
+        {
+          "roleId": "role_tech_pm",
+          "title": "Associate Product Manager (Technical PM)",
+          "interestCompatibility": 43,
+          "currentJobReadiness": 22,
+          "shortDescription": "Defines product roadmaps, prioritizes sprint backlogs, and aligns engineering teams with customer needs.",
+          "skillsToDevelop": [
+            "Agile & Scrum",
+            "User Story Mapping",
+            "Data Analysis",
+            "Roadmapping",
+            "Cross-Functional Leadership"
+          ],
+          "skillsAlreadyAcquired": [],
+          "whyRecommended": [
+            "Your preferred working mode aligns with management and analysis and research activities.",
+            "High growth upside: learning Agile & Scrum & User Story Mapping will dramatically accelerate readiness."
+          ],
+          "typicalRoles": [
+            "Associate Product Manager (APM)",
+            "Product Owner",
+            "Tech Program Coordinator"
+          ],
+          "averageEntrySalary": "₹10 - 18 LPA",
+          "marketDemand": "High"
+        },
+        {
+          "roleId": "role_product_designer",
+          "title": "Product Designer (UI/UX)",
+          "interestCompatibility": 30,
+          "currentJobReadiness": 22,
+          "shortDescription": "Designs intuitive user journeys, wireframes, interaction systems, and conducts user research to solve product problems.",
+          "skillsToDevelop": [
+            "Figma",
+            "Design Systems",
+            "Prototyping",
+            "User Research",
+            "Wireframing",
+            "Usability Testing"
+          ],
+          "skillsAlreadyAcquired": [],
+          "whyRecommended": [
+            "Your preferred working mode aligns with designing and research activities.",
+            "High growth upside: learning Figma & Design Systems will dramatically accelerate readiness."
+          ],
+          "typicalRoles": [
+            "Junior Product Designer",
+            "UI/UX Designer",
+            "Interaction Designer"
+          ],
+          "averageEntrySalary": "₹7 - 13 LPA",
+          "marketDemand": "High"
+        }
+      ],
+      "completedAt": "2026-11-14T15:49:22.821Z",
       "isDraft": false
     }
   ],
@@ -1380,6 +2201,19 @@
       "passed": true,
       "proficiencyLevel": "Advanced",
       "attemptedAt": "2026-11-02T16:00:00.000Z"
+    },
+    {
+      "id": "att_1794395496581_42ud",
+      "userId": "usr_student_1794379860816",
+      "quizId": "quiz_prog_1",
+      "domain": "programming",
+      "skillName": "TypeScript",
+      "score": 2,
+      "totalQuestions": 5,
+      "percentage": 40,
+      "passed": false,
+      "proficiencyLevel": "Beginner",
+      "attemptedAt": "2026-11-11T11:11:36.581Z"
     }
   ],
   "roadmaps": [
@@ -1546,9 +2380,437 @@
           "status": "pending"
         }
       ]
+    },
+    {
+      "id": "rdmp_usr_student_1794379860816_1794380171753",
+      "userId": "usr_student_1794379860816",
+      "careerRoleId": "cr_frontend",
+      "careerRoleTitle": "Frontend & Web Systems Engineer",
+      "currentModuleIndex": 2,
+      "progressPercentage": 50,
+      "milestonesCompleted": 2,
+      "totalMilestones": 4,
+      "createdAt": "2026-11-11T06:56:11.753Z",
+      "updatedAt": "2026-11-11T06:56:11.753Z",
+      "modules": [
+        {
+          "id": "mod_fe_1",
+          "title": "Modern JavaScript & TypeScript Architecture",
+          "description": "Master event loops, async execution, closures, type narrowing, and strict production interfaces.",
+          "order": 1,
+          "skillsCovered": [
+            "JavaScript",
+            "TypeScript",
+            "Async Concurrency"
+          ],
+          "objectives": [
+            "Understand microtask queue and event loop scheduling",
+            "Write generic discriminated unions and exhaustive matchers",
+            "Implement custom event buses and observer patterns"
+          ],
+          "resources": [
+            {
+              "title": "TypeScript Deep Dive Handbook",
+              "url": "https://www.typescriptlang.org/docs/",
+              "type": "documentation"
+            },
+            {
+              "title": "Event Loop Visualized",
+              "url": "https://javascript.info/event-loop",
+              "type": "guide"
+            }
+          ],
+          "project": {
+            "id": "prj_fe_1",
+            "title": "Type-Safe Event Bus & State Store",
+            "description": "Build an in-memory event-driven reactive state container with full TypeScript inference.",
+            "deliverables": "GitHub repository with 100% test coverage and typed API interface",
+            "estimatedHours": 12
+          },
+          "assessmentQuizId": "quiz_prog_1",
+          "status": "completed",
+          "completedAt": "2026-10-25T14:30:00.000Z",
+          "addedToResume": true
+        },
+        {
+          "id": "mod_fe_2",
+          "title": "React Component Lifecycle, Hooks & Virtual DOM",
+          "description": "Deep dive into React 19 reconciliation, memoization strategies, custom hooks, and state isolation.",
+          "order": 2,
+          "skillsCovered": [
+            "React",
+            "State Management",
+            "Component Design"
+          ],
+          "objectives": [
+            "Optimize rendering trees using useMemo, useCallback, and transitions",
+            "Build resilient custom hooks for data fetching and debouncing",
+            "Prevent memory leaks and state race conditions in async operations"
+          ],
+          "resources": [
+            {
+              "title": "React Official Docs: Managing State",
+              "url": "https://react.dev/learn/managing-state",
+              "type": "documentation"
+            },
+            {
+              "title": "React Architecture Patterns",
+              "url": "https://patterns.dev/react",
+              "type": "guide"
+            }
+          ],
+          "project": {
+            "id": "prj_fe_2",
+            "title": "Telemetry Performance Dashboard",
+            "description": "Build a responsive live data dashboard with dynamic filter widgets, virtualization, and zero render jank.",
+            "deliverables": "Interactive component demo with performance benchmark metrics",
+            "estimatedHours": 18
+          },
+          "assessmentQuizId": "quiz_web_1",
+          "status": "completed",
+          "completedAt": "2026-11-02T16:00:00.000Z",
+          "addedToResume": true
+        },
+        {
+          "id": "mod_fe_3",
+          "title": "Next.js App Router, SSR & API Integrations",
+          "description": "Architect full-stack hybrid web applications with Next.js 16, React Server Components, and streaming.",
+          "order": 3,
+          "skillsCovered": [
+            "Next.js",
+            "Server Components",
+            "API Architecture"
+          ],
+          "objectives": [
+            "Implement Server Actions and partial prerendering",
+            "Structure parallel and intercepted routes for modals",
+            "Ensure sub-second Largest Contentful Paint (LCP) benchmarks"
+          ],
+          "resources": [
+            {
+              "title": "Next.js App Router Foundations",
+              "url": "https://nextjs.org/docs/app",
+              "type": "documentation"
+            },
+            {
+              "title": "Core Web Vitals Engineering Guide",
+              "url": "https://web.dev/vitals/",
+              "type": "guide"
+            }
+          ],
+          "project": {
+            "id": "prj_fe_3",
+            "title": "Progressive Resume Builder & Live PDF Engine",
+            "description": "Build an interactive multi-template resume preview engine with local draft persistence and PDF export.",
+            "deliverables": "Full-stack Next.js application with split-screen preview and verified data imports",
+            "estimatedHours": 24
+          },
+          "status": "ongoing"
+        },
+        {
+          "id": "mod_fe_4",
+          "title": "Distributed Systems, Web Security & Senior Interview Prep",
+          "description": "Master frontend security (CSP, CSRF, XSS), CI/CD pipelines, Docker deployment, and system design interviews.",
+          "order": 4,
+          "skillsCovered": [
+            "Web Security",
+            "CI/CD",
+            "System Design"
+          ],
+          "objectives": [
+            "Configure Content Security Policies and sanitize user inputs",
+            "Design scalable real-time feed systems for millions of concurrent users",
+            "Ace technical whiteboard and code pair programming interviews"
+          ],
+          "resources": [
+            {
+              "title": "OWASP Top Ten Web Application Security",
+              "url": "https://owasp.org/www-project-top-ten/",
+              "type": "documentation"
+            },
+            {
+              "title": "Frontend System Design Handbook",
+              "url": "https://greatfrontend.com",
+              "type": "guide"
+            }
+          ],
+          "project": {
+            "id": "prj_fe_4",
+            "title": "Micro-Frontend Orchestration Gateway",
+            "description": "Develop a federated module loader with isolated sandboxes and role-based access verification.",
+            "deliverables": "End-to-end repository with automated GitHub Actions CI pipeline and deployment",
+            "estimatedHours": 30
+          },
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "rdmp_usr_student_1794670439285_1794671353249",
+      "userId": "usr_student_1794670439285",
+      "careerRoleId": "cr_frontend",
+      "careerRoleTitle": "Frontend & Web Systems Engineer",
+      "currentModuleIndex": 2,
+      "progressPercentage": 50,
+      "milestonesCompleted": 2,
+      "totalMilestones": 4,
+      "createdAt": "2026-11-14T15:49:13.249Z",
+      "updatedAt": "2026-11-14T15:49:13.249Z",
+      "modules": [
+        {
+          "id": "mod_fe_1",
+          "title": "Modern JavaScript & TypeScript Architecture",
+          "description": "Master event loops, async execution, closures, type narrowing, and strict production interfaces.",
+          "order": 1,
+          "skillsCovered": [
+            "JavaScript",
+            "TypeScript",
+            "Async Concurrency"
+          ],
+          "objectives": [
+            "Understand microtask queue and event loop scheduling",
+            "Write generic discriminated unions and exhaustive matchers",
+            "Implement custom event buses and observer patterns"
+          ],
+          "resources": [
+            {
+              "title": "TypeScript Deep Dive Handbook",
+              "url": "https://www.typescriptlang.org/docs/",
+              "type": "documentation"
+            },
+            {
+              "title": "Event Loop Visualized",
+              "url": "https://javascript.info/event-loop",
+              "type": "guide"
+            }
+          ],
+          "project": {
+            "id": "prj_fe_1",
+            "title": "Type-Safe Event Bus & State Store",
+            "description": "Build an in-memory event-driven reactive state container with full TypeScript inference.",
+            "deliverables": "GitHub repository with 100% test coverage and typed API interface",
+            "estimatedHours": 12
+          },
+          "assessmentQuizId": "quiz_prog_1",
+          "status": "completed",
+          "completedAt": "2026-10-25T14:30:00.000Z",
+          "addedToResume": true
+        },
+        {
+          "id": "mod_fe_2",
+          "title": "React Component Lifecycle, Hooks & Virtual DOM",
+          "description": "Deep dive into React 19 reconciliation, memoization strategies, custom hooks, and state isolation.",
+          "order": 2,
+          "skillsCovered": [
+            "React",
+            "State Management",
+            "Component Design"
+          ],
+          "objectives": [
+            "Optimize rendering trees using useMemo, useCallback, and transitions",
+            "Build resilient custom hooks for data fetching and debouncing",
+            "Prevent memory leaks and state race conditions in async operations"
+          ],
+          "resources": [
+            {
+              "title": "React Official Docs: Managing State",
+              "url": "https://react.dev/learn/managing-state",
+              "type": "documentation"
+            },
+            {
+              "title": "React Architecture Patterns",
+              "url": "https://patterns.dev/react",
+              "type": "guide"
+            }
+          ],
+          "project": {
+            "id": "prj_fe_2",
+            "title": "Telemetry Performance Dashboard",
+            "description": "Build a responsive live data dashboard with dynamic filter widgets, virtualization, and zero render jank.",
+            "deliverables": "Interactive component demo with performance benchmark metrics",
+            "estimatedHours": 18
+          },
+          "assessmentQuizId": "quiz_web_1",
+          "status": "completed",
+          "completedAt": "2026-11-02T16:00:00.000Z",
+          "addedToResume": true
+        },
+        {
+          "id": "mod_fe_3",
+          "title": "Next.js App Router, SSR & API Integrations",
+          "description": "Architect full-stack hybrid web applications with Next.js 16, React Server Components, and streaming.",
+          "order": 3,
+          "skillsCovered": [
+            "Next.js",
+            "Server Components",
+            "API Architecture"
+          ],
+          "objectives": [
+            "Implement Server Actions and partial prerendering",
+            "Structure parallel and intercepted routes for modals",
+            "Ensure sub-second Largest Contentful Paint (LCP) benchmarks"
+          ],
+          "resources": [
+            {
+              "title": "Next.js App Router Foundations",
+              "url": "https://nextjs.org/docs/app",
+              "type": "documentation"
+            },
+            {
+              "title": "Core Web Vitals Engineering Guide",
+              "url": "https://web.dev/vitals/",
+              "type": "guide"
+            }
+          ],
+          "project": {
+            "id": "prj_fe_3",
+            "title": "Progressive Resume Builder & Live PDF Engine",
+            "description": "Build an interactive multi-template resume preview engine with local draft persistence and PDF export.",
+            "deliverables": "Full-stack Next.js application with split-screen preview and verified data imports",
+            "estimatedHours": 24
+          },
+          "status": "ongoing"
+        },
+        {
+          "id": "mod_fe_4",
+          "title": "Distributed Systems, Web Security & Senior Interview Prep",
+          "description": "Master frontend security (CSP, CSRF, XSS), CI/CD pipelines, Docker deployment, and system design interviews.",
+          "order": 4,
+          "skillsCovered": [
+            "Web Security",
+            "CI/CD",
+            "System Design"
+          ],
+          "objectives": [
+            "Configure Content Security Policies and sanitize user inputs",
+            "Design scalable real-time feed systems for millions of concurrent users",
+            "Ace technical whiteboard and code pair programming interviews"
+          ],
+          "resources": [
+            {
+              "title": "OWASP Top Ten Web Application Security",
+              "url": "https://owasp.org/www-project-top-ten/",
+              "type": "documentation"
+            },
+            {
+              "title": "Frontend System Design Handbook",
+              "url": "https://greatfrontend.com",
+              "type": "guide"
+            }
+          ],
+          "project": {
+            "id": "prj_fe_4",
+            "title": "Micro-Frontend Orchestration Gateway",
+            "description": "Develop a federated module loader with isolated sandboxes and role-based access verification.",
+            "deliverables": "End-to-end repository with automated GitHub Actions CI pipeline and deployment",
+            "estimatedHours": 30
+          },
+          "status": "pending"
+        }
+      ]
     }
   ],
-  "resumeDocuments": [],
+  "resumeDocuments": [
+    {
+      "id": "res_bld_1794370617096",
+      "userId": "usr_student_1794221971460",
+      "title": "Frontend Systems Engineer (Primary)",
+      "targetRole": "Frontend Engineer",
+      "template": "modern-minimal",
+      "personalInfo": {
+        "fullName": "bhumika",
+        "email": "bhumikaa2005@gmail.com",
+        "phone": "79734865454",
+        "location": "punjab",
+        "portfolioUrl": "https://alexmorgan.dev",
+        "linkedinUrl": "https://linkedin.com/in/alexmorgan",
+        "githubUrl": "https://github.com/alexmorgan",
+        "summary": "going with flow"
+      },
+      "education": [
+        {
+          "institution": "St. Jude Institute of Technology",
+          "degree": "B.Tech in Computer Science",
+          "department": "Computer Science & Engineering",
+          "graduationYear": 2026,
+          "cgpa": 8.8
+        }
+      ],
+      "experience": [],
+      "projects": [],
+      "skills": [],
+      "certifications": [],
+      "achievements": [],
+      "createdAt": "2026-11-11T04:16:57.096Z",
+      "updatedAt": "2026-11-11T04:16:57.102Z"
+    },
+    {
+      "id": "res_bld_1794380159401",
+      "userId": "usr_student_1794379860816",
+      "title": "Frontend Systems Engineer (Primary)",
+      "targetRole": "Frontend Engineer",
+      "template": "modern-minimal",
+      "personalInfo": {
+        "fullName": "bhuu",
+        "email": "bhumikaa205@gmail.com",
+        "phone": "+1 (555) 382-9012",
+        "location": "San Francisco, CA",
+        "portfolioUrl": "https://alexmorgan.dev",
+        "linkedinUrl": "https://linkedin.com/in/alexmorgan",
+        "githubUrl": "https://github.com/alexmorgan",
+        "summary": "Passionate software engineer experienced in building scalable web architectures, design systems, and resilient frontend telemetry."
+      },
+      "education": [
+        {
+          "institution": "St. Jude Institute of Technology",
+          "degree": "B.Tech in Computer Science",
+          "department": "Computer Science & Engineering",
+          "graduationYear": 2026,
+          "cgpa": 8.92
+        }
+      ],
+      "experience": [],
+      "projects": [],
+      "skills": [],
+      "certifications": [],
+      "achievements": [],
+      "createdAt": "2026-11-11T06:55:59.401Z",
+      "updatedAt": "2026-11-11T11:10:45.018Z"
+    },
+    {
+      "id": "res_bld_1794671330938",
+      "userId": "usr_student_1794670439285",
+      "title": "Frontend Systems Engineer (Primary)",
+      "targetRole": "Frontend Engineer",
+      "template": "modern-minimal",
+      "personalInfo": {
+        "fullName": "naman",
+        "email": "naman@lpu.com",
+        "phone": "797\\3486337",
+        "location": "punjab",
+        "portfolioUrl": "https://alexmorgan.dev",
+        "linkedinUrl": "https://linkedin.com/in/alexmorgan",
+        "githubUrl": "https://github.com/alexmorgan",
+        "summary": "kuch bhi"
+      },
+      "education": [
+        {
+          "institution": "St. Jude Institute of Technology",
+          "degree": "B.Tech in Computer Science",
+          "department": "Computer Science & Engineering",
+          "graduationYear": 2026,
+          "cgpa": 8.8
+        }
+      ],
+      "experience": [],
+      "projects": [],
+      "skills": [],
+      "certifications": [],
+      "achievements": [],
+      "createdAt": "2026-11-14T15:48:50.938Z",
+      "updatedAt": "2026-11-14T15:48:50.938Z"
+    }
+  ],
   "notifications": [
     {
       "id": "notif_1",

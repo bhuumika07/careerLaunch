@@ -24,7 +24,7 @@ export function SectionHeading({
     return (
       <Component
         className={cn(
-          "font-heading font-bold tracking-tight text-cream",
+          "font-heading font-bold tracking-tight text-foreground",
           sizeClasses[Component],
           className
         )}
@@ -44,7 +44,7 @@ export function SectionHeading({
     return (
       <Component
         className={cn(
-          "font-heading font-bold tracking-tight text-cream",
+          "font-heading font-bold tracking-tight text-foreground",
           sizeClasses[Component],
           className
         )}
@@ -64,7 +64,7 @@ export function SectionHeading({
   return (
     <Component
       className={cn(
-        "font-heading font-bold tracking-tight text-cream",
+        "font-heading font-bold tracking-tight text-foreground",
         sizeClasses[Component],
         className
       )}
@@ -73,7 +73,7 @@ export function SectionHeading({
         const isMatch = highlightLookup.has(part.toLowerCase())
         if (isMatch) {
           return (
-            <span key={index} className="text-sand">
+            <span key={index} className="text-accent-text">
               {part}
             </span>
           )

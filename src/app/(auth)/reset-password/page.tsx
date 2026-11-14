@@ -74,29 +74,29 @@ function ResetPasswordForm() {
   return (
     <div className="w-full space-y-6">
       <div className="space-y-1">
-        <h1 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-cream">
+        <h1 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
           Create New Password
         </h1>
-        <p className="text-xs sm:text-sm text-cream/60">
+        <p className="text-xs sm:text-sm text-muted-foreground">
           Ensure your new password meets institutional security requirements.
         </p>
       </div>
 
       {error && (
-        <div className="p-3.5 rounded-xl border border-danger/40 bg-danger/10 text-cream text-xs flex items-center gap-2.5">
+        <div className="p-3.5 rounded-xl border border-danger/50 bg-danger/15 text-foreground text-xs flex items-center gap-2.5">
           <AlertCircle className="size-4 text-danger shrink-0" />
           <span>{error}</span>
         </div>
       )}
 
       {success ? (
-        <div className="p-6 rounded-2xl border border-sand/30 bg-white/[0.04] space-y-4 text-center">
-          <div className="size-12 rounded-full bg-sand/20 text-sand flex items-center justify-center mx-auto">
-            <CheckCircle2 className="size-6 text-sand" />
+        <div className="p-6 rounded-2xl border border-success/40 bg-success/10 space-y-4 text-center">
+          <div className="size-12 rounded-full bg-success/20 text-success flex items-center justify-center mx-auto">
+            <CheckCircle2 className="size-6 text-success" />
           </div>
           <div className="space-y-1">
-            <h3 className="font-heading text-lg font-bold text-cream">Password Reset Complete</h3>
-            <p className="text-xs text-cream/70">
+            <h3 className="font-heading text-lg font-bold text-foreground">Password Reset Complete</h3>
+            <p className="text-xs text-muted-foreground">
               Your password has been securely updated. Redirecting to sign in...
             </p>
           </div>
@@ -111,7 +111,7 @@ function ResetPasswordForm() {
           {/* New Password */}
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
-              <Label htmlFor="new-password" className="text-xs font-semibold text-cream/80 uppercase tracking-wider">
+              <Label htmlFor="new-password" className="text-xs font-semibold text-foreground/85 uppercase tracking-wider">
                 New Password
               </Label>
               {password.length > 0 && (
@@ -121,7 +121,7 @@ function ResetPasswordForm() {
               )}
             </div>
             <div className="relative">
-              <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-cream/40" />
+              <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
               <Input
                 id="new-password"
                 type={showPassword ? "text" : "password"}
@@ -129,12 +129,12 @@ function ResetPasswordForm() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Min. 8 characters"
-                className="pl-10 pr-10 h-11 bg-white/[0.05] border-cream/15 text-cream placeholder:text-cream/35 rounded-xl focus:border-sand"
+                className="pl-10 pr-10 h-11 bg-white/[0.05] border-border bg-white/[0.05] text-foreground placeholder:text-muted-foreground/80 rounded-xl focus:border-ring"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-cream/40 hover:text-cream cursor-pointer"
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer"
                 aria-label={showPassword ? "Hide password" : "Show password"}
               >
                 {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
@@ -153,7 +153,7 @@ function ResetPasswordForm() {
                         backgroundColor:
                           index <= passwordStrength.score - 1
                             ? passwordStrength.color
-                            : "rgba(232, 223, 212, 0.12)",
+                            : "var(--border)",
                       }}
                     />
                   ))}
@@ -164,11 +164,11 @@ function ResetPasswordForm() {
 
           {/* Confirm Password */}
           <div className="space-y-1.5">
-            <Label htmlFor="confirm-new-password" className="text-xs font-semibold text-cream/80 uppercase tracking-wider">
+            <Label htmlFor="confirm-new-password" className="text-xs font-semibold text-foreground/85 uppercase tracking-wider">
               Confirm New Password
             </Label>
             <div className="relative">
-              <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-cream/40" />
+              <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
               <Input
                 id="confirm-new-password"
                 type={showPassword ? "text" : "password"}
@@ -176,7 +176,7 @@ function ResetPasswordForm() {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="Repeat new password"
-                className="pl-10 h-11 bg-white/[0.05] border-cream/15 text-cream placeholder:text-cream/35 rounded-xl focus:border-sand"
+                className="pl-10 h-11 bg-white/[0.05] border-border bg-white/[0.05] text-foreground placeholder:text-muted-foreground/80 rounded-xl focus:border-ring"
               />
             </div>
             {confirmPassword.length > 0 && confirmPassword !== password && (
@@ -189,7 +189,7 @@ function ResetPasswordForm() {
             variant="primary"
             size="lg"
             disabled={loading}
-            className="w-full justify-center text-sm font-semibold shadow-lg shadow-sand/15 cursor-pointer"
+            className="w-full justify-center text-sm font-semibold shadow-lg shadow-primary/20 cursor-pointer"
             icon={<ArrowRight className="size-4" />}
           >
             {loading ? "Updating Password..." : "Reset Password"}
@@ -202,7 +202,7 @@ function ResetPasswordForm() {
 
 export default function ResetPasswordPage() {
   return (
-    <React.Suspense fallback={<div className="min-h-[420px] flex items-center justify-center text-cream/40">Loading password reset...</div>}>
+    <React.Suspense fallback={<div className="min-h-[420px] flex items-center justify-center text-muted-foreground">Loading password reset...</div>}>
       <ResetPasswordForm />
     </React.Suspense>
   );

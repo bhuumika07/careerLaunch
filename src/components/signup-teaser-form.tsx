@@ -40,16 +40,16 @@ export function SignupTeaserForm({ className }: SignupTeaserFormProps) {
   return (
     <div
       className={cn(
-        "bg-white/[0.06] backdrop-blur-xl border border-cream/[0.12] rounded-[20px] p-6 sm:p-8 md:p-10 max-w-lg mx-auto shadow-2xl shadow-black/40",
+        "glass-card p-6 sm:p-8 md:p-10 max-w-lg mx-auto shadow-2xl",
         className
       )}
     >
       {/* Form Header */}
       <div className="text-center sm:text-left mb-6 sm:mb-8">
-        <h2 className="font-heading text-2xl sm:text-3xl font-bold text-cream tracking-tight">
+        <h2 className="font-heading text-2xl sm:text-3xl font-bold text-foreground tracking-tight">
           Start Your Journey
         </h2>
-        <p className="text-sm text-cream/70 mt-2 leading-relaxed">
+        <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
           Create your free account and take the first step toward career readiness.
         </p>
       </div>
@@ -57,7 +57,7 @@ export function SignupTeaserForm({ className }: SignupTeaserFormProps) {
       <form onSubmit={handleSubmit} className="space-y-5">
         {/* Full Name Field */}
         <div className="space-y-2">
-          <Label htmlFor="fullName" className="text-cream text-sm font-medium">
+          <Label htmlFor="fullName" className="text-foreground text-sm font-medium">
             Full Name
           </Label>
           <Input
@@ -67,13 +67,13 @@ export function SignupTeaserForm({ className }: SignupTeaserFormProps) {
             placeholder="John Doe"
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
-            className="h-11 bg-white/[0.06] border-cream/[0.12] text-cream placeholder:text-cream/40 focus-visible:border-sand focus-visible:ring-sand/30 rounded-xl px-4 text-sm"
+            className="h-11 bg-white/[0.06] border-border text-foreground placeholder:text-muted-foreground/70 focus-visible:border-ring focus-visible:ring-ring/40 rounded-xl px-4 text-sm"
           />
         </div>
 
         {/* Email Field */}
         <div className="space-y-2">
-          <Label htmlFor="email" className="text-cream text-sm font-medium">
+          <Label htmlFor="email" className="text-foreground text-sm font-medium">
             Email Address
           </Label>
           <Input
@@ -83,13 +83,13 @@ export function SignupTeaserForm({ className }: SignupTeaserFormProps) {
             placeholder="john@university.edu"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="h-11 bg-white/[0.06] border-cream/[0.12] text-cream placeholder:text-cream/40 focus-visible:border-sand focus-visible:ring-sand/30 rounded-xl px-4 text-sm"
+            className="h-11 bg-white/[0.06] border-border text-foreground placeholder:text-muted-foreground/70 focus-visible:border-ring focus-visible:ring-ring/40 rounded-xl px-4 text-sm"
           />
         </div>
 
         {/* Phone Field */}
         <div className="space-y-2">
-          <Label htmlFor="phone" className="text-cream text-sm font-medium">
+          <Label htmlFor="phone" className="text-foreground text-sm font-medium">
             Phone Number
           </Label>
           <Input
@@ -98,44 +98,44 @@ export function SignupTeaserForm({ className }: SignupTeaserFormProps) {
             placeholder="+1 (555) 000-0000"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
-            className="h-11 bg-white/[0.06] border-cream/[0.12] text-cream placeholder:text-cream/40 focus-visible:border-sand focus-visible:ring-sand/30 rounded-xl px-4 text-sm"
+            className="h-11 bg-white/[0.06] border-border text-foreground placeholder:text-muted-foreground/70 focus-visible:border-ring focus-visible:ring-ring/40 rounded-xl px-4 text-sm"
           />
         </div>
 
         {/* Role Select Field */}
         <div className="space-y-2">
-          <Label htmlFor="role" className="text-cream text-sm font-medium">
+          <Label htmlFor="role" className="text-foreground text-sm font-medium">
             Role
           </Label>
           <Select value={role} onValueChange={setRole}>
             <SelectTrigger
               id="role"
-              className="w-full h-11 bg-white/[0.06] border-cream/[0.12] text-cream focus:border-sand focus:ring-sand/30 rounded-xl px-4 text-sm data-[placeholder]:text-cream/40"
+              className="w-full h-11 bg-white/[0.06] border-border text-foreground focus:border-ring focus:ring-ring/40 rounded-xl px-4 text-sm data-[placeholder]:text-muted-foreground/70"
             >
               <SelectValue placeholder="Select your role" />
             </SelectTrigger>
-            <SelectContent className="bg-ink/95 backdrop-blur-xl border border-cream/[0.15] text-cream rounded-xl p-1 shadow-2xl">
+            <SelectContent className="bg-navy-950/95 backdrop-blur-xl border border-border text-foreground rounded-xl p-1 shadow-2xl">
               <SelectItem
                 value="student"
-                className="cursor-pointer text-cream/90 focus:bg-sand focus:text-ink rounded-lg py-2 px-3 text-sm"
+                className="cursor-pointer text-foreground/90 focus:bg-primary focus:text-primary-foreground rounded-lg py-2 px-3 text-sm"
               >
                 Student
               </SelectItem>
               <SelectItem
                 value="faculty"
-                className="cursor-pointer text-cream/90 focus:bg-sand focus:text-ink rounded-lg py-2 px-3 text-sm"
+                className="cursor-pointer text-foreground/90 focus:bg-primary focus:text-primary-foreground rounded-lg py-2 px-3 text-sm"
               >
                 Faculty
               </SelectItem>
               <SelectItem
                 value="recruiter"
-                className="cursor-pointer text-cream/90 focus:bg-sand focus:text-ink rounded-lg py-2 px-3 text-sm"
+                className="cursor-pointer text-foreground/90 focus:bg-primary focus:text-primary-foreground rounded-lg py-2 px-3 text-sm"
               >
                 Recruiter
               </SelectItem>
               <SelectItem
                 value="institution"
-                className="cursor-pointer text-cream/90 focus:bg-sand focus:text-ink rounded-lg py-2 px-3 text-sm"
+                className="cursor-pointer text-foreground/90 focus:bg-primary focus:text-primary-foreground rounded-lg py-2 px-3 text-sm"
               >
                 Institution
               </SelectItem>
@@ -149,20 +149,20 @@ export function SignupTeaserForm({ className }: SignupTeaserFormProps) {
             asChild
             variant="primary"
             size="lg"
-            className="w-full text-center justify-center font-bold text-base shadow-lg shadow-sand/20 cursor-pointer"
+            className="w-full text-center justify-center font-bold text-base shadow-lg shadow-primary/20 cursor-pointer"
           >
             <Link href="/register">Register Now</Link>
           </PillButton>
         </div>
 
         {/* Legal micro-copy */}
-        <p className="text-center text-xs text-cream/45 mt-3">
+        <p className="text-center text-xs text-muted-foreground mt-3">
           By signing up, you agree to our{" "}
-          <Link href="/terms" className="underline hover:text-cream">
+          <Link href="/terms" className="underline text-link hover:text-foreground">
             Terms
           </Link>{" "}
           and{" "}
-          <Link href="/privacy" className="underline hover:text-cream">
+          <Link href="/privacy" className="underline text-link hover:text-foreground">
             Privacy Policy
           </Link>
           .

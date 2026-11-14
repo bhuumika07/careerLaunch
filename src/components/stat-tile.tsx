@@ -11,15 +11,15 @@ export function StatTile({ value, label, className, ...props }: StatTileProps) {
   return (
     <div
       className={cn(
-        "border-[1.5px] border-sand rounded-xl p-6 bg-transparent flex flex-col justify-center",
+        "border-[1.5px] border-accent hover:border-accent-hover rounded-xl p-6 bg-card backdrop-blur-sm flex flex-col justify-center transition-colors",
         className
       )}
       {...props}
     >
-      <div className="text-3xl font-heading font-bold text-cream tracking-tight">
+      <div className="text-3xl font-heading font-bold text-foreground tracking-tight">
         {value}
       </div>
-      <div className="text-sm text-cream/65 mt-1 font-body">
+      <div className="text-sm text-muted-foreground mt-1 font-body">
         {label}
       </div>
     </div>

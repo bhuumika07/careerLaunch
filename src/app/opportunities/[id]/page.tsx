@@ -12,6 +12,7 @@ import {
   ExternalLink,
   CheckCircle2,
   AlertCircle,
+  AlertTriangle,
   ArrowLeft,
   ShieldCheck,
   Send,
@@ -133,7 +134,7 @@ function OpportunityDetailContent() {
 
   if (loading) {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-16 text-center text-slate-400">
+      <div className="max-w-4xl mx-auto px-4 py-16 text-center text-muted-foreground">
         Loading opportunity details...
       </div>
     );
@@ -142,8 +143,8 @@ function OpportunityDetailContent() {
   if (error || !opp) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-16 text-center space-y-4">
-        <AlertCircle className="size-10 text-rose-500 mx-auto" />
-        <h2 className="font-heading font-bold text-xl text-ink">{error || "Opportunity not found"}</h2>
+        <AlertCircle className="size-10 text-danger mx-auto" />
+        <h2 className="font-heading font-bold text-xl text-foreground">{error || "Opportunity not found"}</h2>
         <Link href="/opportunities">
           <PillButton variant="secondary" size="md">
             Back to Directory
@@ -158,45 +159,45 @@ function OpportunityDetailContent() {
       {/* Back button */}
       <Link
         href="/opportunities"
-        className="inline-flex items-center gap-1.5 text-xs text-slate-500 hover:text-ink font-medium"
+        className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground font-medium"
       >
         <ArrowLeft className="size-3.5" />
         Back to All Opportunities
       </Link>
 
       {/* Main Header Card */}
-      <div className="p-6 sm:p-8 rounded-3xl bg-white border border-slate-200 shadow-xs space-y-6">
+      <div className="p-6 sm:p-8 rounded-3xl bg-card border border-border shadow-xs space-y-6">
         <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
           <div className="flex items-start gap-4">
-            <div className="size-16 rounded-2xl bg-[#22343D] text-[#E8DFD4] flex items-center justify-center font-heading font-extrabold text-xl shrink-0 shadow-sm">
+            <div className="size-16 rounded-2xl bg-navy text-sky-50 flex items-center justify-center font-heading font-extrabold text-xl shrink-0 shadow-sm">
               {opp.org.substring(0, 2).toUpperCase()}
             </div>
             <div className="space-y-1.5">
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="font-semibold text-xs text-slate-600">{opp.org}</span>
-                <Badge variant="outline" className="text-[10px] bg-[#C4A885]/10 border-[#C4A885]/30 text-[#C4A885]">
+                <span className="font-semibold text-xs text-muted-foreground">{opp.org}</span>
+                <Badge variant="outline" className="text-[10px] bg-primary/10 border-primary/30 text-primary">
                   {opp.category}
                 </Badge>
-                <Badge variant="outline" className="text-[10px] capitalize text-slate-600 border-slate-200">
+                <Badge variant="outline" className="text-[10px] capitalize text-muted-foreground border-border">
                   {opp.workMode}
                 </Badge>
               </div>
 
-              <h1 className="font-heading text-2xl sm:text-3xl font-extrabold text-ink tracking-tight">
+              <h1 className="font-heading text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
                 {opp.title}
               </h1>
 
-              <div className="flex items-center gap-4 text-xs text-slate-500 flex-wrap pt-1">
+              <div className="flex items-center gap-4 text-xs text-muted-foreground flex-wrap pt-1">
                 <span className="flex items-center gap-1">
-                  <MapPin className="size-3.5 text-slate-400" />
+                  <MapPin className="size-3.5 text-muted-foreground" />
                   {opp.location}
                 </span>
                 <span>•</span>
-                <span className="font-semibold text-ink">
+                <span className="font-semibold text-foreground">
                   {opp.stipendSalary || "Competitive"}
                 </span>
                 <span>•</span>
-                <span className="flex items-center gap-1 text-slate-400">
+                <span className="flex items-center gap-1 text-muted-foreground">
                   <Calendar className="size-3.5" />
                   Deadline: {new Date(opp.deadline).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
                 </span>
@@ -227,8 +228,8 @@ function OpportunityDetailContent() {
         </div>
 
         {/* Verification & Meta Strip */}
-        <div className="flex items-center justify-between text-xs text-slate-500 border-t border-slate-100 pt-4 flex-wrap gap-2">
-          <div className="flex items-center gap-1.5 text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200">
+        <div className="flex items-center justify-between text-xs text-muted-foreground border-t border-border pt-4 flex-wrap gap-2">
+          <div className="flex items-center gap-1.5 text-success bg-card px-2.5 py-1 rounded-lg border border-success/40">
             <ShieldCheck className="size-3.5" />
             <span>
               Verified by CareerLaunch • Last verified on {new Date(opp.lastVerifiedDate).toLocaleDateString()}
@@ -240,7 +241,7 @@ function OpportunityDetailContent() {
               href={opp.sourceUrl}
               target="_blank"
               rel="noreferrer"
-              className="text-[#C4A885] hover:underline flex items-center gap-1"
+              className="text-primary hover:underline flex items-center gap-1"
             >
               Source Link
               <ExternalLink className="size-3" />
@@ -253,20 +254,20 @@ function OpportunityDetailContent() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left Column: Role Details & Skills */}
         <div className="lg:col-span-2 space-y-8">
-          <div className="p-6 sm:p-8 rounded-3xl bg-white border border-slate-200 shadow-xs space-y-4">
-            <h2 className="font-heading text-lg font-bold text-ink">About This Opportunity</h2>
-            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed whitespace-pre-line">
+          <div className="p-6 sm:p-8 rounded-3xl bg-card border border-border shadow-xs space-y-4">
+            <h2 className="font-heading text-lg font-bold text-foreground">About This Opportunity</h2>
+            <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
               {opp.description}
             </p>
           </div>
 
-          <div className="p-6 sm:p-8 rounded-3xl bg-white border border-slate-200 shadow-xs space-y-4">
-            <h2 className="font-heading text-lg font-bold text-ink">Required Skills & Technologies</h2>
+          <div className="p-6 sm:p-8 rounded-3xl bg-card border border-border shadow-xs space-y-4">
+            <h2 className="font-heading text-lg font-bold text-foreground">Required Skills & Technologies</h2>
             <div className="flex flex-wrap gap-2">
               {opp.skills.map((skill) => (
                 <span
                   key={skill}
-                  className="px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700"
+                  className="px-3 py-1.5 rounded-xl bg-sky-50 border border-border text-xs font-semibold text-foreground/90"
                 >
                   {skill}
                 </span>
@@ -279,12 +280,12 @@ function OpportunityDetailContent() {
         <div className="space-y-6">
           {/* Explainable Matching Intelligence Card */}
           {matchData && (
-            <div className="p-6 rounded-3xl bg-white border border-slate-200 shadow-xs space-y-4">
+            <div className="p-6 rounded-3xl bg-card border border-border shadow-xs space-y-4">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] uppercase font-bold tracking-wider text-slate-500">
+                <span className="text-[10px] uppercase font-bold tracking-wider text-muted-foreground">
                   Explainable Fit Analysis
                 </span>
-                <span className="text-[10px] font-semibold bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full border border-amber-200">
+                <span className="text-[10px] font-semibold bg-card text-link px-2 py-0.5 rounded-full border border-teal-600/40">
                   Illustrative Score
                 </span>
               </div>
@@ -292,73 +293,76 @@ function OpportunityDetailContent() {
               {/* Compatibility Score */}
               <div className="flex items-baseline justify-between pt-1">
                 <div>
-                  <div className="text-3xl font-extrabold text-ink font-heading">
+                  <div className="text-3xl font-extrabold text-foreground font-heading">
                     {matchData.compatibilityScore}%
                   </div>
-                  <div className="text-xs text-slate-500">Skill Alignment ({matchData.skillAnalysis.matchRatio})</div>
+                  <div className="text-xs text-muted-foreground">Skill Alignment ({matchData.skillAnalysis.matchRatio})</div>
                 </div>
                 <div
-                  className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
+                  className={`text-xs font-semibold px-2.5 py-1 rounded-full inline-flex items-center gap-1 ${
                     matchData.overallVerdict.badgeColor === "success"
-                      ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                      ? "bg-success text-success-foreground border border-success"
                       : matchData.overallVerdict.badgeColor === "warning"
-                      ? "bg-amber-50 text-amber-700 border border-amber-200"
-                      : "bg-rose-50 text-rose-700 border border-rose-200"
+                      ? "border-2 border-warning bg-warning/10 text-foreground"
+                      : "bg-danger text-danger-foreground border border-danger"
                   }`}
                 >
+                  {matchData.overallVerdict.badgeColor === "warning" && (
+                    <AlertTriangle className="size-3 text-navy shrink-0" />
+                  )}
                   {matchData.overallVerdict.badge}
                 </div>
               </div>
 
               {/* HARD ELIGIBILITY SEPARATION (Prompt 7 Rule) */}
               {!matchData.hardEligibility.isFullyEligible ? (
-                <div className="p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-xs text-rose-800 space-y-1.5">
-                  <div className="flex items-center gap-1.5 font-bold text-rose-900">
+                <div className="p-3.5 rounded-2xl bg-card border-2 border-danger text-xs text-danger space-y-1.5">
+                  <div className="flex items-center gap-1.5 font-bold text-danger">
                     <AlertCircle className="size-4 shrink-0" />
                     Academic Criteria Not Met
                   </div>
-                  <p className="text-[11px] leading-relaxed text-rose-700">
+                  <p className="text-[11px] leading-relaxed text-danger">
                     {matchData.overallVerdict.explanation}
                   </p>
                 </div>
               ) : (
-                <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 flex items-center gap-2">
-                  <CheckCircle2 className="size-4 text-emerald-600 shrink-0" />
+                <div className="p-3 rounded-xl bg-card border border-success/50 text-xs text-success flex items-center gap-2">
+                  <CheckCircle2 className="size-4 text-success shrink-0" />
                   <span>All mandatory institutional academic criteria are fully satisfied.</span>
                 </div>
               )}
 
               {/* Matching Skills Breakdown */}
-              <div className="space-y-2 pt-2 border-t border-slate-100">
-                <span className="text-[11px] font-semibold text-slate-700 uppercase tracking-wider">
+              <div className="space-y-2 pt-2 border-t border-border">
+                <span className="text-[11px] font-semibold text-foreground/90 uppercase tracking-wider">
                   Matching Verified Skills
                 </span>
                 <div className="flex flex-wrap gap-1.5">
                   {matchData.skillAnalysis.matchingSkills.map((s: any, idx: number) => (
                     <span
                       key={idx}
-                      className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-emerald-50 border border-emerald-200 text-[11px] font-medium text-emerald-800"
+                      className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-card border border-success/50 text-[11px] font-medium text-success"
                     >
-                      <CheckCircle2 className="size-3 text-emerald-600" />
+                      <CheckCircle2 className="size-3 text-success" />
                       {s.name} {s.status === "verified" ? "(Verified)" : "(Self-declared)"}
                     </span>
                   ))}
                   {matchData.skillAnalysis.matchingSkills.length === 0 && (
-                    <span className="text-xs text-slate-400">No overlapping skills yet.</span>
+                    <span className="text-xs text-muted-foreground">No overlapping skills yet.</span>
                   )}
                 </div>
               </div>
 
               {/* Skills to Improve */}
               {matchData.skillAnalysis.skillsToImprove.length > 0 && (
-                <div className="space-y-2 pt-2 border-t border-slate-100">
+                <div className="space-y-2 pt-2 border-t border-border">
                   <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-semibold text-slate-700 uppercase tracking-wider">
+                    <span className="text-[11px] font-semibold text-foreground/90 uppercase tracking-wider">
                       Skills to Improve
                     </span>
                     <Link
                       href="/student/roadmap"
-                      className="text-[11px] text-[#C4A885] hover:underline font-medium"
+                      className="text-[11px] text-primary hover:underline font-medium"
                     >
                       Bridge via Roadmap &rarr;
                     </Link>
@@ -367,7 +371,7 @@ function OpportunityDetailContent() {
                     {matchData.skillAnalysis.skillsToImprove.map((s: any, idx: number) => (
                       <span
                         key={idx}
-                        className="px-2 py-0.5 rounded-lg bg-slate-100 border border-slate-200 text-[11px] text-slate-600"
+                        className="px-2 py-0.5 rounded-lg bg-sky-100 border border-border text-[11px] text-muted-foreground"
                       >
                         {s.name}
                       </span>
@@ -379,25 +383,25 @@ function OpportunityDetailContent() {
           )}
 
           {/* Hard Academic Eligibility Panel */}
-          <div className="p-6 rounded-3xl bg-white border border-slate-200 shadow-xs space-y-4">
-            <h3 className="font-heading text-base font-bold text-ink">Hard Eligibility Criteria</h3>
-            <div className="space-y-3 text-xs text-slate-600">
-              <div className="flex justify-between border-b border-slate-100 pb-2">
-                <span className="text-slate-400">Target Degrees:</span>
-                <span className="font-semibold text-ink text-right">{opp.eligibility.degrees.join(", ")}</span>
+          <div className="p-6 rounded-3xl bg-card border border-border shadow-xs space-y-4">
+            <h3 className="font-heading text-base font-bold text-foreground">Hard Eligibility Criteria</h3>
+            <div className="space-y-3 text-xs text-muted-foreground">
+              <div className="flex justify-between border-b border-border pb-2">
+                <span className="text-muted-foreground">Target Degrees:</span>
+                <span className="font-semibold text-foreground text-right">{opp.eligibility.degrees.join(", ")}</span>
               </div>
-              <div className="flex justify-between border-b border-slate-100 pb-2">
-                <span className="text-slate-400">Graduation Batches:</span>
-                <span className="font-semibold text-ink">{opp.eligibility.graduationYears.join(", ")}</span>
+              <div className="flex justify-between border-b border-border pb-2">
+                <span className="text-muted-foreground">Graduation Batches:</span>
+                <span className="font-semibold text-foreground">{opp.eligibility.graduationYears.join(", ")}</span>
               </div>
-              <div className="flex justify-between border-b border-slate-100 pb-2">
-                <span className="text-slate-400">Experience Level:</span>
-                <span className="font-semibold text-ink">{opp.eligibility.experienceLevel}</span>
+              <div className="flex justify-between border-b border-border pb-2">
+                <span className="text-muted-foreground">Experience Level:</span>
+                <span className="font-semibold text-foreground">{opp.eligibility.experienceLevel}</span>
               </div>
               {opp.eligibility.minCgpa && (
-                <div className="flex justify-between border-b border-slate-100 pb-2">
-                  <span className="text-slate-400">Minimum CGPA:</span>
-                  <span className="font-semibold text-emerald-700">{opp.eligibility.minCgpa} / 10.0</span>
+                <div className="flex justify-between border-b border-border pb-2">
+                  <span className="text-muted-foreground">Minimum CGPA:</span>
+                  <span className="font-semibold text-success">{opp.eligibility.minCgpa} / 10.0</span>
                 </div>
               )}
             </div>
@@ -420,33 +424,33 @@ function OpportunityDetailContent() {
       {/* APPLY MODAL                                                    */}
       {/* ============================================================== */}
       {applyModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink/75 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-white rounded-3xl border border-slate-200 max-w-lg w-full p-6 sm:p-8 shadow-2xl space-y-5">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy/75 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-card rounded-3xl border border-border max-w-lg w-full p-6 sm:p-8 shadow-2xl space-y-5">
+            <div className="flex items-center justify-between border-b border-border pb-4">
               <div>
-                <h3 className="font-heading text-lg font-bold text-ink">
+                <h3 className="font-heading text-lg font-bold text-foreground">
                   Apply to {opp.org}
                 </h3>
-                <p className="text-xs text-slate-500">{opp.title}</p>
+                <p className="text-xs text-muted-foreground">{opp.title}</p>
               </div>
               <button
                 type="button"
                 onClick={() => setApplyModalOpen(false)}
-                className="p-1.5 text-slate-400 hover:text-ink rounded-lg"
+                className="p-1.5 text-muted-foreground hover:text-foreground rounded-lg"
               >
                 <X className="size-5" />
               </button>
             </div>
 
             {submitError && (
-              <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2">
+              <div className="p-3 rounded-xl bg-card border border-danger text-danger text-xs flex items-center gap-2">
                 <AlertCircle className="size-4 shrink-0" />
                 <span>{submitError}</span>
               </div>
             )}
 
             {submitSuccess && (
-              <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs flex items-center gap-2">
+              <div className="p-3 rounded-xl bg-success/5 border border-success text-success text-xs flex items-center gap-2">
                 <CheckCircle2 className="size-4 shrink-0" />
                 <span>{submitSuccess}</span>
               </div>
@@ -455,18 +459,18 @@ function OpportunityDetailContent() {
             <form onSubmit={handleApplySubmit} className="space-y-4">
               {/* Resume selector */}
               <div>
-                <label className="text-xs font-semibold text-slate-700 block mb-1.5">
+                <label className="text-xs font-semibold text-foreground/90 block mb-1.5">
                   Select Submitted Resume:
                 </label>
                 {resumes.length === 0 ? (
-                  <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs text-slate-500">
+                  <div className="p-3 bg-sky-50 rounded-xl border border-border text-xs text-muted-foreground">
                     No uploaded resume found. Your current student profile will be attached automatically.
                   </div>
                 ) : (
                   <select
                     value={selectedResumeId}
                     onChange={(e) => setSelectedResumeId(e.target.value)}
-                    className="w-full p-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs text-slate-800 focus:outline-none focus:border-[#C4A885]"
+                    className="w-full p-2.5 rounded-xl border border-border bg-sky-50 text-xs text-foreground/90 focus:outline-none focus:border-ring focus:ring-2 focus:ring-ring/40"
                   >
                     {resumes.map((r) => (
                       <option key={r.id} value={r.id}>
@@ -479,7 +483,7 @@ function OpportunityDetailContent() {
 
               {/* Cover Note */}
               <div>
-                <label className="text-xs font-semibold text-slate-700 block mb-1.5">
+                <label className="text-xs font-semibold text-foreground/90 block mb-1.5">
                   Brief Cover Note / Pitch (Optional):
                 </label>
                 <textarea
@@ -487,7 +491,7 @@ function OpportunityDetailContent() {
                   placeholder="Share relevant projects, certifications, or why you're a great fit for this role..."
                   value={coverNote}
                   onChange={(e) => setCoverNote(e.target.value)}
-                  className="w-full p-3 rounded-xl border border-slate-200 bg-slate-50 text-xs text-slate-800 focus:outline-none focus:border-[#C4A885]"
+                  className="w-full p-3 rounded-xl border border-border bg-sky-50 text-xs text-foreground/90 focus:outline-none focus:border-ring focus:ring-2 focus:ring-ring/40"
                 />
               </div>
 
@@ -520,8 +524,10 @@ function OpportunityDetailContent() {
 
 export default function OpportunityDetailPage() {
   return (
-    <React.Suspense fallback={<div className="p-16 text-center text-slate-400">Loading opportunity...</div>}>
-      <OpportunityDetailContent />
-    </React.Suspense>
+    <div data-theme="light" className="min-h-screen bg-background text-foreground">
+      <React.Suspense fallback={<div className="p-16 text-center text-muted-foreground">Loading opportunity...</div>}>
+        <OpportunityDetailContent />
+      </React.Suspense>
+    </div>
   );
 }

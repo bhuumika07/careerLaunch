@@ -17,6 +17,7 @@ import {
   Building2,
   ArrowRight,
   Flame,
+  AlertTriangle,
 } from "lucide-react";
 import { PillButton } from "@/components/ui/pill-button";
 import { Input } from "@/components/ui/input";
@@ -106,14 +107,15 @@ function OpportunitiesExplorerContent() {
 
     if (diffHours < 0) {
       return (
-        <Badge variant="outline" className="border-rose-300 text-rose-700 bg-rose-50 text-[10px]">
+        <Badge variant="outline" className="border-danger text-danger bg-card text-[10px] flex items-center gap-1">
+          <AlertCircle className="size-3" />
           Expired
         </Badge>
       );
     }
     if (diffHours <= 48) {
       return (
-        <Badge className="bg-rose-600 text-white text-[10px] flex items-center gap-1 font-semibold animate-pulse">
+        <Badge className="bg-danger text-danger-foreground text-[10px] flex items-center gap-1 font-semibold animate-pulse">
           <Flame className="size-3" />
           Closes in {Math.round(diffHours)}h
         </Badge>
@@ -121,13 +123,14 @@ function OpportunitiesExplorerContent() {
     }
     if (diffHours <= 24 * 7) {
       return (
-        <Badge variant="outline" className="border-amber-400 text-amber-800 bg-amber-50 text-[10px]">
+        <Badge variant="outline" className="border-2 border-warning text-foreground bg-warning/10 text-[10px] flex items-center gap-1">
+          <AlertTriangle className="size-3 text-navy" />
           {Math.ceil(diffHours / 24)} days left
         </Badge>
       );
     }
     return (
-      <Badge variant="outline" className="border-slate-300 text-slate-600 text-[10px]">
+      <Badge variant="outline" className="border-border bg-sky-50 text-navy-700 text-[10px]">
         Open
       </Badge>
     );
@@ -137,34 +140,34 @@ function OpportunitiesExplorerContent() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
       {/* Page Hero */}
       <div className="space-y-3 max-w-3xl">
-        <Badge variant="outline" className="text-xs uppercase tracking-wider text-[#C4A885] border-[#C4A885]/40 bg-[#C4A885]/10">
+        <Badge variant="outline" className="text-xs uppercase tracking-wider text-link border-teal-600/40 bg-card">
           Opportunity Ecosystem
         </Badge>
-        <h1 className="font-heading text-3xl sm:text-4xl font-extrabold text-ink tracking-tight">
+        <h1 className="font-heading text-3xl sm:text-4xl font-extrabold text-foreground tracking-tight">
           Find Your Next Career Milestone
         </h1>
-        <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
+        <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
           Curated and verified opportunities across 8 dimensions: Jobs, Internships, Research fellowships, Faculty development programs, Workshops, and Industry Capstones.
         </p>
       </div>
 
       {/* Search & Category Filter Section */}
-      <div className="p-6 bg-white rounded-3xl border border-slate-200 shadow-xs space-y-5">
+      <div className="p-6 bg-card rounded-3xl border border-border shadow-xs space-y-5">
         {/* Search Bar Input */}
         <div className="relative">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-slate-400" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-muted-foreground" />
           <input
             type="text"
             placeholder="Search by role title, corporate organization, technical skill (e.g. Next.js, Python), or keywords..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-12 pr-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-sm focus:outline-none focus:border-[#C4A885] text-ink"
+            className="w-full pl-12 pr-4 py-3 rounded-2xl bg-sky-50 border border-border text-sm focus:outline-none focus:border-ring focus:ring-2 focus:ring-ring/40 text-foreground"
           />
         </div>
 
         {/* 8 Categories Filter Pills */}
         <div className="space-y-2">
-          <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">
+          <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider block">
             Category
           </span>
           <div className="flex flex-wrap gap-2">
@@ -178,8 +181,8 @@ function OpportunitiesExplorerContent() {
                   className={cn(
                     "px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer border",
                     isSelected
-                      ? "bg-[#C4A885] border-[#C4A885] text-ink shadow-xs"
-                      : "bg-slate-50 border-slate-200 text-slate-600 hover:border-slate-300"
+                      ? "bg-primary border-primary text-primary-foreground shadow-xs"
+                      : "bg-sky-50 border-border text-foreground/80 hover:border-teal-600/40"
                   )}
                 >
                   {cat}
@@ -190,15 +193,15 @@ function OpportunitiesExplorerContent() {
         </div>
 
         {/* Secondary Filter Dropdowns */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 border-t border-slate-100">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 border-t border-border">
           <div>
-            <label className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider block mb-1">
+            <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider block mb-1">
               Work Mode
             </label>
             <select
               value={selectedMode}
               onChange={(e) => setSelectedMode(e.target.value)}
-              className="w-full p-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs text-slate-700 capitalize focus:outline-none focus:border-[#C4A885]"
+              className="w-full p-2.5 rounded-xl border border-border bg-sky-50 text-xs text-foreground capitalize focus:outline-none focus:border-ring focus:ring-2 focus:ring-ring/40"
             >
               {WORK_MODES.map((mode) => (
                 <option key={mode} value={mode}>
@@ -209,13 +212,13 @@ function OpportunitiesExplorerContent() {
           </div>
 
           <div>
-            <label className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider block mb-1">
+            <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider block mb-1">
               Experience Level
             </label>
             <select
               value={selectedExp}
               onChange={(e) => setSelectedExp(e.target.value)}
-              className="w-full p-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs text-slate-700 focus:outline-none focus:border-[#C4A885]"
+              className="w-full p-2.5 rounded-xl border border-border bg-sky-50 text-xs text-foreground focus:outline-none focus:border-ring focus:ring-2 focus:ring-ring/40"
             >
               {EXP_LEVELS.map((exp) => (
                 <option key={exp} value={exp}>
@@ -226,13 +229,13 @@ function OpportunitiesExplorerContent() {
           </div>
 
           <div>
-            <label className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider block mb-1">
+            <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider block mb-1">
               Deadline Urgency
             </label>
             <select
               value={urgencyDays}
               onChange={(e) => setUrgencyDays(e.target.value)}
-              className="w-full p-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs text-slate-700 focus:outline-none focus:border-[#C4A885]"
+              className="w-full p-2.5 rounded-xl border border-border bg-sky-50 text-xs text-foreground focus:outline-none focus:border-ring focus:ring-2 focus:ring-ring/40"
             >
               <option value="All">All Deadlines</option>
               <option value="2">Closing within 48 Hours 🔥</option>
@@ -244,7 +247,7 @@ function OpportunitiesExplorerContent() {
       </div>
 
       {/* Results Header */}
-      <div className="flex items-center justify-between text-xs text-slate-500">
+      <div className="flex items-center justify-between text-xs text-muted-foreground">
         <span>
           Showing <strong>{opportunities.length}</strong> opportunities
         </span>
@@ -257,7 +260,7 @@ function OpportunitiesExplorerContent() {
             setSelectedExp("All");
             setUrgencyDays("All");
           }}
-          className="text-[#C4A885] hover:underline cursor-pointer"
+          className="text-primary hover:underline cursor-pointer"
         >
           Reset all filters
         </button>
@@ -265,14 +268,14 @@ function OpportunitiesExplorerContent() {
 
       {/* Opportunities Card Grid */}
       {loading ? (
-        <div className="p-16 text-center text-slate-400 bg-white rounded-3xl border border-slate-200">
+        <div className="p-16 text-center text-muted-foreground bg-card rounded-3xl border border-border">
           Loading vetted opportunities...
         </div>
       ) : opportunities.length === 0 ? (
-        <div className="p-16 text-center bg-white rounded-3xl border border-slate-200 space-y-3">
-          <Briefcase className="size-10 text-slate-300 mx-auto" />
-          <h3 className="font-heading font-bold text-ink text-base">No matching opportunities found</h3>
-          <p className="text-xs text-slate-500 max-w-sm mx-auto">
+        <div className="p-16 text-center bg-card rounded-3xl border border-border space-y-3">
+          <Briefcase className="size-10 text-muted-foreground mx-auto" />
+          <h3 className="font-heading font-bold text-foreground text-base">No matching opportunities found</h3>
+          <p className="text-xs text-muted-foreground max-w-sm mx-auto">
             Try adjusting your search keywords, clearing work mode filters, or exploring other categories.
           </p>
         </div>
@@ -284,22 +287,22 @@ function OpportunitiesExplorerContent() {
               <Link
                 key={opp.id}
                 href={`/opportunities/${opp.id}`}
-                className="group block p-6 sm:p-7 rounded-3xl bg-white border border-slate-200 hover:border-[#C4A885]/70 hover:shadow-md transition-all flex flex-col justify-between space-y-5"
+                className="group block p-6 sm:p-7 rounded-3xl bg-card border border-border hover:border-teal-600/60 hover:shadow-md transition-all flex flex-col justify-between space-y-5"
               >
                 <div className="space-y-4">
                   {/* Top line: Org & Bookmark & Urgency */}
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-3">
-                      <div className="size-11 rounded-2xl bg-slate-100 flex items-center justify-center font-heading font-bold text-[#22343D] text-sm shrink-0 border border-slate-200">
+                      <div className="size-11 rounded-2xl bg-sky-100 flex items-center justify-center font-heading font-bold text-navy text-sm shrink-0 border border-border">
                         {opp.org.substring(0, 2).toUpperCase()}
                       </div>
                       <div>
-                        <h4 className="font-semibold text-xs text-slate-700">{opp.org}</h4>
+                        <h4 className="font-semibold text-xs text-foreground">{opp.org}</h4>
                         <div className="flex items-center gap-2 mt-0.5">
-                          <Badge variant="outline" className="text-[10px] text-[#22343D] bg-slate-50 border-slate-200">
+                          <Badge variant="outline" className="text-[10px] text-navy bg-sky-50 border-border">
                             {opp.category}
                           </Badge>
-                          <span className="text-[11px] text-slate-400 capitalize">• {opp.workMode}</span>
+                          <span className="text-[11px] text-muted-foreground capitalize">• {opp.workMode}</span>
                         </div>
                       </div>
                     </div>
@@ -312,8 +315,8 @@ function OpportunitiesExplorerContent() {
                         className={cn(
                           "p-2 rounded-xl border transition-colors cursor-pointer",
                           isBookmarked
-                            ? "bg-[#C4A885]/15 border-[#C4A885] text-[#C4A885]"
-                            : "border-slate-200 text-slate-400 hover:text-ink hover:bg-slate-50"
+                            ? "bg-primary border-primary text-primary-foreground"
+                            : "border-border text-muted-foreground hover:text-foreground hover:bg-sky-50"
                         )}
                         title="Bookmark opportunity"
                       >
@@ -324,10 +327,10 @@ function OpportunitiesExplorerContent() {
 
                   {/* Title & Description */}
                   <div>
-                    <h3 className="font-heading text-lg sm:text-xl font-bold text-ink group-hover:text-[#C4A885] transition-colors">
+                    <h3 className="font-heading text-lg sm:text-xl font-bold text-foreground group-hover:text-link transition-colors">
                       {opp.title}
                     </h3>
-                    <p className="text-xs text-slate-500 mt-1 line-clamp-2 leading-relaxed">
+                    <p className="text-xs text-muted-foreground mt-1 line-clamp-2 leading-relaxed">
                       {opp.description}
                     </p>
                   </div>
@@ -337,13 +340,13 @@ function OpportunitiesExplorerContent() {
                     {opp.skills.slice(0, 4).map((skill) => (
                       <span
                         key={skill}
-                        className="px-2 py-0.5 rounded-md bg-slate-50 border border-slate-200 text-[10px] text-slate-600 font-medium"
+                        className="px-2 py-0.5 rounded-md bg-sky-50 border border-border text-[10px] text-foreground/85 font-medium"
                       >
                         {skill}
                       </span>
                     ))}
                     {opp.skills.length > 4 && (
-                      <span className="px-2 py-0.5 rounded-md bg-slate-50 text-[10px] text-slate-400">
+                      <span className="px-2 py-0.5 rounded-md bg-sky-50 text-[10px] text-muted-foreground">
                         +{opp.skills.length - 4} more
                       </span>
                     )}
@@ -351,17 +354,17 @@ function OpportunitiesExplorerContent() {
                 </div>
 
                 {/* Bottom line: Compensation + Location + Details */}
-                <div className="border-t border-slate-100 pt-4 flex items-center justify-between text-xs text-slate-500">
+                <div className="border-t border-border pt-4 flex items-center justify-between text-xs text-muted-foreground">
                   <div className="flex items-center gap-3">
-                    <span className="font-bold text-ink">{opp.stipendSalary || "Competitive"}</span>
+                    <span className="font-bold text-foreground">{opp.stipendSalary || "Competitive"}</span>
                     <span>•</span>
-                    <span className="flex items-center gap-1 text-slate-400">
+                    <span className="flex items-center gap-1 text-muted-foreground">
                       <MapPin className="size-3" />
                       {opp.location}
                     </span>
                   </div>
 
-                  <span className="text-[#C4A885] font-semibold flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+                  <span className="text-link font-semibold flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
                     View Details
                     <ArrowRight className="size-3.5" />
                   </span>
@@ -377,8 +380,10 @@ function OpportunitiesExplorerContent() {
 
 export default function OpportunitiesPage() {
   return (
-    <React.Suspense fallback={<div className="p-16 text-center text-slate-400">Loading opportunity directory...</div>}>
-      <OpportunitiesExplorerContent />
-    </React.Suspense>
+    <div data-theme="light" className="min-h-screen bg-background text-foreground">
+      <React.Suspense fallback={<div className="p-16 text-center text-muted-foreground">Loading opportunity directory...</div>}>
+        <OpportunitiesExplorerContent />
+      </React.Suspense>
+    </div>
   );
 }

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import * as React from "react";
 import Link from "next/link";
@@ -201,27 +201,27 @@ function CareerDiscoveryQuestionnaireContent() {
   return (
     <div className="max-w-4xl mx-auto space-y-8">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-5">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-5">
         <div>
-          <h1 className="font-heading text-2xl sm:text-3xl font-bold text-ink tracking-tight flex items-center gap-2.5">
-            <Compass className="size-7 text-[#C4A885]" />
+          <h1 className="font-heading text-2xl sm:text-3xl font-bold text-foreground tracking-tight flex items-center gap-2.5">
+            <Compass className="size-7 text-primary" />
             Career Path Discovery
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500 mt-1">
+          <p className="text-xs sm:text-sm text-muted-foreground mt-1">
             Answer a few questions about your preferences, tools, and aspirations to discover calibrated career trajectories.
           </p>
         </div>
 
         {/* Autosave Indicator */}
-        <div className="flex items-center gap-2 text-xs text-slate-400 bg-white px-3 py-1.5 rounded-full border border-slate-200 shrink-0">
+        <div className="flex items-center gap-2 text-xs text-muted-foreground bg-white px-3 py-1.5 rounded-full border border-border shrink-0">
           {saving ? (
             <>
-              <RefreshCw className="size-3.5 text-[#C4A885] animate-spin" />
+              <RefreshCw className="size-3.5 text-primary animate-spin" />
               <span>Autosaving...</span>
             </>
           ) : (
             <>
-              <CheckCircle2 className="size-3.5 text-emerald-500" />
+              <CheckCircle2 className="size-3.5 text-success" />
               <span>Saved {lastSaved}</span>
             </>
           )}
@@ -229,9 +229,9 @@ function CareerDiscoveryQuestionnaireContent() {
       </div>
 
       {/* Stepper Progress Bar */}
-      <div className="space-y-2 bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
+      <div className="space-y-2 bg-white p-5 rounded-2xl border border-border shadow-xs">
         <div className="flex items-center justify-between text-xs">
-          <span className="font-semibold text-slate-700">
+          <span className="font-semibold text-foreground/90">
             Step {step} of {totalSteps}:{" "}
             {step === 1 && "Interests & Subjects"}
             {step === 2 && "Work Preferences"}
@@ -239,26 +239,26 @@ function CareerDiscoveryQuestionnaireContent() {
             {step === 4 && "College Projects & Activities"}
             {step === 5 && "Preferred Industries & Career Goals"}
           </span>
-          <span className="font-bold text-[#C4A885]">{progressPercent}%</span>
+          <span className="font-bold text-primary">{progressPercent}%</span>
         </div>
-        <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+        <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
           <div
-            className="bg-[#C4A885] h-2 rounded-full transition-all duration-300"
+            className="bg-primary h-2 rounded-full transition-all duration-300"
             style={{ width: `${progressPercent}%` }}
           />
         </div>
       </div>
 
       {/* Questionnaire Form Container */}
-      <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-10 shadow-xs min-h-[420px] flex flex-col justify-between space-y-8">
+      <div className="bg-white rounded-3xl border border-border p-6 sm:p-10 shadow-xs min-h-[420px] flex flex-col justify-between space-y-8">
         {/* STEP 1: INTERESTS & SUBJECTS */}
         {step === 1 && (
           <div className="space-y-6">
             <div className="space-y-1">
-              <h2 className="font-heading text-xl font-bold text-ink">
+              <h2 className="font-heading text-xl font-bold text-foreground">
                 What topics and subject areas excite you most?
               </h2>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-muted-foreground">
                 Select all fields you find intellectually stimulating or enjoy learning about.
               </p>
             </div>
@@ -273,15 +273,15 @@ function CareerDiscoveryQuestionnaireContent() {
                     className={cn(
                       "p-4 rounded-xl border text-xs font-semibold cursor-pointer transition-all flex items-center justify-between",
                       isSelected
-                        ? "border-[#C4A885] bg-[#C4A885]/10 text-ink shadow-xs"
-                        : "border-slate-200 bg-slate-50/50 hover:bg-slate-100/60 text-slate-700"
+                        ? "border-primary bg-primary/10 text-foreground shadow-xs"
+                        : "border-border bg-background/50 hover:bg-muted/60 text-foreground/90"
                     )}
                   >
                     <span>{interest}</span>
                     <div
                       className={cn(
                         "size-5 rounded-md border flex items-center justify-center transition-colors",
-                        isSelected ? "bg-[#C4A885] border-[#C4A885] text-ink" : "border-slate-300 bg-white"
+                        isSelected ? "bg-primary border-primary text-foreground" : "border-border bg-white"
                       )}
                     >
                       {isSelected && <Check className="size-3.5 stroke-[3]" />}
@@ -297,10 +297,10 @@ function CareerDiscoveryQuestionnaireContent() {
         {step === 2 && (
           <div className="space-y-6">
             <div className="space-y-1">
-              <h2 className="font-heading text-xl font-bold text-ink">
+              <h2 className="font-heading text-xl font-bold text-foreground">
                 How do you prefer spending your working day?
               </h2>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-muted-foreground">
                 Select the activities that feel natural and energizing to you.
               </p>
             </div>
@@ -316,26 +316,26 @@ function CareerDiscoveryQuestionnaireContent() {
                     className={cn(
                       "p-5 rounded-2xl border cursor-pointer transition-all flex items-start gap-4",
                       isSelected
-                        ? "border-[#C4A885] bg-[#C4A885]/10 shadow-xs"
-                        : "border-slate-200 bg-slate-50/50 hover:bg-slate-100/60"
+                        ? "border-primary bg-primary/10 shadow-xs"
+                        : "border-border bg-background/50 hover:bg-muted/60"
                     )}
                   >
                     <div
                       className={cn(
                         "size-10 rounded-xl flex items-center justify-center shrink-0",
-                        isSelected ? "bg-[#C4A885] text-ink" : "bg-white border border-slate-200 text-slate-600"
+                        isSelected ? "bg-primary text-foreground" : "bg-white border border-border text-muted-foreground"
                       )}
                     >
                       <Icon className="size-5" />
                     </div>
                     <div className="flex-1 space-y-1">
-                      <h4 className="font-heading font-bold text-sm text-ink">{pref.label}</h4>
-                      <p className="text-xs text-slate-500">{pref.desc}</p>
+                      <h4 className="font-heading font-bold text-sm text-foreground">{pref.label}</h4>
+                      <p className="text-xs text-muted-foreground">{pref.desc}</p>
                     </div>
                     <div
                       className={cn(
                         "size-5 rounded-md border flex items-center justify-center shrink-0 mt-1",
-                        isSelected ? "bg-[#C4A885] border-[#C4A885] text-ink" : "border-slate-300 bg-white"
+                        isSelected ? "bg-primary border-primary text-foreground" : "border-border bg-white"
                       )}
                     >
                       {isSelected && <Check className="size-3.5 stroke-[3]" />}
@@ -351,10 +351,10 @@ function CareerDiscoveryQuestionnaireContent() {
         {step === 3 && (
           <div className="space-y-6">
             <div className="space-y-1">
-              <h2 className="font-heading text-xl font-bold text-ink">
+              <h2 className="font-heading text-xl font-bold text-foreground">
                 Which tools, frameworks, or languages have you already explored?
               </h2>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-muted-foreground">
                 This helps distinguish between your natural interests and your current job readiness.
               </p>
             </div>
@@ -370,8 +370,8 @@ function CareerDiscoveryQuestionnaireContent() {
                     className={cn(
                       "px-3.5 py-2 rounded-xl text-xs font-semibold transition-all border cursor-pointer",
                       isSelected
-                        ? "bg-[#C4A885] border-[#C4A885] text-ink shadow-xs"
-                        : "bg-slate-50 border-slate-200 text-slate-700 hover:border-slate-300"
+                        ? "bg-primary border-primary text-foreground shadow-xs"
+                        : "bg-background border-border text-foreground/90 hover:border-border"
                     )}
                   >
                     {tool} {isSelected && "✓"}
@@ -400,10 +400,10 @@ function CareerDiscoveryQuestionnaireContent() {
         {step === 4 && (
           <div className="space-y-6">
             <div className="space-y-1">
-              <h2 className="font-heading text-xl font-bold text-ink">
+              <h2 className="font-heading text-xl font-bold text-foreground">
                 Academic & College Projects
               </h2>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-muted-foreground">
                 Mention any coursework projects, hackathons, or clubs you participated in.
               </p>
             </div>
@@ -426,13 +426,13 @@ function CareerDiscoveryQuestionnaireContent() {
                 {answers.collegeProjects.map((p, idx) => (
                   <div
                     key={idx}
-                    className="p-3 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between text-xs text-ink"
+                    className="p-3 bg-background border border-border rounded-xl flex items-center justify-between text-xs text-foreground"
                   >
                     <span className="font-medium">{p}</span>
                     <button
                       type="button"
                       onClick={() => removeProject(idx)}
-                      className="text-rose-500 hover:text-rose-700 font-bold ml-2 text-sm"
+                      className="text-danger hover:text-danger/80 font-bold ml-2 text-sm"
                     >
                       ×
                     </button>
@@ -447,17 +447,17 @@ function CareerDiscoveryQuestionnaireContent() {
         {step === 5 && (
           <div className="space-y-6">
             <div className="space-y-1">
-              <h2 className="font-heading text-xl font-bold text-ink">
+              <h2 className="font-heading text-xl font-bold text-foreground">
                 Preferred Industries & Career Goals
               </h2>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-muted-foreground">
                 Select your target domains and articulate your aspirational target in your own words.
               </p>
             </div>
 
             <div className="space-y-4">
               <div>
-                <label className="text-xs font-semibold text-slate-600 block mb-2">
+                <label className="text-xs font-semibold text-muted-foreground block mb-2">
                   Target Industry Sectors:
                 </label>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
@@ -470,12 +470,12 @@ function CareerDiscoveryQuestionnaireContent() {
                         className={cn(
                           "p-3 rounded-xl border text-xs font-semibold cursor-pointer transition-all flex items-center justify-between",
                           isSelected
-                            ? "border-[#C4A885] bg-[#C4A885]/10 text-ink shadow-xs"
-                            : "border-slate-200 bg-slate-50/50 hover:bg-slate-100/60 text-slate-700"
+                            ? "border-primary bg-primary/10 text-foreground shadow-xs"
+                            : "border-border bg-background/50 hover:bg-muted/60 text-foreground/90"
                         )}
                       >
                         <span>{ind}</span>
-                        {isSelected && <Check className="size-4 text-[#C4A885]" />}
+                        {isSelected && <Check className="size-4 text-primary" />}
                       </div>
                     );
                   })}
@@ -483,7 +483,7 @@ function CareerDiscoveryQuestionnaireContent() {
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-slate-600 block mb-1">
+                <label className="text-xs font-semibold text-muted-foreground block mb-1">
                   In one or two sentences, what is your primary career aspiration?
                 </label>
                 <Textarea
@@ -503,7 +503,7 @@ function CareerDiscoveryQuestionnaireContent() {
         )}
 
         {/* Bottom Navigation Buttons */}
-        <div className="flex items-center justify-between border-t border-slate-100 pt-6">
+        <div className="flex items-center justify-between border-t border-border/50 pt-6">
           {step > 1 ? (
             <PillButton
               type="button"
@@ -536,7 +536,7 @@ function CareerDiscoveryQuestionnaireContent() {
 
 export default function CareerDiscoveryQuestionnairePage() {
   return (
-    <React.Suspense fallback={<div className="p-16 text-center text-slate-400">Loading career discovery...</div>}>
+    <React.Suspense fallback={<div className="p-16 text-center text-muted-foreground">Loading career discovery...</div>}>
       <CareerDiscoveryQuestionnaireContent />
     </React.Suspense>
   );

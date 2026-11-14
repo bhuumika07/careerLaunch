@@ -33,6 +33,21 @@ const ROLES = [
     description: "Build verified skill profiles, identify gaps, and land internships or jobs.",
   },
   {
+    id: "job_seeker",
+    title: "Job Seeker",
+    badge: "Professional",
+    icon: Briefcase,
+    description: "Explore curated opportunities, match your skills, and apply directly on source sites.",
+  },
+];
+  {
+    id: "student",
+    title: "Student",
+    badge: "Early Career",
+    icon: GraduationCap,
+    description: "Build verified skill profiles, identify gaps, and land internships or jobs.",
+  },
+  {
     id: "faculty",
     title: "Faculty",
     badge: "Educator & Mentor",
@@ -136,20 +151,20 @@ function RegisterForm() {
     <div className="w-full space-y-6">
       {/* Step Indicator Header */}
       <div className="space-y-2">
-        <div className="flex items-center justify-between text-xs font-semibold text-cream/60">
+        <div className="flex items-center justify-between text-xs font-semibold text-muted-foreground">
           <span>{step === 1 ? "Step 1: Choose Your Role" : "Step 2: Account Credentials"}</span>
-          <span className="text-sand">Step {step} of 2</span>
+          <span className="text-amber">Step {step} of 2</span>
         </div>
         <div className="h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
           <div
-            className="h-full bg-sand transition-all duration-300"
+            className="h-full bg-accent transition-all duration-300"
             style={{ width: step === 1 ? "50%" : "100%" }}
           />
         </div>
       </div>
 
       {error && (
-        <div className="p-3.5 rounded-xl border border-danger/40 bg-danger/10 text-cream text-xs flex items-center gap-2.5">
+        <div className="p-3.5 rounded-xl border border-danger/50 bg-danger/15 text-foreground text-xs flex items-center gap-2.5">
           <AlertCircle className="size-4 text-danger shrink-0" />
           <span>{error}</span>
         </div>
@@ -159,10 +174,10 @@ function RegisterForm() {
       {step === 1 && (
         <div className="space-y-6">
           <div className="space-y-1">
-            <h1 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-cream">
+            <h1 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
               Select Your Role
             </h1>
-            <p className="text-xs sm:text-sm text-cream/60">
+            <p className="text-xs sm:text-sm text-muted-foreground">
               Each stakeholder accesses specialized tools and workflows tailored to their objectives.
             </p>
           </div>
@@ -180,15 +195,15 @@ function RegisterForm() {
                   className={cn(
                     "text-left p-4 rounded-[18px] border transition-all duration-200 cursor-pointer flex flex-col justify-between space-y-3 relative group",
                     isSelected
-                      ? "border-sand bg-white/[0.08] shadow-lg shadow-sand/10 ring-1 ring-sand"
-                      : "border-cream/15 bg-white/[0.03] hover:border-cream/35 hover:bg-white/[0.05]"
+                      ? "border-amber bg-white/[0.08] shadow-lg shadow-teal/15 ring-1 ring-amber"
+                      : "border-border bg-white/[0.03] hover:border-sky/40 hover:bg-white/[0.06]"
                   )}
                 >
                   <div className="flex items-center justify-between w-full">
                     <div
                       className={cn(
                         "size-10 rounded-xl flex items-center justify-center transition-colors",
-                        isSelected ? "bg-sand text-ink" : "bg-white/[0.06] text-cream"
+                        isSelected ? "bg-primary text-primary-foreground" : "bg-white/[0.06] text-foreground"
                       )}
                     >
                       <Icon className="size-5" />
@@ -198,8 +213,8 @@ function RegisterForm() {
                       className={cn(
                         "text-[10px] font-semibold px-2 py-0.5 rounded-full uppercase tracking-wider",
                         isSelected
-                          ? "bg-sand/20 text-sand"
-                          : "bg-white/[0.06] text-cream/50 group-hover:text-cream/70"
+                          ? "bg-amber/20 text-amber"
+                          : "bg-white/[0.06] text-muted-foreground group-hover:text-foreground"
                       )}
                     >
                       {r.badge}
@@ -208,12 +223,12 @@ function RegisterForm() {
 
                   <div className="space-y-1">
                     <div className="flex items-center justify-between">
-                      <span className="font-heading font-bold text-base text-cream">
+                      <span className="font-heading font-bold text-base text-foreground">
                         {r.title}
                       </span>
-                      {isSelected && <CheckCircle2 className="size-4 text-sand" />}
+                      {isSelected && <CheckCircle2 className="size-4 text-amber" />}
                     </div>
-                    <p className="text-xs text-cream/60 leading-relaxed line-clamp-2">
+                    <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">
                       {r.description}
                     </p>
                   </div>
@@ -232,9 +247,9 @@ function RegisterForm() {
             Continue as {ROLES.find((r) => r.id === selectedRole)?.title}
           </PillButton>
 
-          <p className="text-center text-xs text-cream/60">
+          <p className="text-center text-xs text-muted-foreground">
             Already have an account?{" "}
-            <Link href="/login" className="text-sand hover:underline font-semibold">
+            <Link href="/login" className="text-link hover:underline font-semibold">
               Sign In
             </Link>
           </p>
@@ -248,45 +263,45 @@ function RegisterForm() {
             <button
               type="button"
               onClick={() => setStep(1)}
-              className="inline-flex items-center gap-1.5 text-xs text-cream/60 hover:text-cream mb-1 transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground mb-1 transition-colors cursor-pointer"
             >
               <ArrowLeft className="size-3.5" />
               <span>Change Role ({ROLES.find((r) => r.id === selectedRole)?.title})</span>
             </button>
-            <h1 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-cream">
+            <h1 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
               Create Your Account
             </h1>
-            <p className="text-xs sm:text-sm text-cream/60">
+            <p className="text-xs sm:text-sm text-muted-foreground">
               Set up your profile credentials for the{" "}
-              <span className="text-sand capitalize">{selectedRole}</span> portal.
+              <span className="text-amber capitalize">{selectedRole}</span> portal.
             </p>
           </div>
 
           {/* Full Name */}
           <div className="space-y-1.5">
-            <Label htmlFor="reg-name" className="text-xs font-semibold text-cream/80 uppercase tracking-wider">
+            <Label htmlFor="reg-name" className="text-xs font-semibold text-foreground/85 uppercase tracking-wider">
               Full Name
             </Label>
             <div className="relative">
-              <UserIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-cream/40" />
+              <UserIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
               <Input
                 id="reg-name"
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Jane Doe"
-                className="pl-10 h-11 bg-white/[0.05] border-cream/15 text-cream placeholder:text-cream/35 rounded-xl focus:border-sand"
+                className="pl-10 h-11 bg-white/[0.05] border-border text-foreground placeholder:text-muted-foreground/80 rounded-xl focus:border-ring"
               />
             </div>
           </div>
 
           {/* Email Address */}
           <div className="space-y-1.5">
-            <Label htmlFor="reg-email" className="text-xs font-semibold text-cream/80 uppercase tracking-wider">
+            <Label htmlFor="reg-email" className="text-xs font-semibold text-foreground/85 uppercase tracking-wider">
               Email Address
             </Label>
             <div className="relative">
-              <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-cream/40" />
+              <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
               <Input
                 id="reg-email"
                 type="email"
@@ -300,7 +315,7 @@ function RegisterForm() {
                     ? "admin@university.edu"
                     : "student@university.edu"
                 }
-                className="pl-10 h-11 bg-white/[0.05] border-cream/15 text-cream placeholder:text-cream/35 rounded-xl focus:border-sand"
+                className="pl-10 h-11 bg-white/[0.05] border-border text-foreground placeholder:text-muted-foreground/80 rounded-xl focus:border-ring"
               />
             </div>
           </div>
@@ -308,7 +323,7 @@ function RegisterForm() {
           {/* Password with Strength Meter */}
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
-              <Label htmlFor="reg-password" className="text-xs font-semibold text-cream/80 uppercase tracking-wider">
+              <Label htmlFor="reg-password" className="text-xs font-semibold text-foreground/85 uppercase tracking-wider">
                 Password
               </Label>
               {password.length > 0 && (
@@ -321,7 +336,7 @@ function RegisterForm() {
               )}
             </div>
             <div className="relative">
-              <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-cream/40" />
+              <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
               <Input
                 id="reg-password"
                 type={showPassword ? "text" : "password"}
@@ -329,12 +344,12 @@ function RegisterForm() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Min. 8 characters"
-                className="pl-10 pr-10 h-11 bg-white/[0.05] border-cream/15 text-cream placeholder:text-cream/35 rounded-xl focus:border-sand"
+                className="pl-10 pr-10 h-11 bg-white/[0.05] border-border text-foreground placeholder:text-muted-foreground/80 rounded-xl focus:border-ring"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-cream/40 hover:text-cream cursor-pointer"
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer"
                 aria-label={showPassword ? "Hide password" : "Show password"}
               >
                 {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
@@ -353,12 +368,12 @@ function RegisterForm() {
                         backgroundColor:
                           index <= passwordStrength.score - 1
                             ? passwordStrength.color
-                            : "rgba(232, 223, 212, 0.12)",
+                            : "var(--border)",
                       }}
                     />
                   ))}
                 </div>
-                <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-cream/55 pt-0.5">
+                <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-muted-foreground pt-0.5">
                   <span className={cn(passwordStrength.checks.length && "text-success")}>
                     ✓ 8+ chars
                   </span>
@@ -384,11 +399,11 @@ function RegisterForm() {
 
           {/* Confirm Password */}
           <div className="space-y-1.5">
-            <Label htmlFor="reg-confirm" className="text-xs font-semibold text-cream/80 uppercase tracking-wider">
+            <Label htmlFor="reg-confirm" className="text-xs font-semibold text-foreground/85 uppercase tracking-wider">
               Confirm Password
             </Label>
             <div className="relative">
-              <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-cream/40" />
+              <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
               <Input
                 id="reg-confirm"
                 type={showPassword ? "text" : "password"}
@@ -396,7 +411,7 @@ function RegisterForm() {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="Repeat password"
-                className="pl-10 h-11 bg-white/[0.05] border-cream/15 text-cream placeholder:text-cream/35 rounded-xl focus:border-sand"
+                className="pl-10 h-11 bg-white/[0.05] border-border text-foreground placeholder:text-muted-foreground/80 rounded-xl focus:border-ring"
               />
             </div>
             {confirmPassword.length > 0 && confirmPassword !== password && (
@@ -412,12 +427,12 @@ function RegisterForm() {
               required
               checked={termsAccepted}
               onChange={(e) => setTermsAccepted(e.target.checked)}
-              className="size-4 mt-0.5 rounded-sm border-cream/30 bg-white/5 text-sand accent-sand cursor-pointer"
+              className="size-4 mt-0.5 rounded-sm border-sky/30 bg-white/5 text-amber accent-amber cursor-pointer"
             />
-            <label htmlFor="terms" className="text-xs text-cream/70 leading-relaxed cursor-pointer">
+            <label htmlFor="terms" className="text-xs text-muted-foreground leading-relaxed cursor-pointer">
               I agree to the{" "}
-              <span className="text-sand underline underline-offset-2">Terms of Service</span> and{" "}
-              <span className="text-sand underline underline-offset-2">Privacy Policy</span>, and consent to career readiness credential verification.
+              <span className="text-link underline underline-offset-2">Terms of Service</span> and{" "}
+              <span className="text-link underline underline-offset-2">Privacy Policy</span>, and consent to career readiness credential verification.
             </label>
           </div>
 
@@ -427,14 +442,14 @@ function RegisterForm() {
             variant="primary"
             size="lg"
             disabled={loading}
-            className="w-full justify-center text-sm font-semibold shadow-lg shadow-sand/15 cursor-pointer mt-2"
+            className="w-full justify-center text-sm font-semibold shadow-lg shadow-primary/20 cursor-pointer mt-2"
           >
             {loading ? "Creating Account..." : "Complete Registration"}
           </PillButton>
 
-          <p className="text-center text-xs text-cream/60 pt-2">
+          <p className="text-center text-xs text-muted-foreground pt-2">
             Already have an account?{" "}
-            <Link href="/login" className="text-sand hover:underline font-semibold">
+            <Link href="/login" className="text-link hover:underline font-semibold">
               Sign In
             </Link>
           </p>
@@ -446,7 +461,7 @@ function RegisterForm() {
 
 export default function RegisterPage() {
   return (
-    <React.Suspense fallback={<div className="min-h-[420px] flex items-center justify-center text-cream/40">Loading registration...</div>}>
+    <React.Suspense fallback={<div className="min-h-[420px] flex items-center justify-center text-muted-foreground">Loading registration...</div>}>
       <RegisterForm />
     </React.Suspense>
   );

@@ -7,14 +7,15 @@ import { motion, useReducedMotion, type HTMLMotionProps } from "motion/react";
 import { cn } from "@/lib/utils";
 
 export const pillButtonVariants = cva(
-  "inline-flex items-center justify-center gap-2 rounded-full font-medium transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-sand focus-visible:ring-offset-2 focus-visible:ring-offset-ink disabled:pointer-events-none disabled:opacity-50 cursor-pointer select-none",
+  "inline-flex items-center justify-center gap-2 rounded-full font-medium transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 cursor-pointer select-none",
   {
     variants: {
       variant: {
-        primary: "bg-sand text-ink hover:bg-sand/90",
+        primary:
+          "bg-primary text-primary-foreground hover:bg-primary-hover active:bg-primary-active shadow-sm",
         secondary:
-          "border border-cream/20 text-cream bg-transparent hover:bg-cream/5",
-        ghost: "text-cream hover:bg-cream/5",
+          "border border-secondary-border text-foreground bg-secondary hover:bg-secondary/80",
+        ghost: "text-foreground hover:bg-secondary/60",
       },
       size: {
         sm: "px-4 py-1.5 text-sm",
