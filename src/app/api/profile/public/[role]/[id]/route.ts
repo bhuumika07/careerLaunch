@@ -20,8 +20,8 @@ export async function GET(
       );
     }
 
-    if (role === "student") {
-      const profile = db.studentProfiles.find((p) => p.userId === user.id);
+    if (role === "student" || role === "job_seeker") {
+      const profile = (db.studentProfiles || []).find((p) => p.userId === user.id);
       return NextResponse.json({
         success: true,
         user: {
@@ -36,6 +36,10 @@ export async function GET(
               department: profile.department,
               degree: profile.degree,
               graduationYear: profile.graduationYear,
+              currentStatus: profile.currentStatus,
+              totalExperience: profile.totalExperience,
+              currentRole: profile.currentRole,
+              targetRoles: profile.targetRoles,
               bio: profile.bio,
               portfolioUrl: profile.portfolioUrl,
               githubUrl: profile.githubUrl,
@@ -49,59 +53,14 @@ export async function GET(
       });
     }
 
-    if (role === "faculty") {
-      const profile = db.facultyProfiles.find((p) => p.userId === user.id);
-      return NextResponse.json({
-        success: true,
-        user: { id: user.id, name: user.name, role: user.role },
-        profile,
-      });
-    }
-
-    if (role === "recruiter") {
-      const profile = db.recruiterProfiles.find((p) => p.userId === user.id);
-      return NextResponse.json({
-        success: true,
-        user: { id: user.id, name: user.name, role: user.role },
-        profile: profile
-          ? {
-              companyName: profile.companyName,
-              website: profile.website,
-              industry: profile.industry,
-              aboutCompany: profile.aboutCompany,
-              verificationStatus: profile.verificationStatus,
-            }
-          : null,
-      });
-    }
-
-    if (role === "institution") {
-      const profile = db.institutionProfiles.find((p) => p.userId === user.id);
-      return NextResponse.json({
-        success: true,
-        user: { id: user.id, name: user.name, role: user.role },
-        profile: profile
-          ? {
-              name: profile.name,
-              type: profile.type,
-              location: profile.location,
-              website: profile.website,
-              accreditation: profile.accreditation,
-              departments: profile.departments,
-              verificationStatus: profile.verificationStatus,
-            }
-          : null,
-      });
-    }
-
     return NextResponse.json(
-      { success: false, error: "Unsupported role for public profile" },
-      { status: 400 }
+      { success: false, error: "Role profile not publicly viewable." },
+      { status: 403 }
     );
   } catch (error) {
     console.error("Public profile API error:", error);
     return NextResponse.json(
-      { success: false, error: "Failed to fetch public profile." },
+      { success: false, error: "Failed to load public profile." },
       { status: 500 }
     );
   }

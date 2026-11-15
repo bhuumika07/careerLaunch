@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { readDb, writeDb } from "@/lib/db";
+import { readDb, writeDb, StudentProfile } from "@/lib/db";
 import { requireAuth, handleAuthError } from "@/lib/auth-guard";
 
 export async function GET(req: NextRequest) {
@@ -7,16 +7,7 @@ export async function GET(req: NextRequest) {
     const { user } = await requireAuth(req);
     const db = readDb();
 
-    let roleProfile: any = null;
-    if (user.role === "student") {
-      roleProfile = db.studentProfiles.find((p) => p.userId === user.id);
-    } else if (user.role === "faculty") {
-      roleProfile = db.facultyProfiles.find((p) => p.userId === user.id);
-    } else if (user.role === "recruiter") {
-      roleProfile = db.recruiterProfiles.find((p) => p.userId === user.id);
-    } else if (user.role === "institution") {
-      roleProfile = db.institutionProfiles.find((p) => p.userId === user.id);
-    }
+    const profile = (db.studentProfiles || []).find((p) => p.userId === user.id);
 
     return NextResponse.json({
       success: true,
@@ -27,7 +18,7 @@ export async function GET(req: NextRequest) {
         role: user.role,
         onboardingCompleted: user.onboardingCompleted,
       },
-      profile: roleProfile,
+      profile: profile || null,
     });
   } catch (error) {
     return handleAuthError(error);
@@ -43,142 +34,62 @@ export async function POST(req: NextRequest) {
     const db = readDb();
     const now = new Date().toISOString();
 
+    db.studentProfiles = db.studentProfiles || [];
+    let profile = db.studentProfiles.find((p) => p.userId === user.id);
+
+    if (!profile) {
+      profile = {
+        userId: user.id,
+        skills: [],
+        projects: [],
+        experience: [],
+        certifications: [],
+        achievements: [],
+        updatedAt: now,
+      };
+      db.studentProfiles.push(profile);
+    }
+
+    // Common shared fields
+    if (data.phone !== undefined) profile.phone = data.phone;
+    if (data.bio !== undefined) profile.bio = data.bio;
+    if (data.location !== undefined) profile.location = data.location;
+    if (data.avatarUrl !== undefined) profile.avatarUrl = data.avatarUrl;
+
     if (user.role === "student") {
-      let profile = db.studentProfiles.find((p) => p.userId === user.id);
-      if (!profile) {
-        profile = {
-          userId: user.id,
-          skills: [],
-          projects: [],
-          experience: [],
-          certifications: [],
-          achievements: [],
-          updatedAt: now,
-        };
-        db.studentProfiles.push(profile);
-      }
-      if (data.phone !== undefined) profile.phone = data.phone;
-      if (data.bio !== undefined) profile.bio = data.bio;
-      if (data.location !== undefined) profile.location = data.location;
+      // Student-specific fields
       if (data.institution !== undefined) profile.institution = data.institution;
       if (data.department !== undefined) profile.department = data.department;
       if (data.degree !== undefined) profile.degree = data.degree;
       if (data.graduationYear !== undefined) profile.graduationYear = Number(data.graduationYear);
       if (data.cgpa !== undefined) profile.cgpa = Number(data.cgpa);
-      if (data.avatarUrl !== undefined) profile.avatarUrl = data.avatarUrl;
-      profile.updatedAt = now;
-    } else if (user.role === "faculty") {
-      let profile = db.facultyProfiles.find((p) => p.userId === user.id);
-      if (!profile) {
-        profile = {
-          userId: user.id,
-          designation: "",
-          department: "",
-          institution: "",
-          qualifications: [],
-          expertise: [],
-          experienceHistory: [],
-          publications: [],
-          certificationsFDPs: [],
-          collaborationInterests: [],
-          updatedAt: now,
-        };
-        db.facultyProfiles.push(profile);
-      }
-      if (data.designation) profile.designation = data.designation;
-      if (data.department) profile.department = data.department;
-      if (data.institution) profile.institution = data.institution;
-      if (data.qualifications) {
-        profile.qualifications = Array.isArray(data.qualifications)
-          ? data.qualifications
-          : data.qualifications.split(",").map((s: string) => s.trim());
-      }
-      if (data.expertise) {
-        profile.expertise = Array.isArray(data.expertise)
-          ? data.expertise
-          : data.expertise.split(",").map((s: string) => s.trim());
-      }
-      profile.updatedAt = now;
-    } else if (user.role === "recruiter") {
-      let profile = db.recruiterProfiles.find((p) => p.userId === user.id);
-      if (!profile) {
-        profile = {
-          userId: user.id,
-          companyName: "",
-          website: "",
-          industry: "",
-          recruiterDesignation: "",
-          officialEmail: user.email,
-          verificationStatus: "pending",
-          hiringPreferences: {
-            targetDepartments: [],
-            targetRoles: [],
-            preferredSkills: [],
-          },
-          opportunitiesCount: 0,
-          updatedAt: now,
-        };
-        db.recruiterProfiles.push(profile);
-      }
-      if (data.companyName) profile.companyName = data.companyName;
-      if (data.website) profile.website = data.website;
-      if (data.industry) profile.industry = data.industry;
-      if (data.recruiterDesignation) profile.recruiterDesignation = data.recruiterDesignation;
-      if (data.officialEmail) profile.officialEmail = data.officialEmail;
-      if (data.companySize) profile.companySize = data.companySize;
-      if (data.headquarters) profile.headquarters = data.headquarters;
-      if (data.aboutCompany) profile.aboutCompany = data.aboutCompany;
-      if (data.verificationDocument) profile.verificationDocument = data.verificationDocument;
-      profile.verificationStatus = "pending";
-      profile.updatedAt = now;
-    } else if (user.role === "institution") {
-      let profile = db.institutionProfiles.find((p) => p.userId === user.id);
-      if (!profile) {
-        profile = {
-          userId: user.id,
-          name: "",
-          type: "University",
-          location: "",
-          website: "",
-          adminName: user.name,
-          adminDesignation: "",
-          adminContact: "",
-          verificationStatus: "pending",
-          departments: [],
-          studentCountByBatch: {},
-          facultyCountByDepartment: {},
-          updatedAt: now,
-        };
-        db.institutionProfiles.push(profile);
-      }
-      if (data.name) profile.name = data.name;
-      if (data.type) profile.type = data.type;
-      if (data.location) profile.location = data.location;
-      if (data.website) profile.website = data.website;
-      if (data.adminName) profile.adminName = data.adminName;
-      if (data.adminDesignation) profile.adminDesignation = data.adminDesignation;
-      if (data.adminContact) profile.adminContact = data.adminContact;
-      if (data.verificationDocument) profile.verificationDocument = data.verificationDocument;
-      profile.verificationStatus = "pending";
-      profile.updatedAt = now;
+    } else if (user.role === "job_seeker") {
+      // Job Seeker-specific fields
+      if (data.currentStatus !== undefined) profile.currentStatus = data.currentStatus;
+      if (data.totalExperience !== undefined) profile.totalExperience = data.totalExperience;
+      if (data.currentRole !== undefined) profile.currentRole = data.currentRole;
+      if (data.targetRoles !== undefined) profile.targetRoles = Array.isArray(data.targetRoles) ? data.targetRoles : [data.targetRoles];
+      if (data.preferredLocations !== undefined) profile.preferredLocations = Array.isArray(data.preferredLocations) ? data.preferredLocations : [data.preferredLocations];
+      if (data.expectedCompensation !== undefined) profile.expectedCompensation = data.expectedCompensation;
     }
 
-    if (completeOnboarding) {
-      const dbUser = db.users.find((u) => u.id === user.id);
-      if (dbUser) {
-        dbUser.onboardingCompleted = true;
-        dbUser.updatedAt = now;
-      }
+    profile.updatedAt = now;
+
+    // Update user onboarding state
+    const dbUser = (db.users || []).find((u) => u.id === user.id);
+    if (dbUser && completeOnboarding) {
+      dbUser.onboardingCompleted = true;
+      dbUser.updatedAt = now;
     }
 
     writeDb(db);
 
+    const redirectTo = user.role === "admin" ? "/admin/dashboard" : "/student/dashboard";
+
     return NextResponse.json({
       success: true,
-      message: completeOnboarding
-        ? "Onboarding completed successfully! Redirecting to your dashboard..."
-        : "Progress saved. You can continue anytime.",
-      redirectTo: `/${user.role}/dashboard`,
+      redirectTo,
+      profile,
     });
   } catch (error) {
     return handleAuthError(error);

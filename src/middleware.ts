@@ -2,29 +2,26 @@ import { NextResponse, type NextRequest } from "next/server";
 
 const SESSION_COOKIE_NAME = "cl_session";
 
-const ROLE_ROUTE_PREFIXES: Record<string, string> = {
-  "/student": "student",
-  "/faculty": "faculty",
-  "/recruiter": "recruiter",
-  "/institution": "institution",
-  "/admin": "admin",
+const ROLE_ROUTE_PREFIXES: Record<string, string[]> = {
+  "/student": ["student", "job_seeker", "admin"],
+  "/admin": ["admin"],
 };
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // 1. Check if route requires role check
-  let requiredRole: string | null = null;
-  for (const [prefix, role] of Object.entries(ROLE_ROUTE_PREFIXES)) {
+  let allowedRoles: string[] | null = null;
+  for (const [prefix, roles] of Object.entries(ROLE_ROUTE_PREFIXES)) {
     if (pathname.startsWith(prefix)) {
-      requiredRole = role;
+      allowedRoles = roles;
       break;
     }
   }
 
   const isSettingsRoute = pathname.startsWith("/settings");
   const isOnboardingRoute = pathname.startsWith("/onboarding");
-  const isProtected = requiredRole !== null || isSettingsRoute || isOnboardingRoute;
+  const isProtected = allowedRoles !== null || isSettingsRoute || isOnboardingRoute;
 
   if (!isProtected) {
     return NextResponse.next();
@@ -41,10 +38,13 @@ export function middleware(request: NextRequest) {
   // 3. Verify role matching from companion role cookie
   const roleCookie = request.cookies.get("cl_role")?.value;
 
-  if (requiredRole && roleCookie) {
-    if (roleCookie !== requiredRole && roleCookie !== "admin") {
-      // Cross-role unauthorized access attempt: redirect to their own dashboard
-      const userDashboardUrl = new URL(`/${roleCookie}/dashboard`, request.url);
+  if (allowedRoles && roleCookie) {
+    if (!allowedRoles.includes(roleCookie) && roleCookie !== "admin") {
+      // Cross-role unauthorized access attempt: redirect to dashboard
+      const userDashboardUrl = new URL(
+        roleCookie === "admin" ? "/admin/dashboard" : "/student/dashboard",
+        request.url
+      );
       return NextResponse.redirect(userDashboardUrl);
     }
   }
@@ -55,9 +55,6 @@ export function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     "/student/:path*",
-    "/faculty/:path*",
-    "/recruiter/:path*",
-    "/institution/:path*",
     "/admin/:path*",
     "/onboarding/:path*",
     "/settings/:path*",

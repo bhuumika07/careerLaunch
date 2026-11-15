@@ -516,7 +516,7 @@ export default function DesignSystemPage() {
               chipLabel="Placement"
               items={[
                 "Explainable matching algorithms",
-                "Direct recruiter pipeline & campus drives",
+                "Direct verified opportunity links & tracking",
                 "Contextual application dispatch",
               ]}
             />
@@ -590,10 +590,8 @@ export default function DesignSystemPage() {
                       <SelectValue placeholder="Select role" />
                     </SelectTrigger>
                     <SelectContent className="bg-card border-border text-foreground">
-                      <SelectItem value="student">Student</SelectItem>
-                      <SelectItem value="faculty">Faculty</SelectItem>
-                      <SelectItem value="recruiter">Recruiter</SelectItem>
-                      <SelectItem value="institution">Institution</SelectItem>
+                      <SelectItem value="student">Student &amp; Learner</SelectItem>
+                      <SelectItem value="job_seeker">Job Seeker &amp; Professional</SelectItem>
                       <SelectItem value="admin">Platform Admin</SelectItem>
                     </SelectContent>
                   </Select>
@@ -627,16 +625,10 @@ export default function DesignSystemPage() {
                   <Badge className="bg-primary/20 text-primary border border-primary/30 px-3 py-1">
                     Student
                   </Badge>
-                  <Badge className="bg-danger/20 text-danger border border-danger/30 px-3 py-1">
-                    Faculty
+                  <Badge className="bg-teal/20 text-teal border border-teal/30 px-3 py-1">
+                    Job Seeker
                   </Badge>
-                  <Badge className="bg-warning/20 text-warning border border-warning/30 px-3 py-1">
-                    Recruiter
-                  </Badge>
-                  <Badge className="bg-info/20 text-info border border-info/30 px-3 py-1">
-                    Institution
-                  </Badge>
-                  <Badge className="bg-danger/40 text-danger border border-danger/40 px-3 py-1">
+                  <Badge className="bg-amber/20 text-amber border border-amber/30 px-3 py-1">
                     Admin
                   </Badge>
                 </div>

@@ -9,7 +9,7 @@ import {
   defaultQuizAttempts,
 } from "./default-data";
 
-export type Role = "student" | "faculty" | "recruiter" | "institution" | "admin";
+export type Role = "student" | "job_seeker" | "admin";
 export type UserStatus = "pending_verification" | "active" | "suspended" | "deactivated";
 
 export interface User {
@@ -102,11 +102,20 @@ export interface StudentProfile {
   phone?: string;
   bio?: string;
   location?: string;
+  // Student-specific fields:
   institution?: string;
   department?: string;
   degree?: string;
   graduationYear?: number;
   cgpa?: number;
+  // Job Seeker-specific fields:
+  currentStatus?: "employed" | "unemployed" | "freelancing" | "switching_careers";
+  totalExperience?: string;
+  currentRole?: string;
+  targetRoles?: string[];
+  preferredLocations?: string[];
+  expectedCompensation?: string;
+  // Shared fields:
   avatarUrl?: string;
   portfolioUrl?: string;
   githubUrl?: string;
@@ -118,6 +127,8 @@ export interface StudentProfile {
   achievements: AchievementItem[];
   updatedAt: string;
 }
+
+export type CareerProfile = StudentProfile;
 
 export interface PublicationItem {
   id: string;

@@ -8,13 +8,11 @@ import {
   ArrowRight,
   ArrowLeft,
   CheckCircle2,
+  GraduationCap,
+  Briefcase,
+  User,
   Upload,
   AlertCircle,
-  FileCheck,
-  Building2,
-  GraduationCap,
-  Users,
-  Briefcase,
   Save,
 } from "lucide-react";
 import { PillButton } from "@/components/ui/pill-button";
@@ -40,85 +38,60 @@ export default function OnboardingPage() {
     id: string;
     name: string;
     email: string;
-    role: "student" | "faculty" | "recruiter" | "institution" | "admin";
+    role: "student" | "job_seeker" | "admin";
   } | null>(null);
 
   const [step, setStep] = React.useState<1 | 2>(1);
 
-  // Common fields
+  // Common shared fields
   const [avatarUrl, setAvatarUrl] = React.useState<string>("");
+  const [phone, setPhone] = React.useState("");
+  const [bio, setBio] = React.useState("");
+  const [location, setLocation] = React.useState("");
 
-  // Student fields
-  const [studentPhone, setStudentPhone] = React.useState("");
-  const [studentBio, setStudentBio] = React.useState("");
-  const [studentLocation, setStudentLocation] = React.useState("");
-  const [studentInstitution, setStudentInstitution] = React.useState("St. Jude Institute of Technology");
-  const [studentDepartment, setStudentDepartment] = React.useState("Computer Science & Engineering");
-  const [studentDegree, setStudentDegree] = React.useState("B.Tech in Computer Science");
-  const [studentGradYear, setStudentGradYear] = React.useState("2026");
-  const [studentCgpa, setStudentCgpa] = React.useState("8.8");
+  // Student-specific fields
+  const [institution, setInstitution] = React.useState("St. Jude Institute of Technology");
+  const [department, setDepartment] = React.useState("Computer Science & Engineering");
+  const [degree, setDegree] = React.useState("B.Tech in Computer Science");
+  const [gradYear, setGradYear] = React.useState("2026");
+  const [cgpa, setCgpa] = React.useState("8.8");
 
-  // Faculty fields
-  const [facultyDesignation, setFacultyDesignation] = React.useState("Associate Professor");
-  const [facultyDepartment, setFacultyDepartment] = React.useState("Computer Science & Engineering");
-  const [facultyInstitution, setFacultyInstitution] = React.useState("St. Jude Institute of Technology");
-  const [facultyQualifications, setFacultyQualifications] = React.useState("Ph.D. in Computer Science");
-  const [facultyExpertise, setFacultyExpertise] = React.useState("Distributed Systems, Cloud Architecture");
+  // Job Seeker-specific fields
+  const [currentStatus, setCurrentStatus] = React.useState<string>("employed");
+  const [totalExperience, setTotalExperience] = React.useState("2 years");
+  const [currentRole, setCurrentRole] = React.useState("Junior Software Engineer");
+  const [targetRoles, setTargetRoles] = React.useState("Full Stack Developer, Cloud Engineer");
+  const [preferredLocations, setPreferredLocations] = React.useState("Remote, Bengaluru, Mumbai");
+  const [expectedCompensation, setExpectedCompensation] = React.useState("$80,000 / year");
 
-  // Recruiter fields
-  const [companyName, setCompanyName] = React.useState("Apex Cloud Solutions");
-  const [companyWebsite, setCompanyWebsite] = React.useState("https://apexcloud.example.com");
-  const [companyIndustry, setCompanyIndustry] = React.useState("Cloud Computing & Enterprise SaaS");
-  const [companySize, setCompanySize] = React.useState("500-1000 employees");
-  const [recruiterDesignation, setRecruiterDesignation] = React.useState("Lead Technical Recruiter");
-  const [officialEmail, setOfficialEmail] = React.useState("");
-  const [recruiterDocUploaded, setRecruiterDocUploaded] = React.useState(false);
-
-  // Institution fields
-  const [instName, setInstName] = React.useState("St. Jude Institute of Technology");
-  const [instType, setInstType] = React.useState<"University" | "Autonomous College" | "Institute of Technology" | "Polytechnic">("Autonomous College");
-  const [instLocation, setInstLocation] = React.useState("Austin, Texas");
-  const [instWebsite, setInstWebsite] = React.useState("https://stjude-tech.edu");
-  const [adminName, setAdminName] = React.useState("");
-  const [adminDesignation, setAdminDesignation] = React.useState("Dean of Career & Academic Affairs");
-  const [adminContact, setAdminContact] = React.useState("+1 (555) 902-1849");
-  const [instDocUploaded, setInstDocUploaded] = React.useState(false);
-
-  // Fetch initial profile data on mount
   React.useEffect(() => {
     let mounted = true;
     const fetchUserData = async () => {
       try {
         const res = await fetch("/api/onboarding");
         const data = await res.json();
-        if (mounted && res.ok && data.success) {
+        if (mounted && data.success && data.user) {
           setUser(data.user);
-          if (data.user.role === "recruiter") {
-            setOfficialEmail(data.user.email);
-          }
-          if (data.user.role === "institution") {
-            setAdminName(data.user.name);
-          }
-          // Pre-populate if profile exists
           if (data.profile) {
-            const p = data.profile;
-            if (p.phone) setStudentPhone(p.phone);
-            if (p.bio) setStudentBio(p.bio);
-            if (p.institution) setStudentInstitution(p.institution);
-            if (p.department) setStudentDepartment(p.department);
-            if (p.degree) setStudentDegree(p.degree);
-            if (p.graduationYear) setStudentGradYear(String(p.graduationYear));
-            if (p.cgpa) setStudentCgpa(String(p.cgpa));
-            if (p.designation) setFacultyDesignation(p.designation);
-            if (p.companyName) setCompanyName(p.companyName);
-            if (p.name) setInstName(p.name);
+            setPhone(data.profile.phone || "");
+            setBio(data.profile.bio || "");
+            setLocation(data.profile.location || "");
+            if (data.profile.avatarUrl) setAvatarUrl(data.profile.avatarUrl);
+            if (data.profile.institution) setInstitution(data.profile.institution);
+            if (data.profile.department) setDepartment(data.profile.department);
+            if (data.profile.degree) setDegree(data.profile.degree);
+            if (data.profile.graduationYear) setGradYear(String(data.profile.graduationYear));
+            if (data.profile.cgpa) setCgpa(String(data.profile.cgpa));
+            if (data.profile.currentStatus) setCurrentStatus(data.profile.currentStatus);
+            if (data.profile.totalExperience) setTotalExperience(data.profile.totalExperience);
+            if (data.profile.currentRole) setCurrentRole(data.profile.currentRole);
+            if (data.profile.targetRoles) setTargetRoles(data.profile.targetRoles.join(", "));
+            if (data.profile.preferredLocations) setPreferredLocations(data.profile.preferredLocations.join(", "));
+            if (data.profile.expectedCompensation) setExpectedCompensation(data.profile.expectedCompensation);
           }
-        } else if (mounted) {
-          // If not logged in, redirect to login
-          router.push("/login?redirect=/onboarding");
         }
       } catch {
-        if (mounted) setError("Failed to load onboarding profile.");
+        if (mounted) setError("Failed to load user profile.");
       } finally {
         if (mounted) setLoading(false);
       }
@@ -128,7 +101,7 @@ export default function OnboardingPage() {
     return () => {
       mounted = false;
     };
-  }, [router]);
+  }, []);
 
   const handleAvatarUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -145,51 +118,28 @@ export default function OnboardingPage() {
     setSubmitting(true);
     setError(null);
 
-    const role = user?.role;
-    let payloadData: any = {};
+    const isStudent = user?.role === "student";
 
-    if (role === "student") {
-      payloadData = {
-        phone: studentPhone,
-        bio: studentBio,
-        location: studentLocation,
-        institution: studentInstitution,
-        department: studentDepartment,
-        degree: studentDegree,
-        graduationYear: studentGradYear,
-        cgpa: studentCgpa,
-        avatarUrl,
-      };
-    } else if (role === "faculty") {
-      payloadData = {
-        designation: facultyDesignation,
-        department: facultyDepartment,
-        institution: facultyInstitution,
-        qualifications: facultyQualifications,
-        expertise: facultyExpertise,
-        avatarUrl,
-      };
-    } else if (role === "recruiter") {
-      payloadData = {
-        companyName,
-        website: companyWebsite,
-        industry: companyIndustry,
-        companySize,
-        recruiterDesignation,
-        officialEmail,
-        verificationDocument: recruiterDocUploaded ? "corporate_tax_registration.pdf" : undefined,
-      };
-    } else if (role === "institution") {
-      payloadData = {
-        name: instName,
-        type: instType,
-        location: instLocation,
-        website: instWebsite,
-        adminName,
-        adminDesignation,
-        adminContact,
-        verificationDocument: instDocUploaded ? "university_charter_accreditation.pdf" : undefined,
-      };
+    const payloadData: any = {
+      phone,
+      bio,
+      location,
+      avatarUrl,
+    };
+
+    if (isStudent) {
+      payloadData.institution = institution;
+      payloadData.department = department;
+      payloadData.degree = degree;
+      payloadData.graduationYear = gradYear;
+      payloadData.cgpa = cgpa;
+    } else {
+      payloadData.currentStatus = currentStatus;
+      payloadData.totalExperience = totalExperience;
+      payloadData.currentRole = currentRole;
+      payloadData.targetRoles = targetRoles.split(",").map((s) => s.trim()).filter(Boolean);
+      payloadData.preferredLocations = preferredLocations.split(",").map((s) => s.trim()).filter(Boolean);
+      payloadData.expectedCompensation = expectedCompensation;
     }
 
     try {
@@ -201,12 +151,12 @@ export default function OnboardingPage() {
 
       const resData = await res.json();
       if (!res.ok || !resData.success) {
-        setError(resData.error || "Failed to save onboarding data.");
+        setError(resData.error || "Failed to save profile.");
         setSubmitting(false);
         return;
       }
 
-      router.push(resData.redirectTo || `/${role}/dashboard`);
+      router.push(resData.redirectTo || "/student/dashboard");
     } catch {
       setError("An unexpected network error occurred.");
       setSubmitting(false);
@@ -215,25 +165,23 @@ export default function OnboardingPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-navy to-navy-950 text-foreground">
-        <div className="text-center space-y-3">
-          <div className="size-10 border-2 border-amber border-t-transparent rounded-full animate-spin mx-auto" />
-          <p className="text-xs text-muted-foreground font-medium">Loading your role onboarding wizard...</p>
-        </div>
+      <div className="min-h-screen flex items-center justify-center bg-navy text-foreground">
+        <div className="size-8 border-2 border-amber border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
   const role = user?.role || "student";
+  const isStudent = role === "student";
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-navy to-navy-950 text-foreground selection:bg-amber selection:text-navy py-12 px-6 sm:px-10">
+    <div className="min-h-screen bg-gradient-to-b from-navy to-navy-950 text-foreground py-12 px-6 sm:px-10">
       <div className="max-w-3xl mx-auto space-y-8">
         {/* Top Header */}
-        <div className="flex items-center justify-between border-b border-border pb-6">
+        <div className="flex items-center justify-between border-b border-white/[0.08] pb-6">
           <Link href="/" className="flex items-center gap-2.5">
             <div className="size-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold">
-              <Compass className="size-4 text-primary-foreground" />
+              <Compass className="size-4" />
             </div>
             <span className="font-heading font-bold text-lg text-foreground">
               Career<span className="text-amber">Launch</span>
@@ -244,17 +192,17 @@ export default function OnboardingPage() {
             type="button"
             onClick={() => saveOnboarding(false)}
             disabled={submitting}
-            className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-amber transition-colors font-medium cursor-pointer"
+            className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-amber transition-colors font-medium"
           >
             <Save className="size-3.5" />
-            <span>Save & continue later</span>
+            <span>Save &amp; continue later</span>
           </button>
         </div>
 
         {/* Progress Stepper */}
         <div className="space-y-2.5">
           <div className="flex items-center justify-between text-xs font-semibold text-muted-foreground">
-            <span className="capitalize">{role} Onboarding Wizard</span>
+            <span className="capitalize">{isStudent ? "Student Profile Setup" : "Job Seeker Profile Setup"}</span>
             <span className="text-amber">Step {step} of 2</span>
           </div>
           <div className="h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
@@ -266,691 +214,267 @@ export default function OnboardingPage() {
         </div>
 
         {error && (
-          <div className="p-3.5 rounded-xl border border-danger/50 bg-danger/15 text-foreground text-xs flex items-center gap-2.5">
-            <AlertCircle className="size-4 text-danger shrink-0" />
+          <div className="p-3.5 rounded-xl border border-destructive/50 bg-destructive/15 text-destructive text-xs flex items-center gap-2.5">
+            <AlertCircle className="size-4 shrink-0" />
             <span>{error}</span>
           </div>
         )}
 
-        {/* Wizard Container Glass Card */}
-        <div className="p-8 sm:p-10 rounded-[24px] border border-border bg-white/[0.04] backdrop-blur-xl shadow-2xl space-y-8">
-          {/* ================================================================ */}
-          {/* 1. STUDENT ONBOARDING                                            */}
-          {/* ================================================================ */}
-          {role === "student" && (
-            <>
-              {step === 1 && (
-                <div className="space-y-6">
-                  <div className="space-y-1">
-                    <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber/15 text-amber text-[11px] font-semibold mb-1">
-                      <GraduationCap className="size-3.5" />
-                      <span>Student Profile Setup</span>
-                    </div>
-                    <h2 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
-                      Personal & Contact Information
-                    </h2>
-                    <p className="text-xs sm:text-sm text-muted-foreground">
-                      Introduce yourself to recruiters and faculty advisors with clean contact details.
-                    </p>
-                  </div>
-
-                  {/* Profile Picture Upload */}
-                  <div className="flex items-center gap-5 p-4 rounded-xl border border-border bg-white/[0.02]">
-                    <div className="size-16 rounded-full bg-navy-800 flex items-center justify-center text-foreground font-bold overflow-hidden border border-border shrink-0">
-                      {avatarUrl ? (
-                        <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
-                      ) : (
-                        <span className="text-lg text-amber">{user?.name?.charAt(0) || "S"}</span>
-                      )}
-                    </div>
-                    <div className="space-y-1 flex-1">
-                      <Label htmlFor="student-avatar" className="text-xs font-semibold text-foreground cursor-pointer">
-                        Upload Profile Photo
-                      </Label>
-                      <p className="text-[11px] text-muted-foreground">JPG, PNG or GIF up to 5MB.</p>
-                      <input
-                        id="student-avatar"
-                        type="file"
-                        accept="image/*"
-                        onChange={handleAvatarUpload}
-                        className="text-xs text-muted-foreground file:mr-3 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-amber/20 file:text-amber cursor-pointer"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-1.5">
-                      <Label className="text-xs text-foreground/85 font-medium">Contact Phone</Label>
-                      <Input
-                        value={studentPhone}
-                        onChange={(e) => setStudentPhone(e.target.value)}
-                        placeholder="+1 (555) 000-0000"
-                        className="bg-white/[0.05] border-border text-foreground rounded-xl"
-                      />
-                    </div>
-                    <div className="space-y-1.5">
-                      <Label className="text-xs text-foreground/85 font-medium">Current Location</Label>
-                      <Input
-                        value={studentLocation}
-                        onChange={(e) => setStudentLocation(e.target.value)}
-                        placeholder="City, State"
-                        className="bg-white/[0.05] border-border text-foreground rounded-xl"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <Label className="text-xs text-foreground/85 font-medium">Headline / Bio</Label>
-                    <Textarea
-                      rows={3}
-                      value={studentBio}
-                      onChange={(e) => setStudentBio(e.target.value)}
-                      placeholder="Aspiring software engineer passionate about machine learning systems..."
-                      className="bg-white/[0.05] border-border text-foreground rounded-xl resize-none"
-                    />
-                  </div>
-
-                  <div className="pt-2 flex justify-end">
-                    <PillButton
-                      variant="primary"
-                      size="md"
-                      onClick={() => setStep(2)}
-                      icon={<ArrowRight className="size-4" />}
-                    >
-                      Next: Academic Details
-                    </PillButton>
-                  </div>
+        {/* Wizard Card */}
+        <div className="p-8 sm:p-10 rounded-3xl glass-card border border-sky/20 shadow-2xl space-y-8 bg-navy-950/80">
+          {step === 1 ? (
+            /* STEP 1: Personal Contact & Shared Info */
+            <div className="space-y-6">
+              <div className="space-y-1">
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber/15 text-amber text-[11px] font-semibold mb-1">
+                  {isStudent ? <GraduationCap className="size-3.5" /> : <Briefcase className="size-3.5" />}
+                  <span>{isStudent ? "Academic Identity" : "Professional Identity"}</span>
                 </div>
-              )}
+                <h2 className="font-heading text-2xl font-bold tracking-tight text-foreground">
+                  Contact &amp; Bio Information
+                </h2>
+                <p className="text-xs sm:text-sm text-muted-foreground">
+                  This forms your base discovery identity for automated match scoring.
+                </p>
+              </div>
 
-              {step === 2 && (
-                <div className="space-y-6">
+              {/* Avatar Upload */}
+              <div className="flex items-center gap-5 p-4 rounded-2xl border border-white/[0.08] bg-white/[0.02]">
+                <div className="size-16 rounded-full bg-navy-900 flex items-center justify-center text-foreground font-bold overflow-hidden border border-white/[0.1] shrink-0">
+                  {avatarUrl ? (
+                    <img src={avatarUrl} alt="Avatar" className="size-full object-cover" />
+                  ) : (
+                    <User className="size-7 text-muted-foreground" />
+                  )}
+                </div>
+                <div className="space-y-1.5">
+                  <span className="text-xs font-semibold text-foreground block">Profile Photo</span>
+                  <label className="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/[0.06] hover:bg-white/[0.1] text-xs font-medium text-foreground transition-colors border border-white/[0.08]">
+                    <Upload className="size-3.5" />
+                    <span>Upload Image</span>
+                    <input type="file" accept="image/*" onChange={handleAvatarUpload} className="hidden" />
+                  </label>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <Label htmlFor="phone" className="text-xs">Phone Number</Label>
+                  <Input
+                    id="phone"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder="+1 (555) 000-0000"
+                    className="h-10 text-xs bg-white/[0.04]"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="location" className="text-xs">Location / City</Label>
+                  <Input
+                    id="location"
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                    placeholder="e.g. San Francisco, CA or Remote"
+                    className="h-10 text-xs bg-white/[0.04]"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="bio" className="text-xs">Short Bio / Executive Summary</Label>
+                <Textarea
+                  id="bio"
+                  value={bio}
+                  onChange={(e) => setBio(e.target.value)}
+                  placeholder="Tell us about your background, aspirational roles, and core passions..."
+                  className="h-24 text-xs bg-white/[0.04] resize-none"
+                />
+              </div>
+
+              <div className="flex justify-end pt-4 border-t border-white/[0.08]">
+                <PillButton variant="primary" size="md" onClick={() => setStep(2)}>
+                  <span>Continue to {isStudent ? "Academic Details" : "Career Background"}</span>
+                  <ArrowRight className="size-4 ml-1.5" />
+                </PillButton>
+              </div>
+            </div>
+          ) : (
+            /* STEP 2: Role-Specific Details */
+            <div className="space-y-6">
+              {isStudent ? (
+                /* Student Specific */
+                <div className="space-y-5">
                   <div className="space-y-1">
-                    <button
-                      type="button"
-                      onClick={() => setStep(1)}
-                      className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground mb-1"
-                    >
-                      <ArrowLeft className="size-3.5" />
-                      <span>Back to Personal</span>
-                    </button>
-                    <h2 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+                    <h2 className="font-heading text-2xl font-bold tracking-tight text-foreground">
                       Academic Credentials
                     </h2>
                     <p className="text-xs sm:text-sm text-muted-foreground">
-                      Specify your institution and department so verified coursework can be populated.
+                      Used to match mandatory degree criteria and graduation batch cutoffs.
                     </p>
                   </div>
 
                   <div className="space-y-4">
                     <div className="space-y-1.5">
-                      <Label className="text-xs text-foreground/85 font-medium">Institution Name</Label>
+                      <Label htmlFor="inst" className="text-xs">College / University Name</Label>
                       <Input
-                        value={studentInstitution}
-                        onChange={(e) => setStudentInstitution(e.target.value)}
-                        placeholder="University or College"
-                        className="bg-white/[0.05] border-border text-foreground rounded-xl"
+                        id="inst"
+                        value={institution}
+                        onChange={(e) => setInstitution(e.target.value)}
+                        className="h-10 text-xs bg-white/[0.04]"
                       />
                     </div>
-
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="space-y-1.5">
-                        <Label className="text-xs text-foreground/85 font-medium">Department</Label>
+                        <Label htmlFor="degree" className="text-xs">Degree Program</Label>
                         <Input
-                          value={studentDepartment}
-                          onChange={(e) => setStudentDepartment(e.target.value)}
-                          placeholder="e.g. Computer Science"
-                          className="bg-white/[0.05] border-border text-foreground rounded-xl"
+                          id="degree"
+                          value={degree}
+                          onChange={(e) => setDegree(e.target.value)}
+                          placeholder="B.Tech, B.S., M.S., etc."
+                          className="h-10 text-xs bg-white/[0.04]"
                         />
                       </div>
                       <div className="space-y-1.5">
-                        <Label className="text-xs text-foreground/85 font-medium">Degree Program</Label>
+                        <Label htmlFor="dept" className="text-xs">Department / Major</Label>
                         <Input
-                          value={studentDegree}
-                          onChange={(e) => setStudentDegree(e.target.value)}
-                          placeholder="e.g. B.Tech / B.S."
-                          className="bg-white/[0.05] border-border text-foreground rounded-xl"
+                          id="dept"
+                          value={department}
+                          onChange={(e) => setDepartment(e.target.value)}
+                          placeholder="Computer Science, IT, Data, etc."
+                          className="h-10 text-xs bg-white/[0.04]"
                         />
                       </div>
                     </div>
-
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="space-y-1.5">
-                        <Label className="text-xs text-foreground/85 font-medium">Graduation Year</Label>
+                        <Label htmlFor="gradYear" className="text-xs">Graduation Year</Label>
                         <Input
-                          type="number"
-                          value={studentGradYear}
-                          onChange={(e) => setStudentGradYear(e.target.value)}
-                          placeholder="2026"
-                          className="bg-white/[0.05] border-border text-foreground rounded-xl"
+                          id="gradYear"
+                          value={gradYear}
+                          onChange={(e) => setGradYear(e.target.value)}
+                          className="h-10 text-xs bg-white/[0.04]"
                         />
                       </div>
                       <div className="space-y-1.5">
-                        <Label className="text-xs text-foreground/85 font-medium">Cumulative CGPA / GPA</Label>
+                        <Label htmlFor="cgpa" className="text-xs">Current CGPA / Grade (out of 10.0)</Label>
                         <Input
-                          type="number"
-                          step="0.01"
-                          value={studentCgpa}
-                          onChange={(e) => setStudentCgpa(e.target.value)}
-                          placeholder="e.g. 8.75"
-                          className="bg-white/[0.05] border-border text-foreground rounded-xl"
+                          id="cgpa"
+                          value={cgpa}
+                          onChange={(e) => setCgpa(e.target.value)}
+                          className="h-10 text-xs bg-white/[0.04]"
                         />
                       </div>
                     </div>
-                  </div>
-
-                  <div className="pt-4 flex items-center justify-between border-t border-border">
-                    <PillButton variant="ghost" size="md" onClick={() => setStep(1)}>
-                      Back
-                    </PillButton>
-                    <PillButton
-                      variant="primary"
-                      size="lg"
-                      disabled={submitting}
-                      onClick={() => saveOnboarding(true)}
-                      icon={<CheckCircle2 className="size-4" />}
-                    >
-                      {submitting ? "Finishing..." : "Complete Student Onboarding"}
-                    </PillButton>
                   </div>
                 </div>
-              )}
-            </>
-          )}
-
-          {/* ================================================================ */}
-          {/* 2. FACULTY ONBOARDING                                            */}
-          {/* ================================================================ */}
-          {role === "faculty" && (
-            <>
-              {step === 1 && (
-                <div className="space-y-6">
+              ) : (
+                /* Job Seeker Specific */
+                <div className="space-y-5">
                   <div className="space-y-1">
-                    <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber/15 text-amber text-[11px] font-semibold mb-1">
-                      <Users className="size-3.5" />
-                      <span>Faculty Onboarding</span>
-                    </div>
-                    <h2 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
-                      Institutional Affiliation
+                    <h2 className="font-heading text-2xl font-bold tracking-tight text-foreground">
+                      Professional Background
                     </h2>
                     <p className="text-xs sm:text-sm text-muted-foreground">
-                      Specify your current academic appointment and department.
-                    </p>
-                  </div>
-
-                  <div className="space-y-4">
-                    <div className="space-y-1.5">
-                      <Label className="text-xs text-foreground/85 font-medium">Academic Designation</Label>
-                      <Select value={facultyDesignation} onValueChange={setFacultyDesignation}>
-                        <SelectTrigger className="bg-white/[0.05] border-border text-foreground rounded-xl">
-                          <SelectValue placeholder="Select designation" />
-                        </SelectTrigger>
-                        <SelectContent className="bg-card border-border text-foreground">
-                          <SelectItem value="Professor">Professor</SelectItem>
-                          <SelectItem value="Associate Professor">Associate Professor</SelectItem>
-                          <SelectItem value="Assistant Professor">Assistant Professor</SelectItem>
-                          <SelectItem value="Head of Department">Head of Department</SelectItem>
-                          <SelectItem value="Dean of Engineering">Dean of Engineering</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div className="space-y-1.5">
-                        <Label className="text-xs text-foreground/85 font-medium">Department</Label>
-                        <Input
-                          value={facultyDepartment}
-                          onChange={(e) => setFacultyDepartment(e.target.value)}
-                          placeholder="e.g. Computer Science & Engineering"
-                          className="bg-white/[0.05] border-border text-foreground rounded-xl"
-                        />
-                      </div>
-                      <div className="space-y-1.5">
-                        <Label className="text-xs text-foreground/85 font-medium">Institution</Label>
-                        <Input
-                          value={facultyInstitution}
-                          onChange={(e) => setFacultyInstitution(e.target.value)}
-                          placeholder="e.g. St. Jude Institute of Technology"
-                          className="bg-white/[0.05] border-border text-foreground rounded-xl"
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="pt-2 flex justify-end">
-                    <PillButton
-                      variant="primary"
-                      size="md"
-                      onClick={() => setStep(2)}
-                      icon={<ArrowRight className="size-4" />}
-                    >
-                      Next: Qualifications & Expertise
-                    </PillButton>
-                  </div>
-                </div>
-              )}
-
-              {step === 2 && (
-                <div className="space-y-6">
-                  <div className="space-y-1">
-                    <button
-                      type="button"
-                      onClick={() => setStep(1)}
-                      className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground mb-1"
-                    >
-                      <ArrowLeft className="size-3.5" />
-                      <span>Back to Affiliation</span>
-                    </button>
-                    <h2 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
-                      Qualifications & Research Expertise
-                    </h2>
-                    <p className="text-xs sm:text-sm text-muted-foreground">
-                      Add degrees and specialization tags to guide student mentorship and project evaluations.
-                    </p>
-                  </div>
-
-                  <div className="space-y-4">
-                    <div className="space-y-1.5">
-                      <Label className="text-xs text-foreground/85 font-medium">
-                        Academic Qualifications (comma separated)
-                      </Label>
-                      <Input
-                        value={facultyQualifications}
-                        onChange={(e) => setFacultyQualifications(e.target.value)}
-                        placeholder="e.g. Ph.D. in Computer Science, M.Tech in Software Systems"
-                        className="bg-white/[0.05] border-border text-foreground rounded-xl"
-                      />
-                    </div>
-
-                    <div className="space-y-1.5">
-                      <Label className="text-xs text-foreground/85 font-medium">
-                        Subject Matter Expertise (comma separated)
-                      </Label>
-                      <Input
-                        value={facultyExpertise}
-                        onChange={(e) => setFacultyExpertise(e.target.value)}
-                        placeholder="e.g. Distributed Systems, Machine Learning, Cloud Security"
-                        className="bg-white/[0.05] border-border text-foreground rounded-xl"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="pt-4 flex items-center justify-between border-t border-border">
-                    <PillButton variant="ghost" size="md" onClick={() => setStep(1)}>
-                      Back
-                    </PillButton>
-                    <PillButton
-                      variant="primary"
-                      size="lg"
-                      disabled={submitting}
-                      onClick={() => saveOnboarding(true)}
-                      icon={<CheckCircle2 className="size-4" />}
-                    >
-                      {submitting ? "Finishing..." : "Complete Faculty Onboarding"}
-                    </PillButton>
-                  </div>
-                </div>
-              )}
-            </>
-          )}
-
-          {/* ================================================================ */}
-          {/* 3. RECRUITER ONBOARDING                                          */}
-          {/* ================================================================ */}
-          {role === "recruiter" && (
-            <>
-              {step === 1 && (
-                <div className="space-y-6">
-                  <div className="space-y-1">
-                    <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber/15 text-amber text-[11px] font-semibold mb-1">
-                      <Briefcase className="size-3.5" />
-                      <span>Corporate Recruiter Onboarding</span>
-                    </div>
-                    <h2 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
-                      Company & Organization Profile
-                    </h2>
-                    <p className="text-xs sm:text-sm text-muted-foreground">
-                      Tell students about your company, industry domain, and organizational scale.
-                    </p>
-                  </div>
-
-                  <div className="space-y-4">
-                    <div className="space-y-1.5">
-                      <Label className="text-xs text-foreground/85 font-medium">Company Name</Label>
-                      <Input
-                        value={companyName}
-                        onChange={(e) => setCompanyName(e.target.value)}
-                        placeholder="Apex Cloud Solutions"
-                        className="bg-white/[0.05] border-border text-foreground rounded-xl"
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div className="space-y-1.5">
-                        <Label className="text-xs text-foreground/85 font-medium">Company Website</Label>
-                        <Input
-                          value={companyWebsite}
-                          onChange={(e) => setCompanyWebsite(e.target.value)}
-                          placeholder="https://company.com"
-                          className="bg-white/[0.05] border-border text-foreground rounded-xl"
-                        />
-                      </div>
-                      <div className="space-y-1.5">
-                        <Label className="text-xs text-foreground/85 font-medium">Industry Domain</Label>
-                        <Input
-                          value={companyIndustry}
-                          onChange={(e) => setCompanyIndustry(e.target.value)}
-                          placeholder="Cloud & AI Infrastructure"
-                          className="bg-white/[0.05] border-border text-foreground rounded-xl"
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="pt-2 flex justify-end">
-                    <PillButton
-                      variant="primary"
-                      size="md"
-                      onClick={() => setStep(2)}
-                      icon={<ArrowRight className="size-4" />}
-                    >
-                      Next: Verification & Documents
-                    </PillButton>
-                  </div>
-                </div>
-              )}
-
-              {step === 2 && (
-                <div className="space-y-6">
-                  <div className="space-y-1">
-                    <button
-                      type="button"
-                      onClick={() => setStep(1)}
-                      className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground mb-1"
-                    >
-                      <ArrowLeft className="size-3.5" />
-                      <span>Back to Company Details</span>
-                    </button>
-                    <h2 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
-                      Recruiter Credentials & Verification
-                    </h2>
-                    <p className="text-xs sm:text-sm text-muted-foreground">
-                      Submit corporate verification documents for institutional campus drive authorization.
+                      Configures full-time role recommendations and target compensation filters.
                     </p>
                   </div>
 
                   <div className="space-y-4">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="space-y-1.5">
-                        <Label className="text-xs text-foreground/85 font-medium">Recruiter Designation</Label>
-                        <Input
-                          value={recruiterDesignation}
-                          onChange={(e) => setRecruiterDesignation(e.target.value)}
-                          placeholder="e.g. Senior Talent Partner"
-                          className="bg-white/[0.05] border-border text-foreground rounded-xl"
-                        />
-                      </div>
-                      <div className="space-y-1.5">
-                        <Label className="text-xs text-foreground/85 font-medium">Official Work Email</Label>
-                        <Input
-                          type="email"
-                          value={officialEmail}
-                          onChange={(e) => setOfficialEmail(e.target.value)}
-                          placeholder="name@company.com"
-                          className="bg-white/[0.05] border-border text-foreground rounded-xl"
-                        />
-                      </div>
-                    </div>
-
-                    {/* Document Upload Area */}
-                    <div className="space-y-2">
-                      <Label className="text-xs text-foreground/85 font-medium">
-                        Corporate Verification Document (Certificate of Incorporation / Work ID)
-                      </Label>
-                      <div
-                        onClick={() => setRecruiterDocUploaded(!recruiterDocUploaded)}
-                        className={cn(
-                          "p-6 rounded-2xl border-2 border-dashed transition-all duration-200 cursor-pointer text-center space-y-2",
-                          recruiterDocUploaded
-                            ? "border-amber bg-amber/10"
-                            : "border-border bg-white/[0.02] hover:border-amber/40"
-                        )}
-                      >
-                        {recruiterDocUploaded ? (
-                          <>
-                            <FileCheck className="size-8 text-amber mx-auto" />
-                            <div className="text-xs font-semibold text-amber">
-                              Document Attached: corporate_registration_cert.pdf
-                            </div>
-                            <span className="text-[10px] text-muted-foreground block">
-                              Click to remove or re-upload. Status will be marked: Pending Verification.
-                            </span>
-                          </>
-                        ) : (
-                          <>
-                            <Upload className="size-8 text-muted-foreground mx-auto" />
-                            <div className="text-xs font-medium text-foreground">
-                              Click to simulate uploading verification document
-                            </div>
-                            <span className="text-[10px] text-muted-foreground block">
-                              PDF, PNG, JPG up to 10MB (Verification status: Pending)
-                            </span>
-                          </>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="pt-4 flex items-center justify-between border-t border-border">
-                    <PillButton variant="ghost" size="md" onClick={() => setStep(1)}>
-                      Back
-                    </PillButton>
-                    <PillButton
-                      variant="primary"
-                      size="lg"
-                      disabled={submitting}
-                      onClick={() => saveOnboarding(true)}
-                      icon={<CheckCircle2 className="size-4" />}
-                    >
-                      {submitting ? "Finishing..." : "Submit for Verification"}
-                    </PillButton>
-                  </div>
-                </div>
-              )}
-            </>
-          )}
-
-          {/* ================================================================ */}
-          {/* 4. INSTITUTION ONBOARDING                                        */}
-          {/* ================================================================ */}
-          {role === "institution" && (
-            <>
-              {step === 1 && (
-                <div className="space-y-6">
-                  <div className="space-y-1">
-                    <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber/15 text-amber text-[11px] font-semibold mb-1">
-                      <Building2 className="size-3.5" />
-                      <span>Institution Onboarding</span>
-                    </div>
-                    <h2 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
-                      University & College Profile
-                    </h2>
-                    <p className="text-xs sm:text-sm text-muted-foreground">
-                      Configure your institutional domain, accreditation status, and campus location.
-                    </p>
-                  </div>
-
-                  <div className="space-y-4">
-                    <div className="space-y-1.5">
-                      <Label className="text-xs text-foreground/85 font-medium">Institution Name</Label>
-                      <Input
-                        value={instName}
-                        onChange={(e) => setInstName(e.target.value)}
-                        placeholder="St. Jude Institute of Technology"
-                        className="bg-white/[0.05] border-border text-foreground rounded-xl"
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div className="space-y-1.5">
-                        <Label className="text-xs text-foreground/85 font-medium">Institution Type</Label>
-                        <Select
-                          value={instType}
-                          onValueChange={(val: any) => setInstType(val)}
-                        >
-                          <SelectTrigger className="bg-white/[0.05] border-border text-foreground rounded-xl">
-                            <SelectValue placeholder="Select type" />
+                        <Label className="text-xs">Current Employment Status</Label>
+                        <Select value={currentStatus} onValueChange={setCurrentStatus}>
+                          <SelectTrigger className="h-10 text-xs bg-white/[0.04]">
+                            <SelectValue />
                           </SelectTrigger>
-                          <SelectContent className="bg-card border-border text-foreground">
-                            <SelectItem value="University">University</SelectItem>
-                            <SelectItem value="Autonomous College">Autonomous College</SelectItem>
-                            <SelectItem value="Institute of Technology">Institute of Technology</SelectItem>
-                            <SelectItem value="Polytechnic">Polytechnic</SelectItem>
+                          <SelectContent className="bg-navy-950 border-border text-foreground">
+                            <SelectItem value="employed">Employed full-time</SelectItem>
+                            <SelectItem value="unemployed">Actively seeking</SelectItem>
+                            <SelectItem value="freelancing">Freelancing / Contract</SelectItem>
+                            <SelectItem value="switching_careers">Switching Careers</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
+
                       <div className="space-y-1.5">
-                        <Label className="text-xs text-foreground/85 font-medium">Campus Location</Label>
+                        <Label htmlFor="totExp" className="text-xs">Total Experience</Label>
                         <Input
-                          value={instLocation}
-                          onChange={(e) => setInstLocation(e.target.value)}
-                          placeholder="e.g. Austin, Texas"
-                          className="bg-white/[0.05] border-border text-foreground rounded-xl"
+                          id="totExp"
+                          value={totalExperience}
+                          onChange={(e) => setTotalExperience(e.target.value)}
+                          placeholder="e.g. 3 years, Fresh Graduate"
+                          className="h-10 text-xs bg-white/[0.04]"
                         />
                       </div>
                     </div>
 
                     <div className="space-y-1.5">
-                      <Label className="text-xs text-foreground/85 font-medium">Official Website</Label>
+                      <Label htmlFor="currRole" className="text-xs">Current / Recent Role</Label>
                       <Input
-                        value={instWebsite}
-                        onChange={(e) => setInstWebsite(e.target.value)}
-                        placeholder="https://university.edu"
-                        className="bg-white/[0.05] border-border text-foreground rounded-xl"
+                        id="currRole"
+                        value={currentRole}
+                        onChange={(e) => setCurrentRole(e.target.value)}
+                        placeholder="e.g. Frontend Engineer, Analyst"
+                        className="h-10 text-xs bg-white/[0.04]"
                       />
                     </div>
-                  </div>
 
-                  <div className="pt-2 flex justify-end">
-                    <PillButton
-                      variant="primary"
-                      size="md"
-                      onClick={() => setStep(2)}
-                      icon={<ArrowRight className="size-4" />}
-                    >
-                      Next: Authorized Admin & Accreditation
-                    </PillButton>
-                  </div>
-                </div>
-              )}
+                    <div className="space-y-1.5">
+                      <Label htmlFor="targetRoles" className="text-xs">Target Roles (comma separated)</Label>
+                      <Input
+                        id="targetRoles"
+                        value={targetRoles}
+                        onChange={(e) => setTargetRoles(e.target.value)}
+                        placeholder="Full Stack Engineer, Cloud Architect, DevOps"
+                        className="h-10 text-xs bg-white/[0.04]"
+                      />
+                    </div>
 
-              {step === 2 && (
-                <div className="space-y-6">
-                  <div className="space-y-1">
-                    <button
-                      type="button"
-                      onClick={() => setStep(1)}
-                      className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground mb-1"
-                    >
-                      <ArrowLeft className="size-3.5" />
-                      <span>Back to Institution Details</span>
-                    </button>
-                    <h2 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
-                      Admin Authorization & Accreditation
-                    </h2>
-                    <p className="text-xs sm:text-sm text-muted-foreground">
-                      Authorize placement officers and provide university charter verification.
-                    </p>
-                  </div>
-
-                  <div className="space-y-4">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="space-y-1.5">
-                        <Label className="text-xs text-foreground/85 font-medium">Admin Full Name</Label>
+                        <Label htmlFor="prefLoc" className="text-xs">Preferred Locations</Label>
                         <Input
-                          value={adminName}
-                          onChange={(e) => setAdminName(e.target.value)}
-                          placeholder="Dr. Arthur Pendelton"
-                          className="bg-white/[0.05] border-border text-foreground rounded-xl"
+                          id="prefLoc"
+                          value={preferredLocations}
+                          onChange={(e) => setPreferredLocations(e.target.value)}
+                          placeholder="Remote, Bengaluru, New York"
+                          className="h-10 text-xs bg-white/[0.04]"
                         />
                       </div>
                       <div className="space-y-1.5">
-                        <Label className="text-xs text-foreground/85 font-medium">Admin Designation</Label>
+                        <Label htmlFor="comp" className="text-xs">Target Compensation (Optional)</Label>
                         <Input
-                          value={adminDesignation}
-                          onChange={(e) => setAdminDesignation(e.target.value)}
-                          placeholder="Dean of Placement & Academic Affairs"
-                          className="bg-white/[0.05] border-border text-foreground rounded-xl"
+                          id="comp"
+                          value={expectedCompensation}
+                          onChange={(e) => setExpectedCompensation(e.target.value)}
+                          placeholder="e.g. $90,000 / yr or ₹18 LPA"
+                          className="h-10 text-xs bg-white/[0.04]"
                         />
                       </div>
                     </div>
-
-                    <div className="space-y-1.5">
-                      <Label className="text-xs text-foreground/85 font-medium">Admin Contact Phone</Label>
-                      <Input
-                        value={adminContact}
-                        onChange={(e) => setAdminContact(e.target.value)}
-                        placeholder="+1 (555) 902-1849"
-                        className="bg-white/[0.05] border-border text-foreground rounded-xl"
-                      />
-                    </div>
-
-                    {/* Document Upload Area */}
-                    <div className="space-y-2">
-                      <Label className="text-xs text-foreground/85 font-medium">
-                        Institutional Accreditation / Charter Document
-                      </Label>
-                      <div
-                        onClick={() => setInstDocUploaded(!instDocUploaded)}
-                        className={cn(
-                          "p-6 rounded-2xl border-2 border-dashed transition-all duration-200 cursor-pointer text-center space-y-2",
-                          instDocUploaded
-                            ? "border-amber bg-amber/10"
-                            : "border-border bg-white/[0.02] hover:border-amber/40"
-                        )}
-                      >
-                        {instDocUploaded ? (
-                          <>
-                            <FileCheck className="size-8 text-amber mx-auto" />
-                            <div className="text-xs font-semibold text-amber">
-                              Document Attached: university_charter_naac_accreditation.pdf
-                            </div>
-                            <span className="text-[10px] text-muted-foreground block">
-                              Click to remove. Status: Pending Verification.
-                            </span>
-                          </>
-                        ) : (
-                          <>
-                            <Upload className="size-8 text-muted-foreground mx-auto" />
-                            <div className="text-xs font-medium text-foreground">
-                              Click to upload official institutional accreditation document
-                            </div>
-                            <span className="text-[10px] text-muted-foreground block">
-                              PDF or Scanned Certificate (Verification status: Pending)
-                            </span>
-                          </>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="pt-4 flex items-center justify-between border-t border-border">
-                    <PillButton variant="ghost" size="md" onClick={() => setStep(1)}>
-                      Back
-                    </PillButton>
-                    <PillButton
-                      variant="primary"
-                      size="lg"
-                      disabled={submitting}
-                      onClick={() => saveOnboarding(true)}
-                      icon={<CheckCircle2 className="size-4" />}
-                    >
-                      {submitting ? "Finishing..." : "Complete Institution Onboarding"}
-                    </PillButton>
                   </div>
                 </div>
               )}
-            </>
+
+              {/* Navigation buttons */}
+              <div className="flex items-center justify-between pt-6 border-t border-white/[0.08]">
+                <PillButton variant="secondary" size="md" onClick={() => setStep(1)}>
+                  <ArrowLeft className="size-4 mr-1.5" />
+                  <span>Back</span>
+                </PillButton>
+
+                <PillButton
+                  variant="primary"
+                  size="md"
+                  disabled={submitting}
+                  onClick={() => saveOnboarding(true)}
+                  className="shadow-lg shadow-primary/20"
+                >
+                  <CheckCircle2 className="size-4 mr-1.5" />
+                  <span>{submitting ? "Saving..." : "Complete Setup & Launch Dashboard"}</span>
+                </PillButton>
+              </div>
+            </div>
           )}
         </div>
       </div>

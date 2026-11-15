@@ -30,8 +30,8 @@ export default function ForStudentsPage() {
           <p className="text-muted-foreground text-sm mt-2">Real-time feedback and keyword optimization directly matching employer requirements.</p>
         </div>
         <div className="glass-card p-6">
-          <h3 className="font-heading font-bold text-foreground text-lg">Direct Hiring</h3>
-          <p className="text-muted-foreground text-sm mt-2">Get matched with top tech, consulting, and research recruiters on campus drives.</p>
+          <h3 className="font-heading font-bold text-foreground text-lg">Verified Opportunities</h3>
+          <p className="text-muted-foreground text-sm mt-2">Discover internships, research grants, and entry-level positions aggregated from official portals.</p>
         </div>
       </div>
 

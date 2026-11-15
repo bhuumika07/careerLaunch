@@ -93,7 +93,7 @@ export default function AdminUsersPage() {
             User Account Management
           </h1>
           <p className="text-xs sm:text-sm text-foreground/70">
-            Audit registered student, recruiter, faculty, and institutional accounts across the ecosystem.
+            Audit registered student, job seeker, and internal operator accounts.
           </p>
         </div>
       </div>
@@ -127,9 +127,7 @@ export default function AdminUsersPage() {
           >
             <option value="all">All Roles</option>
             <option value="student">Student</option>
-            <option value="faculty">Faculty</option>
-            <option value="recruiter">Recruiter</option>
-            <option value="institution">Institution</option>
+            <option value="job_seeker">Job Seeker</option>
             <option value="admin">Admin</option>
           </select>
         </div>

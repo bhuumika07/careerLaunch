@@ -75,3 +75,293 @@ model ProfileSyncLog {
   fieldsApplied   Json
   appliedAt       DateTime @default(now())
 }
+
+// -------------------------------------------------
+// Opportunity Data Models (Chunk 1)
+// -------------------------------------------------
+
+enum SourceCategory {
+  jobs
+  internships
+  research
+  scholarships
+  hackathons
+  training
+  other
+}
+
+enum CollectionMethod {
+  api
+  rss
+  scrape
+  manual_import
+}
+
+enum ComplianceStatus {
+  unreviewed
+  permitted
+  restricted
+  blocked
+}
+
+enum SourceStatus {
+  active
+  paused
+  failing
+  disabled
+}
+
+enum ProcessingStatus {
+  collected
+  extracted
+  failed
+  skipped
+}
+
+enum VerificationStatus {
+  verified
+  pending
+  unverified
+  rejected
+}
+
+enum LifecycleStatus {
+  active
+  expiring
+  expired
+  removed
+}
+
+enum WorkMode {
+  remote
+  hybrid
+  onsite
+  unspecified
+}
+
+enum CompensationType {
+  salary
+  hourly
+  stipend
+  equity
+  other
+}
+
+enum Currency {
+  USD
+  EUR
+  GBP
+  INR
+  // add more as needed
+}
+
+model Source {
+  id                 String            @id @default(uuid())
+  name               String
+  baseUrl            String
+  category           SourceCategory
+  collectionMethod   CollectionMethod
+  config             Json
+  complianceStatus   ComplianceStatus  @default(unreviewed)
+  complianceNotes    String?
+  termsUrl           String?
+  robotsCheckedAt    DateTime?
+  collectionFrequency Int               // in minutes
+  reliabilityScore   Int               @default(0) // 0‑100
+  status             SourceStatus      @default(disabled)
+  lastSuccessAt      DateTime?
+  lastFailureAt      DateTime?
+
+  rawListings        RawListing[]
+  collectionRuns     CollectionRun[]
+  opportunitySources OpportunitySource[]
+}
+
+model RawListing {
+  id                String   @id @default(uuid())
+  sourceId          String
+  sourceUrl         String   @unique
+  externalId        String?
+  rawHtml           String?
+  rawJson           Json?
+  rawText           String?
+  contentHash       String
+  fetchedAt         DateTime @default(now())
+  httpStatus        Int
+  processingStatus  ProcessingStatus @default(collected)
+
+  source            Source   @relation(fields: [sourceId], references: [id])
+}
+
+model Opportunity {
+  id                    String   @id @default(uuid())
+  title                 String
+  category              SourceCategory
+  organizationName      String
+  description           String?
+  responsibilities      String?
+  requiredSkills        String[]   // canonical skill IDs
+  preferredSkills       String[]   // canonical skill IDs
+  skillsExplicitOrInferred Json?    // {skillId: "explicit"|"inferred"}
+  eligibility           Json      // complex object with flags per field
+  locationCountry       String?
+  locationState         String?
+  locationCity          String?
+  workMode              WorkMode @default(unspecified)
+  compensation          Json?     // {type, min, max, currency, period}
+  applicationDeadline   DateTime?
+  postedAt              DateTime?
+  sourceId              String
+  sourceUrl             String
+  originalText          String?
+  applicationUrl        String?
+  verificationStatus    VerificationStatus @default(pending)
+  lifecycleStatus       LifecycleStatus @default(active)
+  firstSeenAt           DateTime @default(now())
+  lastCheckedAt         DateTime?
+  lastChangedAt         DateTime?
+  missingFields         String[]   // names of missing fields
+  extractionConfidence  Float?
+  canonicalOpportunityId String?
+
+  source                Source @relation(fields: [sourceId], references: [id])
+  opportunitySources    OpportunitySource[]
+  opportunityChanges    OpportunityChange[]
+  applications          Application[]
+
+  @@index([category])
+  @@index([locationCountry, locationState, locationCity])
+  @@index([applicationDeadline])
+  @@index([lifecycleStatus])
+}
+
+model OpportunitySource {
+  opportunityId String
+  sourceId      String
+  sourceUrl     String
+  seenAt        DateTime @default(now())
+
+  opportunity   Opportunity @relation(fields: [opportunityId], references: [id])
+  source        Source      @relation(fields: [sourceId], references: [id])
+
+  @@id([opportunityId, sourceId, sourceUrl])
+}
+
+model OpportunityChange {
+  id           String   @id @default(uuid())
+  opportunityId String
+  field        String
+  oldValue     String?
+  newValue     String?
+  detectedAt   DateTime @default(now())
+
+  opportunity  Opportunity @relation(fields: [opportunityId], references: [id])
+}
+
+model CollectionRun {
+  id            String   @id @default(uuid())
+  sourceId      String
+  startedAt     DateTime @default(now())
+  endedAt       DateTime?
+  status        SourceStatus
+  listingsFound Int      @default(0)
+  newCount      Int      @default(0)
+  updatedCount  Int      @default(0)
+  failedCount   Int      @default(0)
+  errorSummary  String?
+
+  source        Source   @relation(fields: [sourceId], references: [id])
+}
+
+model Skill {
+  id          String   @id @default(uuid())
+  canonicalName String
+  type        String   // technical|soft|domain|tool
+  category    String?
+  aliases     SkillAlias[]
+}
+
+model SkillAlias {
+  id      String @id @default(uuid())
+  skillId String
+  alias   String
+
+  skill   Skill @relation(fields: [skillId], references: [id])
+}
+
+// -------------------------------------------------
+// Notification & Preference Models (Chunk 7)
+// -------------------------------------------------
+model Notification {
+  id            String   @id @default(uuid())
+  userId        String
+  type          String   // e.g., "new_opportunity", "deadline_reminder", "saved_search"
+  title         String
+  body          String?
+  link          String?
+  createdAt     DateTime @default(now())
+  readAt        DateTime?
+
+  // Optional references
+  opportunityId String?
+  applicationId String?
+}
+
+model NotificationPreference {
+  id                 String   @id @default(uuid())
+  userId             String
+  channelInApp       Boolean  @default(true)
+  channelEmail       Boolean  @default(false)
+  frequency          String   @default("instant") // instant|daily|weekly
+  quietHoursStart    Int?     // 0‑23
+  quietHoursEnd      Int?     // 0‑23
+  typeToggles        Json     @default({}) // {"new_opportunity": true, ...}
+}
+
+model SavedSearch {
+  id                 String   @id @default(uuid())
+  userId             String
+  name               String
+  query              Json     // serialized filters
+  frequency          String   @default("instant") // instant|daily|weekly
+  createdAt          DateTime @default(now())
+  lastTriggeredAt   DateTime?
+}
+
+
+enum ApplicationStatus {
+  saved
+  applied
+  assessment
+  interview
+  selected
+  rejected
+  withdrawn
+}
+
+model Application {
+  id                String   @id @default(uuid())
+  userId            String
+  opportunityId     String
+  status            ApplicationStatus @default(saved)
+  appliedDate       DateTime?
+  notes             String?
+  resumeVersionId   String?
+  confirmationSource String @default("self_reported")
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  // Relations (optional, schema may already have User and Opportunity models)
+  opportunity       Opportunity @relation(fields: [opportunityId], references: [id])
+}
+
+
+model PotentialDuplicate {
+  id           String   @id @default(uuid())
+  opportunityA String   // Opportunity ID A
+  opportunityB String   // Opportunity ID B
+  similarity   Float
+  status       String   @default("pending") // pending|merged|ignored
+  createdAt    DateTime @default(now())
+}
+

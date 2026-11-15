@@ -32,13 +32,13 @@ export async function GET(
   }
 }
 
-// PUT /api/opportunities/[id] - Recruiter update
+// PUT /api/opportunities/[id] - Admin update
 export async function PUT(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { user } = await requireRole(["recruiter", "admin"], req);
+    const { user } = await requireRole(["admin"], req);
     const { id } = await params;
     const body = await req.json();
 
@@ -76,13 +76,13 @@ export async function PUT(
   }
 }
 
-// DELETE /api/opportunities/[id] - Recruiter delete
+// DELETE /api/opportunities/[id] - Admin delete
 export async function DELETE(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { user } = await requireRole(["recruiter", "admin"], req);
+    const { user } = await requireRole(["admin"], req);
     const { id } = await params;
 
     const db = readDb();

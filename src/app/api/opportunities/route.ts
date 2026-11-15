@@ -45,10 +45,10 @@ export async function GET(req: NextRequest) {
   }
 }
 
-// POST /api/opportunities - Recruiter, Faculty & Institution create opportunity with duplicate check
+// POST /api/opportunities - Internal Admin / Ingestion opportunity creation
 export async function POST(req: NextRequest) {
   try {
-    const { user } = await requireRole(["recruiter", "faculty", "institution", "admin"], req);
+    const { user } = await requireRole(["admin"], req);
     const body = await req.json();
 
     const {

@@ -9,11 +9,10 @@ import { cn } from "@/lib/utils";
 
 const navLinks = [
   { label: "Home", href: "/" },
-  { label: "For Students", href: "/for-students" },
-  { label: "For Recruiters", href: "/for-recruiters" },
-  { label: "For Faculty", href: "/for-faculty" },
-  { label: "For Institutions", href: "/for-institutions" },
-  { label: "Opportunities", href: "/#opportunities" },
+  { label: "Explore Opportunities", href: "/opportunities" },
+  { label: "How It Works", href: "/#how-it-works" },
+  { label: "Opportunity Types", href: "/#opportunity-types" },
+  { label: "Why It's Different", href: "/#why-different" },
 ];
 
 export function Navbar() {
@@ -22,7 +21,7 @@ export function Navbar() {
 
   return (
     <div className="fixed top-0 left-0 right-0 z-50 px-4 sm:px-6 pt-4 pointer-events-none">
-      <header data-theme="dark" className="max-w-6xl mx-auto pointer-events-auto bg-navy/85 backdrop-blur-xl border border-sky/20 rounded-full px-3 py-2 shadow-2xl transition-all duration-300 text-sky-50">
+      <header data-theme="dark" className="max-w-6xl mx-auto pointer-events-auto bg-navy/90 backdrop-blur-xl border border-sky/20 rounded-full px-4 py-2.5 shadow-2xl transition-all duration-300 text-sky-50">
         <div className="flex items-center justify-between">
           {/* Logo + Name */}
           <Link
@@ -65,7 +64,10 @@ export function Navbar() {
           </nav>
 
           {/* Right Action */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5">
+            <Link href="/login" className="hidden sm:inline-flex text-xs font-semibold px-3 py-1.5 rounded-full text-sky-50/90 hover:text-sky hover:bg-white/[0.06] transition-colors">
+              Sign In
+            </Link>
             <Link href="/register" className="hidden sm:inline-flex">
               <PillButton variant="primary" size="sm" className="font-semibold shadow-sm">
                 Get Started
@@ -112,7 +114,14 @@ export function Navbar() {
                 </Link>
               );
             })}
-            <div className="pt-2">
+            <div className="pt-2 flex flex-col gap-2">
+              <Link
+                href="/login"
+                onClick={() => setMobileMenuOpen(false)}
+                className="w-full text-center py-2 text-sm text-sky-50 hover:underline"
+              >
+                Sign In
+              </Link>
               <Link
                 href="/register"
                 onClick={() => setMobileMenuOpen(false)}

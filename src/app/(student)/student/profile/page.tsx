@@ -383,7 +383,7 @@ export default function StudentProfilePage() {
           <div className="space-y-1">
             <h3 className="font-heading font-bold text-sm text-foreground">Profile Strength</h3>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              Profiles with 100% completion receive 3.4x higher visibility in recruiter candidate pools.
+              Complete profiles unlock accurate deterministic fit scores and targeted opportunity alerts.
             </p>
           </div>
         </div>

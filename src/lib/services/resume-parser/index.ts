@@ -248,7 +248,7 @@ export function generateImprovementSuggestions(
       id: "sug_1",
       category: "Impact",
       title: "Quantify Engineering Outcomes with the Google X-Y-Z Formula",
-      description: "Frame achievements as 'Accomplished [X], as measured by [Y], by doing [Z]'. Recruiters spend an average of 6 seconds scanning for quantifiable figures.",
+      description: "Frame achievements as 'Accomplished [X], as measured by [Y], by doing [Z]'. Reviewers look for measurable metrics and quantifiable figures.",
       action: "Add measurable throughput, latency, user counts, or test coverage numbers to all project bullets.",
     },
     {
@@ -262,7 +262,7 @@ export function generateImprovementSuggestions(
       id: "sug_3",
       category: "Content",
       title: "Add Direct GitHub & Live Deployment Links",
-      description: "Technical recruiters prioritize candidates with clickable, active repository and demonstration links that verify code quality.",
+      description: "Technical evaluators prioritize candidates with clickable, active repository and demonstration links that verify code quality.",
       action: "Include live preview links for your top 2 projects.",
     },
     {

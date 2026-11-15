@@ -28,45 +28,16 @@ const ROLES = [
   {
     id: "student",
     title: "Student",
-    badge: "Early Career",
+    badge: "Early Career & Grads",
     icon: GraduationCap,
-    description: "Build verified skill profiles, identify gaps, and land internships or jobs.",
+    description: "Enrolled in college/university or recent graduate seeking internships, scholarships, and entry roles.",
   },
   {
     id: "job_seeker",
     title: "Job Seeker",
-    badge: "Professional",
+    badge: "Experienced & Switchers",
     icon: Briefcase,
-    description: "Explore curated opportunities, match your skills, and apply directly on source sites.",
-  },
-];
-  {
-    id: "student",
-    title: "Student",
-    badge: "Early Career",
-    icon: GraduationCap,
-    description: "Build verified skill profiles, identify gaps, and land internships or jobs.",
-  },
-  {
-    id: "faculty",
-    title: "Faculty",
-    badge: "Educator & Mentor",
-    icon: Users,
-    description: "Align curriculum with industry demands, assign benchmark evaluations, and guide students.",
-  },
-  {
-    id: "recruiter",
-    title: "Recruiter",
-    badge: "Talent Partner",
-    icon: Briefcase,
-    description: "Discover pre-vetted campus talent with transparent, explainable skill matching.",
-  },
-  {
-    id: "institution",
-    title: "Institution",
-    badge: "University & Admin",
-    icon: Building2,
-    description: "Track department career outcomes, accreditation metrics, and corporate partnerships.",
+    description: "Experienced professional, fresh graduate, or career switcher seeking full-time jobs and industry transitions.",
   },
 ];
 
@@ -309,10 +280,8 @@ function RegisterForm() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder={
-                  selectedRole === "recruiter"
-                    ? "name@company.com"
-                    : selectedRole === "institution"
-                    ? "admin@university.edu"
+                  selectedRole === "job_seeker"
+                    ? "name@example.com"
                     : "student@university.edu"
                 }
                 className="pl-10 h-11 bg-white/[0.05] border-border text-foreground placeholder:text-muted-foreground/80 rounded-xl focus:border-ring"

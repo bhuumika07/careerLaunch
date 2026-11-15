@@ -15,18 +15,23 @@ import {
   AlertTriangle,
   ArrowLeft,
   ShieldCheck,
-  Send,
   Bookmark,
   Share2,
   X,
   FileText,
+  HelpCircle,
+  ChevronDown,
+  ChevronUp,
+  Sparkles,
+  Send,
+  Flag,
 } from "lucide-react";
 import { PillButton } from "@/components/ui/pill-button";
 import { Badge } from "@/components/ui/badge";
-import { Opportunity, ResumeRecord } from "@/lib/db";
+import { Opportunity } from "@/lib/db";
 import { cn } from "@/lib/utils";
 
-function OpportunityDetailContent() {
+export default function OpportunityDetailPage() {
   const params = useParams();
   const router = useRouter();
   const id = params.id as string;
@@ -35,15 +40,13 @@ function OpportunityDetailContent() {
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
   const [matchData, setMatchData] = React.useState<any | null>(null);
+  const [bookmarked, setBookmarked] = React.useState(false);
+  const [descExpanded, setDescExpanded] = React.useState(false);
 
-  // Apply Modal State
-  const [applyModalOpen, setApplyModalOpen] = React.useState(false);
-  const [resumes, setResumes] = React.useState<ResumeRecord[]>([]);
-  const [selectedResumeId, setSelectedResumeId] = React.useState<string>("");
-  const [coverNote, setCoverNote] = React.useState("");
-  const [submitting, setSubmitting] = React.useState(false);
-  const [submitSuccess, setSubmitSuccess] = React.useState<string | null>(null);
-  const [submitError, setSubmitError] = React.useState<string | null>(null);
+  // External Application Follow-up Prompt
+  const [promptOpen, setPromptOpen] = React.useState(false);
+  const [promptSaved, setPromptSaved] = React.useState(false);
+  const [trackingNotes, setTrackingNotes] = React.useState("");
 
   React.useEffect(() => {
     let mounted = true;
@@ -54,7 +57,7 @@ function OpportunityDetailContent() {
         if (mounted) {
           if (res.ok && data.success) {
             setOpp(data.opportunity);
-            // Fetch explainable matching and hard eligibility
+            // Fetch explainable matching
             fetch(`/api/opportunities/${id}/matching`)
               .then((r) => r.json())
               .then((m) => {
@@ -82,72 +85,69 @@ function OpportunityDetailContent() {
     };
   }, [id]);
 
-  // Load student resumes when opening Apply modal
-  const openApplyModal = async () => {
-    setApplyModalOpen(true);
-    setSubmitError(null);
-    setSubmitSuccess(null);
+  const toggleBookmark = async () => {
     try {
-      const res = await fetch("/api/resume");
+      const res = await fetch(`/api/opportunities/${id}/bookmark`, { method: "POST" });
       const data = await res.json();
-      if (res.ok && data.success && data.resumes.length > 0) {
-        setResumes(data.resumes);
-        setSelectedResumeId(data.resumes[0].id);
+      if (res.ok && data.success) {
+        setBookmarked(data.bookmarked);
       }
     } catch {
       // ignore
     }
   };
 
-  const handleApplySubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSubmitting(true);
-    setSubmitError(null);
-    setSubmitSuccess(null);
+  const handleApplyExternal = () => {
+    if (!opp) return;
+    const targetUrl = opp.sourceUrl || "https://example.com";
+    window.open(targetUrl, "_blank", "noopener,noreferrer");
+    setPromptOpen(true);
+  };
 
+  const recordSelfReportedStatus = async (status: "applied" | "saved" | "remind") => {
     try {
-      const res = await fetch(`/api/opportunities/${id}/apply`, {
+      await fetch(`/api/student/applications`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          resumeId: selectedResumeId || undefined,
-          coverNote,
+          opportunityId: id,
+          status: status === "applied" ? "Applied" : "Saved",
+          confirmationSource: "self_reported",
+          notes: trackingNotes,
         }),
       });
-
-      const data = await res.json();
-      if (res.ok && data.success) {
-        setSubmitSuccess(data.message);
-        setTimeout(() => {
-          setApplyModalOpen(false);
-          router.push("/student/applications");
-        }, 1800);
-      } else {
-        setSubmitError(data.error || "Failed to submit application.");
-      }
+      setPromptSaved(true);
+      setTimeout(() => {
+        setPromptOpen(false);
+        setPromptSaved(false);
+      }, 1500);
     } catch {
-      setSubmitError("Network error occurred during submission.");
-    } finally {
-      setSubmitting(false);
+      setPromptOpen(false);
     }
   };
 
   if (loading) {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-16 text-center text-muted-foreground">
-        Loading opportunity details...
+      <div className="max-w-5xl mx-auto px-6 py-20 animate-pulse space-y-6">
+        <div className="h-8 w-48 bg-white/[0.06] rounded-xl" />
+        <div className="h-32 w-full bg-white/[0.04] rounded-3xl" />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="md:col-span-2 h-64 bg-white/[0.04] rounded-3xl" />
+          <div className="h-64 bg-white/[0.04] rounded-3xl" />
+        </div>
       </div>
     );
   }
 
   if (error || !opp) {
     return (
-      <div className="max-w-2xl mx-auto px-4 py-16 text-center space-y-4">
-        <AlertCircle className="size-10 text-danger mx-auto" />
-        <h2 className="font-heading font-bold text-xl text-foreground">{error || "Opportunity not found"}</h2>
+      <div className="max-w-2xl mx-auto px-6 py-20 text-center space-y-4">
+        <AlertCircle className="size-12 text-destructive mx-auto" />
+        <h2 className="text-xl font-heading font-bold text-foreground">Listing Unavailable</h2>
+        <p className="text-sm text-muted-foreground">{error || "Opportunity not found."}</p>
         <Link href="/opportunities">
           <PillButton variant="secondary" size="md">
-            Back to Directory
+            &larr; Back to Opportunities
           </PillButton>
         </Link>
       </div>
@@ -155,223 +155,266 @@ function OpportunityDetailContent() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
-      {/* Back button */}
-      <Link
-        href="/opportunities"
-        className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground font-medium"
-      >
-        <ArrowLeft className="size-3.5" />
-        Back to All Opportunities
-      </Link>
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+      {/* Back Button */}
+      <div className="flex items-center justify-between">
+        <Link
+          href="/opportunities"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors"
+        >
+          <ArrowLeft className="size-4" />
+          <span>Back to Opportunities</span>
+        </Link>
 
-      {/* Main Header Card */}
-      <div className="p-6 sm:p-8 rounded-3xl bg-card border border-border shadow-xs space-y-6">
-        <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
-          <div className="flex items-start gap-4">
-            <div className="size-16 rounded-2xl bg-navy text-sky-50 flex items-center justify-center font-heading font-extrabold text-xl shrink-0 shadow-sm">
-              {opp.org.substring(0, 2).toUpperCase()}
-            </div>
-            <div className="space-y-1.5">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="font-semibold text-xs text-muted-foreground">{opp.org}</span>
-                <Badge variant="outline" className="text-[10px] bg-primary/10 border-primary/30 text-primary">
-                  {opp.category}
-                </Badge>
-                <Badge variant="outline" className="text-[10px] capitalize text-muted-foreground border-border">
-                  {opp.workMode}
-                </Badge>
-              </div>
-
-              <h1 className="font-heading text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
-                {opp.title}
-              </h1>
-
-              <div className="flex items-center gap-4 text-xs text-muted-foreground flex-wrap pt-1">
-                <span className="flex items-center gap-1">
-                  <MapPin className="size-3.5 text-muted-foreground" />
-                  {opp.location}
-                </span>
-                <span>•</span>
-                <span className="font-semibold text-foreground">
-                  {opp.stipendSalary || "Competitive"}
-                </span>
-                <span>•</span>
-                <span className="flex items-center gap-1 text-muted-foreground">
-                  <Calendar className="size-3.5" />
-                  Deadline: {new Date(opp.deadline).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Action CTAs */}
-          <div className="flex items-center gap-3 shrink-0">
-            {opp.isExternal && opp.sourceUrl ? (
-              <a href={opp.sourceUrl} target="_blank" rel="noreferrer">
-                <PillButton variant="primary" size="lg" icon={<ExternalLink className="size-4" />}>
-                  Apply on Official Site
-                </PillButton>
-              </a>
-            ) : (
-              <PillButton
-                variant="primary"
-                size="lg"
-                onClick={openApplyModal}
-                icon={<Send className="size-4" />}
-                className="shadow-md"
-              >
-                Apply In-Platform
-              </PillButton>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={toggleBookmark}
+            className={cn(
+              "p-2 rounded-full border transition-colors",
+              bookmarked
+                ? "bg-amber/20 border-amber text-amber"
+                : "border-border text-muted-foreground hover:text-foreground"
             )}
-          </div>
-        </div>
-
-        {/* Verification & Meta Strip */}
-        <div className="flex items-center justify-between text-xs text-muted-foreground border-t border-border pt-4 flex-wrap gap-2">
-          <div className="flex items-center gap-1.5 text-success bg-card px-2.5 py-1 rounded-lg border border-success/40">
-            <ShieldCheck className="size-3.5" />
-            <span>
-              Verified by CareerLaunch • Last verified on {new Date(opp.lastVerifiedDate).toLocaleDateString()}
-            </span>
-          </div>
-
-          {opp.sourceUrl && (
-            <a
-              href={opp.sourceUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="text-primary hover:underline flex items-center gap-1"
-            >
-              Source Link
-              <ExternalLink className="size-3" />
-            </a>
-          )}
+            title="Bookmark Opportunity"
+          >
+            <Bookmark className="size-4" fill={bookmarked ? "currentColor" : "none"} />
+          </button>
         </div>
       </div>
 
-      {/* Grid: Description & Eligibility */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Left Column: Role Details & Skills */}
-        <div className="lg:col-span-2 space-y-8">
-          <div className="p-6 sm:p-8 rounded-3xl bg-card border border-border shadow-xs space-y-4">
-            <h2 className="font-heading text-lg font-bold text-foreground">About This Opportunity</h2>
-            <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
-              {opp.description}
-            </p>
+      {/* Main Opportunity Header Card */}
+      <div className="p-6 sm:p-8 rounded-3xl glass-card border border-sky/20 shadow-xl space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6">
+          <div className="space-y-3 max-w-2xl">
+            <div className="flex flex-wrap items-center gap-2">
+              <Badge variant="outline" className="bg-primary/10 border-primary/30 text-primary uppercase text-[10px] tracking-wider font-bold">
+                {opp.category}
+              </Badge>
+              <Badge variant="outline" className="text-xs bg-white/[0.04] text-muted-foreground">
+                {opp.workMode.toUpperCase()}
+              </Badge>
+              <div className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full bg-teal/15 text-teal border border-teal/20 font-medium">
+                <ShieldCheck className="size-3" />
+                <span>Verified Source</span>
+              </div>
+            </div>
+
+            <h1 className="font-heading text-2xl sm:text-3xl md:text-4xl font-extrabold text-foreground tracking-tight">
+              {opp.title}
+            </h1>
+
+            <div className="flex items-center gap-2 text-base font-semibold text-foreground/90">
+              <Building2 className="size-4 text-amber" />
+              <span>{opp.org}</span>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground pt-1">
+              <span className="flex items-center gap-1">
+                <MapPin className="size-3.5 text-sky" />
+                {opp.location || "Not specified"}
+              </span>
+              <span className="flex items-center gap-1">
+                <Clock className="size-3.5 text-sky" />
+                Deadline: {new Date(opp.deadline).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+              </span>
+              {opp.stipendSalary && (
+                <span className="font-medium text-emerald-400">
+                  {opp.stipendSalary}
+                </span>
+              )}
+            </div>
           </div>
 
-          <div className="p-6 sm:p-8 rounded-3xl bg-card border border-border shadow-xs space-y-4">
-            <h2 className="font-heading text-lg font-bold text-foreground">Required Skills & Technologies</h2>
-            <div className="flex flex-wrap gap-2">
-              {opp.skills.map((skill) => (
-                <span
-                  key={skill}
-                  className="px-3 py-1.5 rounded-xl bg-sky-50 border border-border text-xs font-semibold text-foreground/90"
-                >
-                  {skill}
-                </span>
-              ))}
+          {/* Primary CTA */}
+          <div className="flex flex-col sm:items-end gap-3 shrink-0">
+            <PillButton
+              variant="primary"
+              size="lg"
+              className="w-full sm:w-auto shadow-lg shadow-primary/20 flex items-center justify-center gap-2"
+              onClick={handleApplyExternal}
+            >
+              <span>Apply on Original Site</span>
+              <ExternalLink className="size-4" />
+            </PillButton>
+            <p className="text-[11px] text-muted-foreground/80 max-w-xs text-center sm:text-right">
+              Direct link to verified official employer listing.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Grid Layout: Details & Match Engine */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        {/* Left Column: Requirements & Verbatim Text */}
+        <div className="lg:col-span-8 space-y-6">
+          {/* Structured Requirements Panel */}
+          <div className="p-6 sm:p-8 rounded-3xl glass-card border border-sky/15 space-y-6">
+            <h2 className="font-heading text-xl font-bold text-foreground">Standardized Requirements</h2>
+
+            {/* Technical Skills */}
+            <div className="space-y-3">
+              <span className="text-xs font-semibold text-sky-200 uppercase tracking-wider">
+                Technical Skills &amp; Competencies
+              </span>
+              <div className="flex flex-wrap gap-2">
+                {opp.skills.map((skill, i) => (
+                  <span
+                    key={i}
+                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/[0.06] border border-sky/20 text-xs font-medium text-foreground"
+                  >
+                    <span>{skill}</span>
+                    <span className="text-[10px] text-amber uppercase font-semibold">Explicit</span>
+                  </span>
+                ))}
+              </div>
             </div>
+
+            {/* Hard Academic Eligibility */}
+            <div className="space-y-3 pt-4 border-t border-white/[0.06]">
+              <span className="text-xs font-semibold text-sky-200 uppercase tracking-wider">
+                Eligibility &amp; Qualifications
+              </span>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                <div className="p-3 rounded-xl bg-white/[0.03] border border-white/[0.06]">
+                  <span className="text-muted-foreground block text-[11px]">Degrees</span>
+                  <span className="font-semibold text-foreground">
+                    {opp.eligibility.degrees.length > 0 ? opp.eligibility.degrees.join(", ") : "Not specified"}
+                  </span>
+                </div>
+                <div className="p-3 rounded-xl bg-white/[0.03] border border-white/[0.06]">
+                  <span className="text-muted-foreground block text-[11px]">Experience Level</span>
+                  <span className="font-semibold text-foreground">
+                    {opp.eligibility.experienceLevel || "Not specified"}
+                  </span>
+                </div>
+                <div className="p-3 rounded-xl bg-white/[0.03] border border-white/[0.06]">
+                  <span className="text-muted-foreground block text-[11px]">Minimum CGPA</span>
+                  <span className="font-semibold text-foreground">
+                    {opp.eligibility.minCgpa ? `${opp.eligibility.minCgpa} / 10.0` : "Not specified"}
+                  </span>
+                </div>
+                <div className="p-3 rounded-xl bg-white/[0.03] border border-white/[0.06]">
+                  <span className="text-muted-foreground block text-[11px]">Eligible Graduation Batches</span>
+                  <span className="font-semibold text-foreground">
+                    {opp.eligibility.graduationYears.length > 0 ? opp.eligibility.graduationYears.join(", ") : "Not specified"}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Original Verbatim Description */}
+          <div className="p-6 sm:p-8 rounded-3xl glass-card border border-sky/15 space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="font-heading text-lg font-bold text-foreground">Original Source Description</h3>
+                <p className="text-xs text-muted-foreground">Preserved verbatim from the primary external listing.</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setDescExpanded(!descExpanded)}
+                className="flex items-center gap-1 text-xs text-sky font-semibold hover:underline"
+              >
+                <span>{descExpanded ? "Show Less" : "Show Full"}</span>
+                {descExpanded ? <ChevronUp className="size-4" /> : <ChevronDown className="size-4" />}
+              </button>
+            </div>
+
+            <div className={cn("text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap font-sans", !descExpanded && "line-clamp-6")}>
+              {opp.description}
+            </div>
+          </div>
+
+          {/* Report a Problem Link */}
+          <div className="flex items-center justify-between text-xs text-muted-foreground px-2">
+            <span className="flex items-center gap-1.5">
+              <ShieldCheck className="size-4 text-amber" />
+              Verified by CareerLaunch Engine • Last verified {new Date(opp.lastVerifiedDate).toLocaleDateString()}
+            </span>
+            <a
+              href="mailto:support@careerlaunch.com?subject=Report%20Listing%20Issue"
+              className="inline-flex items-center gap-1 text-sky/80 hover:text-sky underline"
+            >
+              <Flag className="size-3" />
+              Report incorrect criteria
+            </a>
           </div>
         </div>
 
-        {/* Right Column: Explainable Matching & Eligibility Checklist */}
-        <div className="space-y-6">
-          {/* Explainable Matching Intelligence Card */}
+        {/* Right Column: Source Attribution & Explainable Match */}
+        <div className="lg:col-span-4 space-y-6">
+          {/* Explainable Fit Score Panel */}
           {matchData && (
-            <div className="p-6 rounded-3xl bg-card border border-border shadow-xs space-y-4">
+            <div className="p-6 rounded-3xl glass-card border border-sky/20 space-y-5">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] uppercase font-bold tracking-wider text-muted-foreground">
-                  Explainable Fit Analysis
-                </span>
-                <span className="text-[10px] font-semibold bg-card text-link px-2 py-0.5 rounded-full border border-teal-600/40">
-                  Illustrative Score
-                </span>
-              </div>
-
-              {/* Compatibility Score */}
-              <div className="flex items-baseline justify-between pt-1">
                 <div>
-                  <div className="text-3xl font-extrabold text-foreground font-heading">
+                  <span className="text-[10px] uppercase font-bold text-sky-200 tracking-wider">
+                    Explainable Fit Engine
+                  </span>
+                  <div className="text-3xl font-heading font-extrabold text-foreground">
                     {matchData.compatibilityScore}%
                   </div>
-                  <div className="text-xs text-muted-foreground">Skill Alignment ({matchData.skillAnalysis.matchRatio})</div>
                 </div>
-                <div
-                  className={`text-xs font-semibold px-2.5 py-1 rounded-full inline-flex items-center gap-1 ${
-                    matchData.overallVerdict.badgeColor === "success"
-                      ? "bg-success text-success-foreground border border-success"
-                      : matchData.overallVerdict.badgeColor === "warning"
-                      ? "border-2 border-warning bg-warning/10 text-foreground"
-                      : "bg-danger text-danger-foreground border border-danger"
-                  }`}
-                >
-                  {matchData.overallVerdict.badgeColor === "warning" && (
-                    <AlertTriangle className="size-3 text-navy shrink-0" />
-                  )}
-                  {matchData.overallVerdict.badge}
+                <div className="text-xs font-semibold px-2.5 py-1 rounded-full bg-teal/20 text-teal border border-teal/30">
+                  {matchData.overallVerdict?.badge || "Compatible"}
                 </div>
               </div>
 
-              {/* HARD ELIGIBILITY SEPARATION (Prompt 7 Rule) */}
-              {!matchData.hardEligibility.isFullyEligible ? (
-                <div className="p-3.5 rounded-2xl bg-card border-2 border-danger text-xs text-danger space-y-1.5">
-                  <div className="flex items-center gap-1.5 font-bold text-danger">
+              {/* Hard Eligibility Verdict */}
+              {matchData.hardEligibility?.isFullyEligible === false ? (
+                <div className="p-3.5 rounded-2xl bg-destructive/10 border border-destructive/30 text-xs text-destructive space-y-1">
+                  <div className="flex items-center gap-1.5 font-bold">
                     <AlertCircle className="size-4 shrink-0" />
-                    Academic Criteria Not Met
+                    <span>Hard Criteria Not Met</span>
                   </div>
-                  <p className="text-[11px] leading-relaxed text-danger">
-                    {matchData.overallVerdict.explanation}
+                  <p className="text-[11px] leading-relaxed">
+                    {matchData.overallVerdict?.explanation || "One or more mandatory eligibility requirements are not satisfied."}
                   </p>
                 </div>
               ) : (
-                <div className="p-3 rounded-xl bg-card border border-success/50 text-xs text-success flex items-center gap-2">
-                  <CheckCircle2 className="size-4 text-success shrink-0" />
-                  <span>All mandatory institutional academic criteria are fully satisfied.</span>
+                <div className="p-3 rounded-xl bg-teal/10 border border-teal/30 text-xs text-teal flex items-center gap-2">
+                  <CheckCircle2 className="size-4 shrink-0" />
+                  <span>All stated mandatory criteria are satisfied.</span>
                 </div>
               )}
 
-              {/* Matching Skills Breakdown */}
-              <div className="space-y-2 pt-2 border-t border-border">
-                <span className="text-[11px] font-semibold text-foreground/90 uppercase tracking-wider">
-                  Matching Verified Skills
+              {/* Matching Skills */}
+              <div className="space-y-2 pt-2 border-t border-white/[0.08]">
+                <span className="text-[11px] font-semibold text-foreground uppercase tracking-wider">
+                  Matched Skills
                 </span>
                 <div className="flex flex-wrap gap-1.5">
-                  {matchData.skillAnalysis.matchingSkills.map((s: any, idx: number) => (
+                  {(matchData.skillAnalysis?.matchingSkills || []).map((s: any, idx: number) => (
                     <span
                       key={idx}
-                      className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-card border border-success/50 text-[11px] font-medium text-success"
+                      className="px-2 py-0.5 rounded-md bg-teal/15 text-teal text-[11px] font-medium"
                     >
-                      <CheckCircle2 className="size-3 text-success" />
-                      {s.name} {s.status === "verified" ? "(Verified)" : "(Self-declared)"}
+                      {s.name}
                     </span>
                   ))}
-                  {matchData.skillAnalysis.matchingSkills.length === 0 && (
-                    <span className="text-xs text-muted-foreground">No overlapping skills yet.</span>
+                  {(!matchData.skillAnalysis?.matchingSkills || matchData.skillAnalysis.matchingSkills.length === 0) && (
+                    <span className="text-xs text-muted-foreground">Add skills to your profile to compare fit.</span>
                   )}
                 </div>
               </div>
 
-              {/* Skills to Improve */}
-              {matchData.skillAnalysis.skillsToImprove.length > 0 && (
-                <div className="space-y-2 pt-2 border-t border-border">
+              {/* Missing Skills + Gap Guidance */}
+              {(matchData.skillAnalysis?.skillsToImprove || []).length > 0 && (
+                <div className="space-y-2 pt-2 border-t border-white/[0.08]">
                   <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-semibold text-foreground/90 uppercase tracking-wider">
-                      Skills to Improve
+                    <span className="text-[11px] font-semibold text-amber uppercase tracking-wider">
+                      Skills to Bridge
                     </span>
-                    <Link
-                      href="/student/roadmap"
-                      className="text-[11px] text-primary hover:underline font-medium"
-                    >
-                      Bridge via Roadmap &rarr;
+                    <Link href="/student/roadmap" className="text-[11px] text-sky hover:underline font-medium">
+                      Roadmap &rarr;
                     </Link>
                   </div>
                   <div className="flex flex-wrap gap-1.5">
                     {matchData.skillAnalysis.skillsToImprove.map((s: any, idx: number) => (
                       <span
                         key={idx}
-                        className="px-2 py-0.5 rounded-lg bg-sky-100 border border-border text-[11px] text-muted-foreground"
+                        className="px-2 py-0.5 rounded-md bg-white/[0.06] text-muted-foreground text-[11px]"
                       >
                         {s.name}
                       </span>
@@ -379,155 +422,120 @@ function OpportunityDetailContent() {
                   </div>
                 </div>
               )}
+
+              <p className="text-[10px] text-muted-foreground italic border-t border-white/[0.06] pt-2">
+                Disclaimer: A compatibility score is an informative fit analysis, not a promise of interview or selection.
+              </p>
             </div>
           )}
 
-          {/* Hard Academic Eligibility Panel */}
-          <div className="p-6 rounded-3xl bg-card border border-border shadow-xs space-y-4">
-            <h3 className="font-heading text-base font-bold text-foreground">Hard Eligibility Criteria</h3>
-            <div className="space-y-3 text-xs text-muted-foreground">
-              <div className="flex justify-between border-b border-border pb-2">
-                <span className="text-muted-foreground">Target Degrees:</span>
-                <span className="font-semibold text-foreground text-right">{opp.eligibility.degrees.join(", ")}</span>
+          {/* Source Attribution Panel */}
+          <div className="p-6 rounded-3xl glass-card border border-sky/15 space-y-4">
+            <h3 className="font-heading text-sm font-bold text-foreground uppercase tracking-wider">
+              Primary Source Attribution
+            </h3>
+            <div className="space-y-2.5 text-xs">
+              <div className="flex justify-between border-b border-white/[0.06] pb-2">
+                <span className="text-muted-foreground">Source Provider:</span>
+                <span className="font-semibold text-foreground">{opp.org}</span>
               </div>
-              <div className="flex justify-between border-b border-border pb-2">
-                <span className="text-muted-foreground">Graduation Batches:</span>
-                <span className="font-semibold text-foreground">{opp.eligibility.graduationYears.join(", ")}</span>
+              <div className="flex justify-between border-b border-white/[0.06] pb-2">
+                <span className="text-muted-foreground">Status:</span>
+                <span className="font-semibold text-teal">Permitted Public Feed</span>
               </div>
-              <div className="flex justify-between border-b border-border pb-2">
-                <span className="text-muted-foreground">Experience Level:</span>
-                <span className="font-semibold text-foreground">{opp.eligibility.experienceLevel}</span>
+              <div className="flex justify-between border-b border-white/[0.06] pb-2">
+                <span className="text-muted-foreground">Original URL:</span>
+                <a
+                  href={opp.sourceUrl || "#"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-semibold text-sky hover:underline inline-flex items-center gap-1 truncate max-w-[150px]"
+                >
+                  <span>{opp.sourceUrl || "View Link"}</span>
+                  <ExternalLink className="size-3" />
+                </a>
               </div>
-              {opp.eligibility.minCgpa && (
-                <div className="flex justify-between border-b border-border pb-2">
-                  <span className="text-muted-foreground">Minimum CGPA:</span>
-                  <span className="font-semibold text-success">{opp.eligibility.minCgpa} / 10.0</span>
-                </div>
-              )}
             </div>
 
-            <div className="pt-2">
-              <PillButton
-                variant="primary"
-                size="md"
-                className="w-full justify-center"
-                onClick={openApplyModal}
-              >
-                Submit Application
-              </PillButton>
+            <div className="p-3 rounded-xl bg-white/[0.03] border border-white/[0.06] text-[11px] text-muted-foreground space-y-1">
+              <p>
+                <strong>Verification Notice:</strong> &quot;Verified Source&quot; confirms this listing genuinely originates from the named organization. It does not constitute an endorsement by CareerLaunch.
+              </p>
             </div>
           </div>
         </div>
       </div>
 
       {/* ============================================================== */}
-      {/* APPLY MODAL                                                    */}
+      {/* "DID YOU APPLY?" FRIENDLY EXTERNAL TRACKING PROMPT (Chunk 6)  */}
       {/* ============================================================== */}
-      {applyModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy/75 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-card rounded-3xl border border-border max-w-lg w-full p-6 sm:p-8 shadow-2xl space-y-5">
-            <div className="flex items-center justify-between border-b border-border pb-4">
-              <div>
-                <h3 className="font-heading text-lg font-bold text-foreground">
-                  Apply to {opp.org}
+      {promptOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy/80 backdrop-blur-md animate-in fade-in duration-200">
+          <div className="bg-navy-950 rounded-3xl border border-sky/20 max-w-md w-full p-6 sm:p-8 shadow-2xl space-y-5">
+            <div className="flex items-center justify-between border-b border-white/[0.08] pb-3">
+              <div className="flex items-center gap-2">
+                <Send className="size-5 text-amber" />
+                <h3 className="font-heading text-base font-bold text-foreground">
+                  Track Your Application
                 </h3>
-                <p className="text-xs text-muted-foreground">{opp.title}</p>
               </div>
               <button
                 type="button"
-                onClick={() => setApplyModalOpen(false)}
-                className="p-1.5 text-muted-foreground hover:text-foreground rounded-lg"
+                onClick={() => setPromptOpen(false)}
+                className="text-muted-foreground hover:text-foreground p-1"
               >
-                <X className="size-5" />
+                <X className="size-4" />
               </button>
             </div>
 
-            {submitError && (
-              <div className="p-3 rounded-xl bg-card border border-danger text-danger text-xs flex items-center gap-2">
-                <AlertCircle className="size-4 shrink-0" />
-                <span>{submitError}</span>
-              </div>
-            )}
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              We just opened <strong>{opp.org}</strong> in a new tab. Did you submit your application on their site?
+            </p>
 
-            {submitSuccess && (
-              <div className="p-3 rounded-xl bg-success/5 border border-success text-success text-xs flex items-center gap-2">
-                <CheckCircle2 className="size-4 shrink-0" />
-                <span>{submitSuccess}</span>
-              </div>
-            )}
+            <textarea
+              placeholder="Add optional notes (e.g. customized resume, contact person, submission ID)..."
+              value={trackingNotes}
+              onChange={(e) => setTrackingNotes(e.target.value)}
+              className="w-full text-xs p-3 rounded-xl bg-white/[0.04] border border-white/[0.08] text-foreground focus:outline-hidden focus:border-sky/40 resize-none h-20"
+            />
 
-            <form onSubmit={handleApplySubmit} className="space-y-4">
-              {/* Resume selector */}
-              <div>
-                <label className="text-xs font-semibold text-foreground/90 block mb-1.5">
-                  Select Submitted Resume:
-                </label>
-                {resumes.length === 0 ? (
-                  <div className="p-3 bg-sky-50 rounded-xl border border-border text-xs text-muted-foreground">
-                    No uploaded resume found. Your current student profile will be attached automatically.
-                  </div>
-                ) : (
-                  <select
-                    value={selectedResumeId}
-                    onChange={(e) => setSelectedResumeId(e.target.value)}
-                    className="w-full p-2.5 rounded-xl border border-border bg-sky-50 text-xs text-foreground/90 focus:outline-none focus:border-ring focus:ring-2 focus:ring-ring/40"
-                  >
-                    {resumes.map((r) => (
-                      <option key={r.id} value={r.id}>
-                        {r.fileName} (Indicative Score: {r.quality.indicativeScore}/100)
-                      </option>
-                    ))}
-                  </select>
-                )}
+            {promptSaved ? (
+              <div className="p-3 rounded-xl bg-teal/20 text-teal text-xs text-center font-semibold">
+                Recorded on your Application Tracker!
               </div>
-
-              {/* Cover Note */}
-              <div>
-                <label className="text-xs font-semibold text-foreground/90 block mb-1.5">
-                  Brief Cover Note / Pitch (Optional):
-                </label>
-                <textarea
-                  rows={4}
-                  placeholder="Share relevant projects, certifications, or why you're a great fit for this role..."
-                  value={coverNote}
-                  onChange={(e) => setCoverNote(e.target.value)}
-                  className="w-full p-3 rounded-xl border border-border bg-sky-50 text-xs text-foreground/90 focus:outline-none focus:border-ring focus:ring-2 focus:ring-ring/40"
-                />
-              </div>
-
-              <div className="flex items-center justify-end gap-3 pt-2">
+            ) : (
+              <div className="flex flex-col gap-2 pt-2">
                 <PillButton
-                  type="button"
-                  variant="secondary"
-                  size="md"
-                  onClick={() => setApplyModalOpen(false)}
-                >
-                  Cancel
-                </PillButton>
-                <PillButton
-                  type="submit"
                   variant="primary"
                   size="md"
-                  disabled={submitting}
-                  icon={<Send className="size-4" />}
+                  className="w-full justify-center"
+                  onClick={() => recordSelfReportedStatus("applied")}
                 >
-                  {submitting ? "Submitting..." : "Confirm & Apply"}
+                  Yes, Mark as Applied (Self-Reported)
                 </PillButton>
+                <div className="grid grid-cols-2 gap-2">
+                  <PillButton
+                    variant="secondary"
+                    size="sm"
+                    className="w-full justify-center text-xs"
+                    onClick={() => recordSelfReportedStatus("saved")}
+                  >
+                    Not yet, keep Saved
+                  </PillButton>
+                  <PillButton
+                    variant="secondary"
+                    size="sm"
+                    className="w-full justify-center text-xs"
+                    onClick={() => recordSelfReportedStatus("remind")}
+                  >
+                    Remind me later
+                  </PillButton>
+                </div>
               </div>
-            </form>
+            )}
           </div>
         </div>
       )}
-    </div>
-  );
-}
-
-export default function OpportunityDetailPage() {
-  return (
-    <div data-theme="light" className="min-h-screen bg-background text-foreground">
-      <React.Suspense fallback={<div className="p-16 text-center text-muted-foreground">Loading opportunity...</div>}>
-        <OpportunityDetailContent />
-      </React.Suspense>
     </div>
   );
 }

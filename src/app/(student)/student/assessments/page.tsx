@@ -170,7 +170,7 @@ export default function StudentAssessmentsPage() {
             </div>
           </div>
           <div className="text-xs text-muted-foreground border-t border-border pt-3 leading-relaxed">
-            Evidence-based certification converts self-declared competencies into cryptographically verifiable resume badges visible to recruiters.
+            Evidence-based certification converts self-declared competencies into verified skill badges that enhance your deterministic match scores.
           </div>
         </div>
 

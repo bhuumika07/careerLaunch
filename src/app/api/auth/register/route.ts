@@ -9,7 +9,7 @@ const registerSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Invalid email address"),
   password: z.string().min(8, "Password must be at least 8 characters"),
-  role: z.enum(["student", "faculty", "recruiter", "institution"]),
+  role: z.enum(["student", "job_seeker"]),
   termsAccepted: z.boolean().refine((val) => val === true, "You must accept the Terms of Service"),
 });
 
@@ -49,17 +49,13 @@ export async function POST(req: NextRequest) {
     const now = new Date().toISOString();
     const userId = `usr_${role}_${Date.now()}`;
 
-    // Institution and recruiter start as pending_verification
-    const status =
-      role === "institution" || role === "recruiter" ? "pending_verification" : "active";
-
     const newUser: User = {
       id: userId,
       name,
       email: normalizedEmail,
       passwordHash,
       role: role as Role,
-      status,
+      status: "active",
       emailVerified: false,
       onboardingCompleted: false,
       createdAt: now,
@@ -68,105 +64,62 @@ export async function POST(req: NextRequest) {
 
     db.users.push(newUser);
 
-    // Create an initial empty profile record for the role
-    if (role === "student") {
-      db.studentProfiles.push({
-        userId,
-        skills: [],
-        projects: [],
-        experience: [],
-        certifications: [],
-        achievements: [],
-        updatedAt: now,
-      });
-    } else if (role === "faculty") {
-      db.facultyProfiles.push({
-        userId,
-        designation: "Faculty Member",
-        department: "General",
-        institution: "Pending Institution Onboarding",
-        qualifications: [],
-        expertise: [],
-        experienceHistory: [],
-        publications: [],
-        certificationsFDPs: [],
-        collaborationInterests: [],
-        updatedAt: now,
-      });
-    } else if (role === "recruiter") {
-      db.recruiterProfiles.push({
-        userId,
-        companyName: "Pending Onboarding",
-        website: "",
-        industry: "Technology",
-        recruiterDesignation: "Technical Recruiter",
-        officialEmail: normalizedEmail,
-        verificationStatus: "pending",
-        hiringPreferences: {
-          targetDepartments: [],
-          targetRoles: [],
-          preferredSkills: [],
-        },
-        opportunitiesCount: 0,
-        updatedAt: now,
-      });
-    } else if (role === "institution") {
-      db.institutionProfiles.push({
-        userId,
-        name: "Pending Institution Onboarding",
-        type: "University",
-        location: "",
-        website: "",
-        adminName: name,
-        adminDesignation: "Authorized Administrator",
-        adminContact: "",
-        verificationStatus: "pending",
-        departments: [],
-        studentCountByBatch: {},
-        facultyCountByDepartment: {},
-        updatedAt: now,
-      });
-    }
+    // Create an initial empty profile record in unified studentProfiles (CareerProfile)
+    db.studentProfiles = db.studentProfiles || [];
+    db.studentProfiles.push({
+      userId,
+      skills: [],
+      projects: [],
+      experience: [],
+      certifications: [],
+      achievements: [],
+      updatedAt: now,
+    });
 
-    // Generate email verification token
-    const token = crypto.randomBytes(32).toString("hex");
-    db.verificationTokens.push({
-      id: `vt_${Date.now()}`,
-      token,
+    // Create email verification token
+    const verificationToken = crypto.randomBytes(32).toString("hex");
+    const tokenRecord = {
+      id: `tok_${crypto.randomBytes(8).toString("hex")}`,
+      token: verificationToken,
       userId,
       email: normalizedEmail,
-      type: "email_verification",
-      expiresAt: Date.now() + 24 * 60 * 60 * 1000, // 24 hours
+      type: "email_verification" as const,
+      expiresAt: Date.now() + 24 * 60 * 60 * 1000,
       used: false,
       createdAt: now,
-    });
+    };
+    db.verificationTokens = db.verificationTokens || [];
+    db.verificationTokens.push(tokenRecord);
 
     writeDb(db);
 
-    // Establish session cookie immediately
-    await createSession(userId, role as Role);
+    // Auto-login newly registered user
+    const session = await createSession(userId, role as Role);
 
     return NextResponse.json(
       {
         success: true,
-        message: "Registration successful. Welcome to CareerLaunch!",
+        message: "Account created successfully.",
         user: {
           id: newUser.id,
           name: newUser.name,
           email: newUser.email,
           role: newUser.role,
           status: newUser.status,
-          onboardingCompleted: false,
+          onboardingCompleted: newUser.onboardingCompleted,
         },
-        verificationToken: token, // Returned for dev testing & automatic verification prompt
+        sessionId: session.id,
         redirectTo: "/onboarding",
       },
       { status: 201 }
     );
   } catch (error) {
-    console.error("Register API error:", error);
+    console.error("Registration failed:", error);
     return NextResponse.json(
-      { success: false, error: "Failed to create account. Please try again." },
+      {
+        success: false,
+        error: "Internal server error occurred during registration.",
+      },
       { status: 500 }
     );
   }

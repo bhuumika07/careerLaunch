@@ -83,7 +83,7 @@ export default function AuthLayout({
         <div className="relative z-10 space-y-3 pt-6 border-t border-border">
           <div className="flex items-center gap-2.5 text-xs text-foreground/85 font-medium">
             <CheckCircle2 className="size-4 text-amber shrink-0" />
-            <span>Four unified roles: Student, Faculty, Recruiter & Institution</span>
+            <span>Dedicated discovery for Students &amp; Experienced Job Seekers</span>
           </div>
           <div className="flex items-center gap-2.5 text-xs text-foreground/85 font-medium">
             <CheckCircle2 className="size-4 text-amber shrink-0" />

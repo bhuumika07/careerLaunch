@@ -16,6 +16,12 @@ import {
   RefreshCw,
   Video,
   FileText,
+  LayoutGrid,
+  List,
+  Download,
+  AlertTriangle,
+  ChevronRight,
+  Bookmark,
 } from "lucide-react";
 import { PillButton } from "@/components/ui/pill-button";
 import { Badge } from "@/components/ui/badge";
@@ -24,20 +30,24 @@ import { cn } from "@/lib/utils";
 
 interface HydratedApplication extends ApplicationRecord {
   opportunity: Opportunity | null;
-  resumeName: string;
+  isExpiredOrClosed?: boolean;
+  confirmationSource?: string;
 }
 
-const PIPELINE_STAGES: ApplicationStatus[] = [
-  "Submitted",
-  "Under review",
-  "Shortlisted",
-  "Selected",
+const BOARD_COLUMNS = [
+  { id: "Saved", label: "Saved" },
+  { id: "Applied", label: "Applied" },
+  { id: "Under review", label: "In Review" },
+  { id: "Interview", label: "Interview" },
+  { id: "Selected", label: "Selected" },
+  { id: "Rejected", label: "Archived" },
 ];
 
 export default function StudentApplicationsPage() {
   const [applications, setApplications] = React.useState<HydratedApplication[]>([]);
   const [loading, setLoading] = React.useState(true);
-  const [selectedFilter, setSelectedFilter] = React.useState<string>("All");
+  const [viewMode, setViewMode] = React.useState<"board" | "table">("board");
+  const [selectedApp, setSelectedApp] = React.useState<HydratedApplication | null>(null);
 
   const fetchApplications = React.useCallback(async () => {
     try {
@@ -47,7 +57,7 @@ export default function StudentApplicationsPage() {
         setApplications(data.applications || []);
       }
     } catch {
-      // fallback
+      // ignore
     } finally {
       setLoading(false);
     }
@@ -57,208 +67,348 @@ export default function StudentApplicationsPage() {
     fetchApplications();
   }, [fetchApplications]);
 
-  const handleWithdraw = async (appId: string, oppTitle: string) => {
-    if (!confirm(`Are you sure you want to withdraw your application for "${oppTitle}"?`)) {
-      return;
-    }
-
+  const updateStatus = async (appId: string, newStatus: string) => {
     try {
-      const res = await fetch(`/api/student/applications/${appId}/withdraw`, {
-        method: "POST",
+      const res = await fetch("/api/student/applications", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: appId, status: newStatus }),
       });
-      const data = await res.json();
-      if (res.ok && data.success) {
-        setApplications((prev) => prev.filter((a) => a.id !== appId));
-      } else {
-        alert(data.error || "Failed to withdraw application.");
+      if (res.ok) {
+        setApplications((prev) =>
+          prev.map((a) => (a.id === appId ? { ...a, status: newStatus as any } : a))
+        );
+        if (selectedApp && selectedApp.id === appId) {
+          setSelectedApp((prev) => (prev ? { ...prev, status: newStatus as any } : null));
+        }
       }
     } catch {
-      alert("Network error occurred.");
+      // ignore
     }
   };
 
-  const getStatusBadge = (status: ApplicationStatus) => {
-    switch (status) {
-      case "Submitted":
-        return <Badge variant="outline" className="border-border text-foreground/90 bg-background text-xs">Submitted</Badge>;
-      case "Under review":
-        return <Badge variant="outline" className="border-amber-300 text-amber-800 bg-amber-50 text-xs font-semibold">Under Review</Badge>;
-      case "Shortlisted":
-        return <Badge className="bg-primary text-foreground text-xs font-semibold">Shortlisted 🎉</Badge>;
-      case "Selected":
-        return <Badge className="bg-success/20 text-white text-xs font-semibold">Selected / Offer Made 🌟</Badge>;
-      case "Rejected":
-        return <Badge variant="outline" className="border-danger text-danger/80 bg-danger/5 text-xs">Not Moving Forward</Badge>;
-      default:
-        return null;
-    }
+  const exportCsv = () => {
+    const headers = ["Title", "Organization", "Status", "Applied Date", "Notes", "Source URL"];
+    const rows = applications.map((a) => [
+      `"${a.opportunity?.title || "N/A"}"`,
+      `"${a.opportunity?.org || "N/A"}"`,
+      `"${a.status}"`,
+      `"${new Date(a.appliedAt).toLocaleDateString()}"`,
+      `"${(a.coverNote || "").replace(/"/g, '""')}"`,
+      `"${a.opportunity?.sourceUrl || ""}"`,
+    ]);
+
+    const csvContent = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows.map((e) => e.join(","))].join("\n");
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `careerlaunch_applications_${new Date().toISOString().slice(0, 10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
-  const filtered = selectedFilter === "All"
-    ? applications
-    : applications.filter((a) => a.status === selectedFilter);
+  if (loading) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 space-y-6 animate-pulse">
+        <div className="h-8 w-64 bg-white/[0.06] rounded-xl" />
+        <div className="h-12 w-full bg-white/[0.04] rounded-2xl" />
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="h-64 bg-white/[0.04] rounded-3xl" />
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="space-y-8">
-      {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-5">
-        <div>
-          <h1 className="font-heading text-2xl sm:text-3xl font-bold text-foreground tracking-tight flex items-center gap-2.5">
-            <Send className="size-7 text-primary" />
-            Application Pipeline
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 space-y-8">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="space-y-1">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal/15 border border-teal/30 text-teal text-xs font-semibold">
+            <Send className="size-3.5" />
+            <span>Self-Reported Application Tracker</span>
+          </div>
+          <h1 className="font-heading text-3xl font-extrabold text-foreground tracking-tight">
+            Application Tracker
           </h1>
-          <p className="text-xs sm:text-sm text-muted-foreground mt-1">
-            Track real-time candidate progression across screening, interview rounds, and selection offers.
+          <p className="text-xs sm:text-sm text-muted-foreground">
+            Track and organize your submissions on external employer portals. Marked by you.
           </p>
         </div>
 
-        <Link href="/opportunities">
-          <PillButton variant="primary" size="md">
-            Explore More Opportunities
-          </PillButton>
-        </Link>
-      </div>
-
-      {/* Filter Tabs */}
-      <div className="flex items-center gap-2 flex-wrap">
-        {["All", "Submitted", "Under review", "Shortlisted", "Selected", "Rejected"].map((filter) => (
-          <button
-            key={filter}
-            type="button"
-            onClick={() => setSelectedFilter(filter)}
-            className={cn(
-              "px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all border cursor-pointer",
-              selectedFilter === filter
-                ? "bg-primary border-primary text-foreground shadow-xs"
-                : "bg-white border-border text-muted-foreground hover:border-border"
-            )}
-          >
-            {filter} ({filter === "All" ? applications.length : applications.filter((a) => a.status === filter).length})
-          </button>
-        ))}
-      </div>
-
-      {/* Applications List */}
-      {loading ? (
-        <div className="p-16 text-center text-muted-foreground bg-white rounded-3xl border border-border">
-          <RefreshCw className="size-6 text-primary animate-spin mx-auto mb-2" />
-          Loading your active applications...
-        </div>
-      ) : filtered.length === 0 ? (
-        <div className="p-16 text-center bg-white rounded-3xl border border-border space-y-4">
-          <Send className="size-10 text-foreground/60 mx-auto" />
-          <h3 className="font-heading font-bold text-foreground text-base">No applications in this category</h3>
-          <p className="text-xs text-muted-foreground max-w-sm mx-auto">
-            Browse our opportunities directory and submit your verified student profile to start tracking your applications.
-          </p>
-          <Link href="/opportunities">
-            <PillButton variant="primary" size="md">
-              Browse Directory
-            </PillButton>
-          </Link>
-        </div>
-      ) : (
-        <div className="space-y-6">
-          {filtered.map((app) => (
-            <div
-              key={app.id}
-              className="p-6 sm:p-7 rounded-3xl bg-white border border-border shadow-xs space-y-6 hover:border-border transition-all"
+        <div className="flex items-center gap-2">
+          {/* View mode toggle */}
+          <div className="flex items-center bg-white/[0.04] border border-white/[0.08] rounded-xl p-1">
+            <button
+              type="button"
+              onClick={() => setViewMode("board")}
+              className={cn(
+                "p-1.5 rounded-lg text-xs font-medium transition-colors",
+                viewMode === "board" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+              )}
+              title="Kanban Board View"
             >
-              {/* Top Row: Org, Role, Status, and Withdraw CTA */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div className="flex items-start gap-4">
-                  <div className="size-12 rounded-2xl bg-muted border border-border flex items-center justify-center font-heading font-extrabold text-danger/80 text-sm shrink-0">
-                    {app.opportunity?.org.substring(0, 2).toUpperCase() || "OR"}
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="font-semibold text-xs text-muted-foreground">{app.opportunity?.org}</span>
-                      <span className="text-foreground/60">•</span>
-                      <span className="text-xs text-muted-foreground">
-                        Applied {new Date(app.appliedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
-                      </span>
-                    </div>
-                    <Link
-                      href={`/opportunities/${app.opportunityId}`}
-                      className="font-heading text-lg font-bold text-foreground hover:text-primary transition-colors"
-                    >
-                      {app.opportunity?.title || "Role Application"}
-                    </Link>
-                  </div>
+              <LayoutGrid className="size-4" />
+            </button>
+            <button
+              type="button"
+              onClick={() => setViewMode("table")}
+              className={cn(
+                "p-1.5 rounded-lg text-xs font-medium transition-colors",
+                viewMode === "table" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+              )}
+              title="Table View"
+            >
+              <List className="size-4" />
+            </button>
+          </div>
+
+          <PillButton
+            variant="secondary"
+            size="sm"
+            onClick={exportCsv}
+            className="text-xs flex items-center gap-1.5"
+          >
+            <Download className="size-3.5" />
+            <span>Export CSV</span>
+          </PillButton>
+        </div>
+      </div>
+
+      {/* Board View */}
+      {viewMode === "board" && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 items-start">
+          {BOARD_COLUMNS.map((col) => {
+            const colApps = applications.filter((a) => {
+              if (col.id === "Rejected") return a.status === "Rejected" || (a.status as string) === "withdrawn";
+              if (col.id === "Interview") return (a.status as string) === "Interview" || a.status === "Shortlisted";
+              return a.status === col.id || (col.id === "Applied" && (a.status === "Submitted" || (a.status as string) === "applied"));
+            });
+
+            return (
+              <div
+                key={col.id}
+                className="p-4 rounded-3xl bg-navy-950/60 border border-white/[0.06] space-y-3 min-h-[400px]"
+              >
+                <div className="flex items-center justify-between pb-2 border-b border-white/[0.06]">
+                  <span className="font-heading text-xs font-bold text-foreground">
+                    {col.label}
+                  </span>
+                  <span className="text-[11px] px-2 py-0.5 rounded-full bg-white/[0.06] text-muted-foreground font-semibold">
+                    {colApps.length}
+                  </span>
                 </div>
 
-                <div className="flex items-center gap-3">
-                  {getStatusBadge(app.status)}
-                  {app.status !== "Selected" && (
-                    <button
-                      type="button"
-                      onClick={() => handleWithdraw(app.id, app.opportunity?.title || "this role")}
-                      className="text-xs text-muted-foreground hover:text-danger/80 font-medium cursor-pointer"
+                <div className="space-y-3">
+                  {colApps.map((app) => (
+                    <div
+                      key={app.id}
+                      onClick={() => setSelectedApp(app)}
+                      className="p-4 rounded-2xl glass-card border border-sky/15 hover:border-sky/35 cursor-pointer space-y-2.5 transition-all duration-200 bg-white/[0.02]"
                     >
-                      Withdraw
-                    </button>
+                      {/* Expired / Closed Warning Banner */}
+                      {app.isExpiredOrClosed && (
+                        <div className="p-2 rounded-xl bg-destructive/15 border border-destructive/25 text-[10px] text-destructive flex items-center gap-1.5 font-medium">
+                          <AlertTriangle className="size-3 shrink-0" />
+                          <span>Listing closed on source</span>
+                        </div>
+                      )}
+
+                      <div className="space-y-1">
+                        <span className="text-[10px] uppercase font-bold text-amber">
+                          {app.opportunity?.category || "Opportunity"}
+                        </span>
+                        <h4 className="font-heading text-xs font-bold text-foreground line-clamp-2">
+                          {app.opportunity?.title || "Tracked Opportunity"}
+                        </h4>
+                        <div className="text-[11px] text-muted-foreground flex items-center gap-1">
+                          <Building2 className="size-3 text-sky" />
+                          <span className="truncate">{app.opportunity?.org || "External Source"}</span>
+                        </div>
+                      </div>
+
+                      <div className="pt-2 flex items-center justify-between text-[10px] text-muted-foreground border-t border-white/[0.06]">
+                        <span>Marked by you</span>
+                        <span className="text-sky hover:underline flex items-center gap-0.5">
+                          Details <ChevronRight className="size-3" />
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+
+                  {colApps.length === 0 && (
+                    <div className="py-8 text-center text-xs text-muted-foreground/60 italic">
+                      Empty
+                    </div>
                   )}
                 </div>
               </div>
+            );
+          })}
+        </div>
+      )}
 
-              {/* Status Stepper Progression */}
-              {app.status !== "Rejected" && (
-                <div className="p-4 rounded-2xl bg-background border border-border/50">
-                  <div className="grid grid-cols-4 gap-2 text-center">
-                    {PIPELINE_STAGES.map((stage, idx) => {
-                      const currentIdx = PIPELINE_STAGES.indexOf(app.status);
-                      const isComplete = currentIdx >= idx;
-                      const isCurrent = app.status === stage;
+      {/* Table View */}
+      {viewMode === "table" && (
+        <div className="rounded-3xl glass-card border border-white/[0.08] overflow-hidden">
+          <table className="w-full text-left text-xs text-muted-foreground">
+            <thead className="bg-white/[0.03] text-foreground uppercase text-[10px] tracking-wider border-b border-white/[0.08]">
+              <tr>
+                <th className="p-4">Opportunity</th>
+                <th className="p-4">Organization</th>
+                <th className="p-4">Status</th>
+                <th className="p-4">Date Marked</th>
+                <th className="p-4">External Source</th>
+                <th className="p-4 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-white/[0.06]">
+              {applications.map((app) => (
+                <tr key={app.id} className="hover:bg-white/[0.02] transition-colors">
+                  <td className="p-4 font-semibold text-foreground">
+                    <button
+                      type="button"
+                      onClick={() => setSelectedApp(app)}
+                      className="hover:text-sky text-left"
+                    >
+                      {app.opportunity?.title || "Tracked Opportunity"}
+                    </button>
+                    {app.isExpiredOrClosed && (
+                      <span className="ml-2 text-[10px] text-destructive">● Closed</span>
+                    )}
+                  </td>
+                  <td className="p-4">{app.opportunity?.org || "External Org"}</td>
+                  <td className="p-4">
+                    <select
+                      value={app.status}
+                      onChange={(e) => updateStatus(app.id, e.target.value)}
+                      className="bg-navy-950 border border-white/[0.1] text-foreground rounded-lg px-2 py-1 text-xs"
+                    >
+                      <option value="Saved">Saved</option>
+                      <option value="Applied">Applied</option>
+                      <option value="Under review">In Review</option>
+                      <option value="Shortlisted">Interview</option>
+                      <option value="Selected">Selected</option>
+                      <option value="Rejected">Rejected</option>
+                    </select>
+                  </td>
+                  <td className="p-4">{new Date(app.appliedAt).toLocaleDateString()}</td>
+                  <td className="p-4">
+                    <a
+                      href={app.opportunity?.sourceUrl || "#"}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sky hover:underline inline-flex items-center gap-1"
+                    >
+                      <span>Open Link</span>
+                      <ExternalLink className="size-3" />
+                    </a>
+                  </td>
+                  <td className="p-4 text-right">
+                    <button
+                      type="button"
+                      onClick={() => setSelectedApp(app)}
+                      className="text-xs text-sky font-semibold hover:underline"
+                    >
+                      View Notes
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
 
-                      return (
-                        <div key={stage} className="space-y-1.5">
-                          <div
-                            className={cn(
-                              "h-1.5 rounded-full transition-colors",
-                              isComplete ? "bg-primary" : "bg-muted"
-                            )}
-                          />
-                          <span
-                            className={cn(
-                              "text-[11px] block truncate",
-                              isCurrent ? "font-bold text-foreground" : isComplete ? "text-muted-foreground font-medium" : "text-muted-foreground"
-                            )}
-                          >
-                            {stage}
-                          </span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-
-              {/* Scheduled Interview Round Alert (If scheduled) */}
-              {app.interviewRound && (
-                <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-xs text-foreground/90 space-y-2">
-                  <div className="flex items-center gap-2 font-bold text-amber-950">
-                    <Video className="size-4 text-amber-700" />
-                    <span>Interview Scheduled: {app.interviewRound.date} ({app.interviewRound.mode})</span>
-                  </div>
-                  <p className="text-foreground/90 leading-relaxed pl-6">
-                    {app.interviewRound.instructions}
-                  </p>
-                </div>
-              )}
-
-              {/* Application History Accordion Strip */}
-              <div className="border-t border-border/50 pt-3 text-xs text-muted-foreground flex items-center justify-between flex-wrap gap-2">
-                <span className="flex items-center gap-1.5">
-                  <FileText className="size-3.5 text-primary" />
-                  Attached Document: <strong>{app.resumeName}</strong>
+      {/* Application Detail Drawer / Modal */}
+      {selectedApp && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy/80 backdrop-blur-md animate-in fade-in duration-200">
+          <div className="bg-navy-950 rounded-3xl border border-sky/20 max-w-lg w-full p-6 sm:p-8 shadow-2xl space-y-6">
+            <div className="flex items-start justify-between border-b border-white/[0.08] pb-4">
+              <div className="space-y-1">
+                <span className="text-[10px] uppercase font-bold text-teal">
+                  Self-Reported External Record
                 </span>
+                <h3 className="font-heading text-lg font-bold text-foreground">
+                  {selectedApp.opportunity?.title || "Tracked Opportunity"}
+                </h3>
+                <p className="text-xs text-muted-foreground">{selectedApp.opportunity?.org}</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedApp(null)}
+                className="text-muted-foreground hover:text-foreground p-1"
+              >
+                &times;
+              </button>
+            </div>
 
-                <span className="text-muted-foreground">
-                  Latest Event: {app.history[app.history.length - 1]?.note || "Status updated"}
-                </span>
+            {selectedApp.isExpiredOrClosed && (
+              <div className="p-3 rounded-2xl bg-destructive/15 border border-destructive/30 text-xs text-destructive space-y-1">
+                <div className="flex items-center gap-1 font-bold">
+                  <AlertCircle className="size-4" />
+                  <span>Notice: Source Listing Closed</span>
+                </div>
+                <p className="text-[11px]">
+                  This listing is no longer accepting submissions on the original employer portal.
+                </p>
+              </div>
+            )}
+
+            <div className="space-y-3 text-xs">
+              <div className="flex justify-between border-b border-white/[0.06] pb-2">
+                <span className="text-muted-foreground">Confirmation Source:</span>
+                <span className="font-semibold text-foreground">Marked by you (Self-reported)</span>
+              </div>
+              <div className="flex justify-between border-b border-white/[0.06] pb-2">
+                <span className="text-muted-foreground">Current Status:</span>
+                <select
+                  value={selectedApp.status}
+                  onChange={(e) => updateStatus(selectedApp.id, e.target.value)}
+                  className="bg-navy-900 border border-white/[0.1] text-foreground rounded-lg px-2 py-1 text-xs"
+                >
+                  <option value="Saved">Saved</option>
+                  <option value="Applied">Applied</option>
+                  <option value="Under review">In Review</option>
+                  <option value="Shortlisted">Interview</option>
+                  <option value="Selected">Selected</option>
+                  <option value="Rejected">Rejected</option>
+                </select>
+              </div>
+              <div className="flex justify-between border-b border-white/[0.06] pb-2">
+                <span className="text-muted-foreground">First Tracked:</span>
+                <span>{new Date(selectedApp.appliedAt).toLocaleString()}</span>
+              </div>
+              <div className="space-y-1 pt-1">
+                <span className="text-muted-foreground block">Personal Notes:</span>
+                <p className="p-3 rounded-xl bg-white/[0.03] border border-white/[0.06] text-foreground whitespace-pre-wrap">
+                  {selectedApp.coverNote || "No notes added yet."}
+                </p>
               </div>
             </div>
-          ))}
+
+            <div className="pt-2 flex items-center justify-between">
+              <a
+                href={selectedApp.opportunity?.sourceUrl || "#"}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs text-sky hover:underline inline-flex items-center gap-1 font-semibold"
+              >
+                <span>Open Original Employer Listing</span>
+                <ExternalLink className="size-3.5" />
+              </a>
+              <PillButton
+                variant="secondary"
+                size="sm"
+                onClick={() => setSelectedApp(null)}
+              >
+                Close
+              </PillButton>
+            </div>
+          </div>
         </div>
       )}
     </div>

@@ -29,6 +29,8 @@ import {
   ChevronRight,
   Compass,
   Award,
+  Sparkles,
+  Layers,
 } from "lucide-react";
 import { navConfig, type Role } from "./nav-config";
 import { cn } from "@/lib/utils";
@@ -56,6 +58,8 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   FileEdit,
   Compass,
   Award,
+  Sparkles,
+  Layers,
 };
 
 export interface SidebarProps {

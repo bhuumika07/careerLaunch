@@ -116,7 +116,7 @@ export default function AdminSettingsPage() {
               className="text-xs"
             />
             <p className="text-[11px] text-muted-foreground mt-1">
-              Triggers warning banner on recruiter creation when similarity exceeds this score
+              Triggers deduplication flag when multi-source listing similarity exceeds this score
             </p>
           </div>
         </div>
@@ -129,7 +129,7 @@ export default function AdminSettingsPage() {
               onChange={(e) => setDuplicateAutoFlag(e.target.checked)}
               className="rounded-sm border-border text-accent-text focus:ring-accent"
             />
-            <span>Enable real-time duplicate warning during recruiter opportunity draft creation</span>
+            <span>Enable automated duplicate merging across multi-source opportunity ingestion</span>
           </label>
         </div>
 

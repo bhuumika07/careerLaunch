@@ -119,25 +119,13 @@ export function SignupTeaserForm({ className }: SignupTeaserFormProps) {
                 value="student"
                 className="cursor-pointer text-foreground/90 focus:bg-primary focus:text-primary-foreground rounded-lg py-2 px-3 text-sm"
               >
-                Student
+                Student & Learner
               </SelectItem>
               <SelectItem
-                value="faculty"
+                value="job_seeker"
                 className="cursor-pointer text-foreground/90 focus:bg-primary focus:text-primary-foreground rounded-lg py-2 px-3 text-sm"
               >
-                Faculty
-              </SelectItem>
-              <SelectItem
-                value="recruiter"
-                className="cursor-pointer text-foreground/90 focus:bg-primary focus:text-primary-foreground rounded-lg py-2 px-3 text-sm"
-              >
-                Recruiter
-              </SelectItem>
-              <SelectItem
-                value="institution"
-                className="cursor-pointer text-foreground/90 focus:bg-primary focus:text-primary-foreground rounded-lg py-2 px-3 text-sm"
-              >
-                Institution
+                Job Seeker & Professional
               </SelectItem>
             </SelectContent>
           </Select>

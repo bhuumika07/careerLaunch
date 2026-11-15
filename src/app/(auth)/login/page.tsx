@@ -10,10 +10,8 @@ import { Label } from "@/components/ui/label";
 
 const DEMO_ACCOUNTS = [
   { role: "Student", email: "student@careerlaunch.com", label: "Student" },
-  { role: "Faculty", email: "faculty@careerlaunch.com", label: "Faculty" },
-  { role: "Recruiter", email: "recruiter@careerlaunch.com", label: "Recruiter" },
-  { role: "Institution", email: "institution@careerlaunch.com", label: "Institution" },
-  { role: "Admin", email: "admin@careerlaunch.com", label: "Admin" },
+  { role: "Job Seeker", email: "jobseeker@careerlaunch.com", label: "Job Seeker" },
+  { role: "Admin", email: "admin@careerlaunch.com", label: "Internal Admin" },
 ];
 
 function LoginForm() {
@@ -73,7 +71,8 @@ function LoginForm() {
       }
 
       // Successful login -> route to target or role dashboard
-      const target = redirectTarget || data.redirectTo || `/${data.user.role}/dashboard`;
+      const roleRoute = data.user.role === "admin" ? "/admin/dashboard" : "/student/dashboard";
+      const target = redirectTarget || data.redirectTo || roleRoute;
       router.push(target);
     } catch {
       setError("Network error occurred. Please check your connection.");
