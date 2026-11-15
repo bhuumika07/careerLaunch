@@ -696,6 +696,51 @@
       "degree": "B.Tech in Computer Science",
       "graduationYear": 2026,
       "cgpa": 8.8
+    },
+    {
+      "id": "062abc97-1c31-4878-80c8-e47c9bc170be",
+      "userId": "user_empty",
+      "college": null,
+      "degree": null,
+      "branch": null,
+      "currentYear": null,
+      "graduationYear": null,
+      "cgpa": null,
+      "cgpaScale": 10,
+      "backlogs": 0,
+      "fieldMetadata": {},
+      "createdAt": "2026-11-15T22:10:13.562Z",
+      "updatedAt": "2026-11-15T22:10:13.566Z"
+    },
+    {
+      "id": "270ab537-ad22-4728-a5e2-28ba29dcb5bb",
+      "userId": "student_carol",
+      "college": null,
+      "degree": null,
+      "branch": null,
+      "currentYear": null,
+      "graduationYear": null,
+      "cgpa": null,
+      "cgpaScale": 10,
+      "backlogs": 0,
+      "fieldMetadata": {},
+      "createdAt": "2026-11-15T22:10:13.586Z",
+      "updatedAt": "2026-11-15T22:10:13.586Z"
+    },
+    {
+      "id": "6a58d5aa-55b9-4c90-99ed-508e3f46289d",
+      "userId": "usr_new_student",
+      "college": null,
+      "degree": null,
+      "branch": null,
+      "currentYear": null,
+      "graduationYear": null,
+      "cgpa": null,
+      "cgpaScale": 10,
+      "backlogs": 0,
+      "fieldMetadata": {},
+      "createdAt": "2026-11-15T22:10:13.789Z",
+      "updatedAt": "2026-11-15T22:10:13.789Z"
     }
   ],
   "facultyProfiles": [],
@@ -1929,7 +1974,7 @@
           "Bachelors",
           "Masters"
         ],
-        "minCgpa": 7,
+        "minCgpa": null,
         "graduationYears": [
           "2025",
           "2026",
@@ -1939,8 +1984,8 @@
       },
       "location": "Hybrid",
       "workMode": "hybrid",
-      "deadline": "2026-12-18T17:14:42.967Z",
-      "stipendSalary": "$45 - $65 / hour",
+      "deadline": null,
+      "stipendSalary": null,
       "status": "active",
       "sourceUrl": "https://boards.greenhouse.io/cloudflare/jobs/7774167?gh_jid=7774167",
       "isExternal": true,
@@ -1984,18 +2029,12 @@
         ],
         "minCgpa": null,
         "experienceLevel": "entry",
-        "isPaid": true,
-        "compensation": {
-          "textVerbatim": "$45 - $65 / hour"
-        }
+        "isPaid": null,
+        "compensation": null
       },
-      "isQuarantined": true,
-      "quarantineReasons": [
-        "SYNTHETIC_SALARY_FALLBACK",
-        "SYNTHETIC_CGPA_FALLBACK",
-        "SYNTHETIC_DEADLINE_FALLBACK"
-      ],
-      "dataQualityScore": 0.4
+      "isQuarantined": false,
+      "quarantineReasons": [],
+      "dataQualityScore": 1
     },
     {
       "id": "real_cloudflare_8038898",
@@ -2014,7 +2053,7 @@
           "Masters",
           "PhD"
         ],
-        "minCgpa": 7,
+        "minCgpa": null,
         "graduationYears": [
           "2024",
           "2025",
@@ -2024,7 +2063,7 @@
       },
       "location": "Hybrid",
       "workMode": "hybrid",
-      "deadline": "2026-12-09T17:14:42.967Z",
+      "deadline": null,
       "stipendSalary": "$230,000 - $288,000",
       "status": "active",
       "sourceUrl": "https://boards.greenhouse.io/cloudflare/jobs/8038898?gh_jid=8038898",
@@ -2070,12 +2109,9 @@
           "textVerbatim": "$230,000 - $288,000"
         }
       },
-      "isQuarantined": true,
-      "quarantineReasons": [
-        "SYNTHETIC_CGPA_FALLBACK",
-        "SYNTHETIC_DEADLINE_FALLBACK"
-      ],
-      "dataQualityScore": 0.6
+      "isQuarantined": false,
+      "quarantineReasons": [],
+      "dataQualityScore": 1
     },
     {
       "id": "real_cloudflare_8155495",
@@ -2099,17 +2135,13 @@
           "Masters",
           "PhD"
         ],
-        "minCgpa": 7,
-        "graduationYears": [
-          "2024",
-          "2025",
-          "2026"
-        ],
+        "minCgpa": null,
+        "graduationYears": [],
         "experienceLevel": "Senior"
       },
       "location": "Hybrid",
       "workMode": "hybrid",
-      "deadline": "2026-12-29T17:14:42.967Z",
+      "deadline": null,
       "stipendSalary": "$230,000 - $317,000",
       "status": "active",
       "sourceUrl": "https://boards.greenhouse.io/cloudflare/jobs/8155495?gh_jid=8155495",
@@ -2149,11 +2181,7 @@
           "Information Technology",
           "Electrical Engineering"
         ],
-        "graduationYears": [
-          2024,
-          2025,
-          2026
-        ],
+        "graduationYears": [],
         "minCgpa": null,
         "experienceLevel": "senior",
         "isPaid": true,
@@ -2161,13 +2189,9 @@
           "textVerbatim": "$230,000 - $317,000"
         }
       },
-      "isQuarantined": true,
-      "quarantineReasons": [
-        "SYNTHETIC_GRAD_YEAR_FALLBACK",
-        "SYNTHETIC_CGPA_FALLBACK",
-        "SYNTHETIC_DEADLINE_FALLBACK"
-      ],
-      "dataQualityScore": 0.4
+      "isQuarantined": false,
+      "quarantineReasons": [],
+      "dataQualityScore": 1
     },
     {
       "id": "real_cloudflare_8105716",
@@ -2191,18 +2215,14 @@
           "Masters",
           "PhD"
         ],
-        "minCgpa": 7,
-        "graduationYears": [
-          "2024",
-          "2025",
-          "2026"
-        ],
+        "minCgpa": null,
+        "graduationYears": [],
         "experienceLevel": "Senior"
       },
       "location": "Hybrid",
       "workMode": "hybrid",
-      "deadline": "2026-12-15T17:14:42.967Z",
-      "stipendSalary": "$120,000 - $185,000 / year",
+      "deadline": null,
+      "stipendSalary": null,
       "status": "active",
       "sourceUrl": "https://boards.greenhouse.io/cloudflare/jobs/8105716?gh_jid=8105716",
       "isExternal": true,
@@ -2241,26 +2261,15 @@
           "Information Technology",
           "Electrical Engineering"
         ],
-        "graduationYears": [
-          2024,
-          2025,
-          2026
-        ],
+        "graduationYears": [],
         "minCgpa": null,
         "experienceLevel": "senior",
-        "isPaid": true,
-        "compensation": {
-          "textVerbatim": "$120,000 - $185,000 / year"
-        }
+        "isPaid": null,
+        "compensation": null
       },
-      "isQuarantined": true,
-      "quarantineReasons": [
-        "SYNTHETIC_SALARY_FALLBACK",
-        "SYNTHETIC_GRAD_YEAR_FALLBACK",
-        "SYNTHETIC_CGPA_FALLBACK",
-        "SYNTHETIC_DEADLINE_FALLBACK"
-      ],
-      "dataQualityScore": 0.2
+      "isQuarantined": false,
+      "quarantineReasons": [],
+      "dataQualityScore": 1
     },
     {
       "id": "real_cloudflare_8055320",
@@ -2285,17 +2294,13 @@
           "Masters",
           "PhD"
         ],
-        "minCgpa": 7,
-        "graduationYears": [
-          "2024",
-          "2025",
-          "2026"
-        ],
+        "minCgpa": null,
+        "graduationYears": [],
         "experienceLevel": "Senior"
       },
       "location": "In-Office",
       "workMode": "onsite",
-      "deadline": "2026-12-12T17:14:42.967Z",
+      "deadline": null,
       "stipendSalary": "$194,000 - $266,000",
       "status": "active",
       "sourceUrl": "https://boards.greenhouse.io/cloudflare/jobs/8055320?gh_jid=8055320",
@@ -2336,11 +2341,7 @@
           "Information Technology",
           "Electrical Engineering"
         ],
-        "graduationYears": [
-          2024,
-          2025,
-          2026
-        ],
+        "graduationYears": [],
         "minCgpa": null,
         "experienceLevel": "senior",
         "isPaid": true,
@@ -2348,13 +2349,9 @@
           "textVerbatim": "$194,000 - $266,000"
         }
       },
-      "isQuarantined": true,
-      "quarantineReasons": [
-        "SYNTHETIC_GRAD_YEAR_FALLBACK",
-        "SYNTHETIC_CGPA_FALLBACK",
-        "SYNTHETIC_DEADLINE_FALLBACK"
-      ],
-      "dataQualityScore": 0.4
+      "isQuarantined": false,
+      "quarantineReasons": [],
+      "dataQualityScore": 1
     },
     {
       "id": "real_figma_6233043004",
@@ -2375,17 +2372,13 @@
           "Masters",
           "PhD"
         ],
-        "minCgpa": 7,
-        "graduationYears": [
-          "2024",
-          "2025",
-          "2026"
-        ],
+        "minCgpa": null,
+        "graduationYears": [],
         "experienceLevel": "Mid-level"
       },
       "location": "San Francisco, CA , New York, NY , United States",
       "workMode": "remote",
-      "deadline": "2026-12-05T17:14:42.967Z",
+      "deadline": null,
       "stipendSalary": "$153,000 - $296,000 USD",
       "status": "active",
       "sourceUrl": "https://boards.greenhouse.io/figma/jobs/6233043004?gh_jid=6233043004",
@@ -2421,11 +2414,7 @@
           "Information Technology",
           "Electrical Engineering"
         ],
-        "graduationYears": [
-          2024,
-          2025,
-          2026
-        ],
+        "graduationYears": [],
         "minCgpa": null,
         "experienceLevel": "mid",
         "isPaid": true,
@@ -2433,13 +2422,9 @@
           "textVerbatim": "$153,000 - $296,000 USD"
         }
       },
-      "isQuarantined": true,
-      "quarantineReasons": [
-        "SYNTHETIC_GRAD_YEAR_FALLBACK",
-        "SYNTHETIC_CGPA_FALLBACK",
-        "SYNTHETIC_DEADLINE_FALLBACK"
-      ],
-      "dataQualityScore": 0.4
+      "isQuarantined": false,
+      "quarantineReasons": [],
+      "dataQualityScore": 1
     },
     {
       "id": "real_figma_6178851004",
@@ -2460,7 +2445,7 @@
           "Bachelors",
           "Masters"
         ],
-        "minCgpa": 7,
+        "minCgpa": null,
         "graduationYears": [
           "2025",
           "2026",
@@ -2470,7 +2455,7 @@
       },
       "location": "San Francisco, CA , New York, NY",
       "workMode": "onsite",
-      "deadline": "2026-12-06T17:14:42.967Z",
+      "deadline": null,
       "stipendSalary": "$46 - $46 USD",
       "status": "active",
       "sourceUrl": "https://boards.greenhouse.io/figma/jobs/6178851004?gh_jid=6178851004",
@@ -2519,12 +2504,9 @@
           "textVerbatim": "$46 - $46 USD"
         }
       },
-      "isQuarantined": true,
-      "quarantineReasons": [
-        "SYNTHETIC_CGPA_FALLBACK",
-        "SYNTHETIC_DEADLINE_FALLBACK"
-      ],
-      "dataQualityScore": 0.6
+      "isQuarantined": false,
+      "quarantineReasons": [],
+      "dataQualityScore": 1
     },
     {
       "id": "real_figma_6207801004",
@@ -2545,7 +2527,7 @@
           "Bachelors",
           "Masters"
         ],
-        "minCgpa": 7,
+        "minCgpa": null,
         "graduationYears": [
           "2025",
           "2026",
@@ -2555,7 +2537,7 @@
       },
       "location": "San Francisco, CA , New York, NY",
       "workMode": "onsite",
-      "deadline": "2026-12-23T17:14:42.967Z",
+      "deadline": null,
       "stipendSalary": "$74 - $74 USD",
       "status": "active",
       "sourceUrl": "https://boards.greenhouse.io/figma/jobs/6207801004?gh_jid=6207801004",
@@ -2604,12 +2586,9 @@
           "textVerbatim": "$74 - $74 USD"
         }
       },
-      "isQuarantined": true,
-      "quarantineReasons": [
-        "SYNTHETIC_CGPA_FALLBACK",
-        "SYNTHETIC_DEADLINE_FALLBACK"
-      ],
-      "dataQualityScore": 0.6
+      "isQuarantined": false,
+      "quarantineReasons": [],
+      "dataQualityScore": 1
     },
     {
       "id": "real_figma_6200626004",
@@ -2630,7 +2609,7 @@
           "Bachelors",
           "Masters"
         ],
-        "minCgpa": 7,
+        "minCgpa": null,
         "graduationYears": [
           "2025",
           "2026",
@@ -2640,7 +2619,7 @@
       },
       "location": "San Francisco, CA , New York, NY",
       "workMode": "onsite",
-      "deadline": "2026-12-22T17:14:42.967Z",
+      "deadline": null,
       "stipendSalary": "$68 - $68 USD",
       "status": "active",
       "sourceUrl": "https://boards.greenhouse.io/figma/jobs/6200626004?gh_jid=6200626004",
@@ -2689,12 +2668,9 @@
           "textVerbatim": "$68 - $68 USD"
         }
       },
-      "isQuarantined": true,
-      "quarantineReasons": [
-        "SYNTHETIC_CGPA_FALLBACK",
-        "SYNTHETIC_DEADLINE_FALLBACK"
-      ],
-      "dataQualityScore": 0.6
+      "isQuarantined": false,
+      "quarantineReasons": [],
+      "dataQualityScore": 1
     },
     {
       "id": "real_figma_6238015004",
@@ -2716,7 +2692,7 @@
           "Bachelors",
           "Masters"
         ],
-        "minCgpa": 7,
+        "minCgpa": null,
         "graduationYears": [
           "2025",
           "2026",
@@ -2726,7 +2702,7 @@
       },
       "location": "San Francisco, CA , New York, NY",
       "workMode": "onsite",
-      "deadline": "2026-12-09T17:14:42.967Z",
+      "deadline": null,
       "stipendSalary": "$74 - $74 USD",
       "status": "active",
       "sourceUrl": "https://boards.greenhouse.io/figma/jobs/6238015004?gh_jid=6238015004",
@@ -2776,12 +2752,9 @@
           "textVerbatim": "$74 - $74 USD"
         }
       },
-      "isQuarantined": true,
-      "quarantineReasons": [
-        "SYNTHETIC_CGPA_FALLBACK",
-        "SYNTHETIC_DEADLINE_FALLBACK"
-      ],
-      "dataQualityScore": 0.6
+      "isQuarantined": false,
+      "quarantineReasons": [],
+      "dataQualityScore": 1
     },
     {
       "id": "real_gitlab_8771512002",
@@ -2802,7 +2775,7 @@
           "Masters",
           "PhD"
         ],
-        "minCgpa": 7,
+        "minCgpa": null,
         "graduationYears": [
           "2024",
           "2025",
@@ -2812,7 +2785,7 @@
       },
       "location": "Remote, Canada; Remote, United States",
       "workMode": "remote",
-      "deadline": "2026-12-18T17:14:42.967Z",
+      "deadline": null,
       "stipendSalary": "$115,200 - $162,000 USD",
       "status": "active",
       "sourceUrl": "https://job-boards.greenhouse.io/gitlab/jobs/8771512002",
@@ -2861,12 +2834,9 @@
           "textVerbatim": "$115,200 - $162,000 USD"
         }
       },
-      "isQuarantined": true,
-      "quarantineReasons": [
-        "SYNTHETIC_CGPA_FALLBACK",
-        "SYNTHETIC_DEADLINE_FALLBACK"
-      ],
-      "dataQualityScore": 0.6
+      "isQuarantined": false,
+      "quarantineReasons": [],
+      "dataQualityScore": 1
     },
     {
       "id": "real_gitlab_8704363002",
@@ -2888,7 +2858,7 @@
           "Masters",
           "PhD"
         ],
-        "minCgpa": 7,
+        "minCgpa": null,
         "graduationYears": [
           "2024",
           "2025",
@@ -2898,8 +2868,8 @@
       },
       "location": "Remote, Canada; Remote, Poland; Remote, United Kingdom",
       "workMode": "remote",
-      "deadline": "2026-12-26T17:14:42.967Z",
-      "stipendSalary": "$120,000 - $185,000 / year",
+      "deadline": null,
+      "stipendSalary": null,
       "status": "active",
       "sourceUrl": "https://job-boards.greenhouse.io/gitlab/jobs/8704363002",
       "isExternal": true,
@@ -2943,18 +2913,12 @@
         ],
         "minCgpa": null,
         "experienceLevel": "mid",
-        "isPaid": true,
-        "compensation": {
-          "textVerbatim": "$120,000 - $185,000 / year"
-        }
+        "isPaid": null,
+        "compensation": null
       },
-      "isQuarantined": true,
-      "quarantineReasons": [
-        "SYNTHETIC_SALARY_FALLBACK",
-        "SYNTHETIC_CGPA_FALLBACK",
-        "SYNTHETIC_DEADLINE_FALLBACK"
-      ],
-      "dataQualityScore": 0.4
+      "isQuarantined": false,
+      "quarantineReasons": [],
+      "dataQualityScore": 1
     },
     {
       "id": "real_gitlab_8749950002",
@@ -2976,7 +2940,7 @@
           "Masters",
           "PhD"
         ],
-        "minCgpa": 7,
+        "minCgpa": null,
         "graduationYears": [
           "2024",
           "2025",
@@ -2986,8 +2950,8 @@
       },
       "location": "Remote, Poland",
       "workMode": "remote",
-      "deadline": "2026-12-17T17:14:42.967Z",
-      "stipendSalary": "$120,000 - $185,000 / year",
+      "deadline": null,
+      "stipendSalary": null,
       "status": "active",
       "sourceUrl": "https://job-boards.greenhouse.io/gitlab/jobs/8749950002",
       "isExternal": true,
@@ -3031,18 +2995,12 @@
         ],
         "minCgpa": null,
         "experienceLevel": "mid",
-        "isPaid": true,
-        "compensation": {
-          "textVerbatim": "$120,000 - $185,000 / year"
-        }
+        "isPaid": null,
+        "compensation": null
       },
-      "isQuarantined": true,
-      "quarantineReasons": [
-        "SYNTHETIC_SALARY_FALLBACK",
-        "SYNTHETIC_CGPA_FALLBACK",
-        "SYNTHETIC_DEADLINE_FALLBACK"
-      ],
-      "dataQualityScore": 0.4
+      "isQuarantined": false,
+      "quarantineReasons": [],
+      "dataQualityScore": 1
     },
     {
       "id": "real_gitlab_8912709002",
@@ -3062,7 +3020,7 @@
           "Masters",
           "PhD"
         ],
-        "minCgpa": 7,
+        "minCgpa": null,
         "graduationYears": [
           "2024",
           "2025",
@@ -3072,7 +3030,7 @@
       },
       "location": "Remote, United Kingdom",
       "workMode": "remote",
-      "deadline": "2026-12-09T17:14:42.967Z",
+      "deadline": null,
       "stipendSalary": "$115,200 - $194,400 USD",
       "status": "active",
       "sourceUrl": "https://job-boards.greenhouse.io/gitlab/jobs/8912709002",
@@ -3119,12 +3077,9 @@
           "textVerbatim": "$115,200 - $194,400 USD"
         }
       },
-      "isQuarantined": true,
-      "quarantineReasons": [
-        "SYNTHETIC_CGPA_FALLBACK",
-        "SYNTHETIC_DEADLINE_FALLBACK"
-      ],
-      "dataQualityScore": 0.6
+      "isQuarantined": false,
+      "quarantineReasons": [],
+      "dataQualityScore": 1
     },
     {
       "id": "real_gitlab_8760233002",
@@ -3146,7 +3101,7 @@
           "Masters",
           "PhD"
         ],
-        "minCgpa": 7,
+        "minCgpa": null,
         "graduationYears": [
           "2024",
           "2025",
@@ -3156,8 +3111,8 @@
       },
       "location": "Remote, Poland",
       "workMode": "remote",
-      "deadline": "2026-12-10T17:14:42.967Z",
-      "stipendSalary": "$120,000 - $185,000 / year",
+      "deadline": null,
+      "stipendSalary": null,
       "status": "active",
       "sourceUrl": "https://job-boards.greenhouse.io/gitlab/jobs/8760233002",
       "isExternal": true,
@@ -3201,18 +3156,12 @@
         ],
         "minCgpa": null,
         "experienceLevel": "mid",
-        "isPaid": true,
-        "compensation": {
-          "textVerbatim": "$120,000 - $185,000 / year"
-        }
+        "isPaid": null,
+        "compensation": null
       },
-      "isQuarantined": true,
-      "quarantineReasons": [
-        "SYNTHETIC_SALARY_FALLBACK",
-        "SYNTHETIC_CGPA_FALLBACK",
-        "SYNTHETIC_DEADLINE_FALLBACK"
-      ],
-      "dataQualityScore": 0.4
+      "isQuarantined": false,
+      "quarantineReasons": [],
+      "dataQualityScore": 1
     },
     {
       "id": "real_datadog_3851935",
@@ -3234,17 +3183,13 @@
           "Masters",
           "PhD"
         ],
-        "minCgpa": 7,
-        "graduationYears": [
-          "2024",
-          "2025",
-          "2026"
-        ],
+        "minCgpa": null,
+        "graduationYears": [],
         "experienceLevel": "Senior"
       },
       "location": "Boston, Massachusetts, USA; New York, New York, USA",
       "workMode": "hybrid",
-      "deadline": "2026-12-07T17:14:42.967Z",
+      "deadline": null,
       "stipendSalary": "$192,000 - $240,000 USD",
       "status": "active",
       "sourceUrl": "https://careers.datadoghq.com/detail/3851935/?gh_jid=3851935",
@@ -3282,11 +3227,7 @@
           "Information Technology",
           "Electrical Engineering"
         ],
-        "graduationYears": [
-          2024,
-          2025,
-          2026
-        ],
+        "graduationYears": [],
         "minCgpa": null,
         "experienceLevel": "senior",
         "isPaid": true,
@@ -3294,13 +3235,9 @@
           "textVerbatim": "$192,000 - $240,000 USD"
         }
       },
-      "isQuarantined": true,
-      "quarantineReasons": [
-        "SYNTHETIC_GRAD_YEAR_FALLBACK",
-        "SYNTHETIC_CGPA_FALLBACK",
-        "SYNTHETIC_DEADLINE_FALLBACK"
-      ],
-      "dataQualityScore": 0.4
+      "isQuarantined": false,
+      "quarantineReasons": [],
+      "dataQualityScore": 1
     },
     {
       "id": "real_datadog_8248968",
@@ -3320,18 +3257,14 @@
           "Masters",
           "PhD"
         ],
-        "minCgpa": 7,
-        "graduationYears": [
-          "2024",
-          "2025",
-          "2026"
-        ],
+        "minCgpa": null,
+        "graduationYears": [],
         "experienceLevel": "Senior"
       },
       "location": "Paris, France",
       "workMode": "hybrid",
-      "deadline": "2026-12-21T17:14:42.967Z",
-      "stipendSalary": "$120,000 - $185,000 / year",
+      "deadline": null,
+      "stipendSalary": null,
       "status": "active",
       "sourceUrl": "https://careers.datadoghq.com/detail/8248968/?gh_jid=8248968",
       "isExternal": true,
@@ -3365,26 +3298,15 @@
           "Information Technology",
           "Electrical Engineering"
         ],
-        "graduationYears": [
-          2024,
-          2025,
-          2026
-        ],
+        "graduationYears": [],
         "minCgpa": null,
         "experienceLevel": "senior",
-        "isPaid": true,
-        "compensation": {
-          "textVerbatim": "$120,000 - $185,000 / year"
-        }
+        "isPaid": null,
+        "compensation": null
       },
-      "isQuarantined": true,
-      "quarantineReasons": [
-        "SYNTHETIC_SALARY_FALLBACK",
-        "SYNTHETIC_GRAD_YEAR_FALLBACK",
-        "SYNTHETIC_CGPA_FALLBACK",
-        "SYNTHETIC_DEADLINE_FALLBACK"
-      ],
-      "dataQualityScore": 0.2
+      "isQuarantined": false,
+      "quarantineReasons": [],
+      "dataQualityScore": 1
     },
     {
       "id": "real_datadog_3851927",
@@ -3406,17 +3328,13 @@
           "Masters",
           "PhD"
         ],
-        "minCgpa": 7,
-        "graduationYears": [
-          "2024",
-          "2025",
-          "2026"
-        ],
+        "minCgpa": null,
+        "graduationYears": [],
         "experienceLevel": "Senior"
       },
       "location": "Boston, Massachusetts, USA; New York, New York, USA",
       "workMode": "hybrid",
-      "deadline": "2026-12-21T17:14:42.967Z",
+      "deadline": null,
       "stipendSalary": "$192,000 - $240,000 USD",
       "status": "active",
       "sourceUrl": "https://careers.datadoghq.com/detail/3851927/?gh_jid=3851927",
@@ -3454,11 +3372,7 @@
           "Information Technology",
           "Electrical Engineering"
         ],
-        "graduationYears": [
-          2024,
-          2025,
-          2026
-        ],
+        "graduationYears": [],
         "minCgpa": null,
         "experienceLevel": "senior",
         "isPaid": true,
@@ -3466,13 +3380,9 @@
           "textVerbatim": "$192,000 - $240,000 USD"
         }
       },
-      "isQuarantined": true,
-      "quarantineReasons": [
-        "SYNTHETIC_GRAD_YEAR_FALLBACK",
-        "SYNTHETIC_CGPA_FALLBACK",
-        "SYNTHETIC_DEADLINE_FALLBACK"
-      ],
-      "dataQualityScore": 0.4
+      "isQuarantined": false,
+      "quarantineReasons": [],
+      "dataQualityScore": 1
     },
     {
       "id": "real_datadog_8114186",
@@ -3490,7 +3400,7 @@
           "Bachelors",
           "Masters"
         ],
-        "minCgpa": 7,
+        "minCgpa": null,
         "graduationYears": [
           "2025",
           "2026",
@@ -3500,8 +3410,8 @@
       },
       "location": "Paris, France",
       "workMode": "hybrid",
-      "deadline": "2026-12-28T17:14:42.967Z",
-      "stipendSalary": "$45 - $65 / hour",
+      "deadline": null,
+      "stipendSalary": null,
       "status": "active",
       "sourceUrl": "https://careers.datadoghq.com/detail/8114186/?gh_jid=8114186",
       "isExternal": true,
@@ -3540,18 +3450,12 @@
         ],
         "minCgpa": null,
         "experienceLevel": "entry",
-        "isPaid": true,
-        "compensation": {
-          "textVerbatim": "$45 - $65 / hour"
-        }
+        "isPaid": null,
+        "compensation": null
       },
-      "isQuarantined": true,
-      "quarantineReasons": [
-        "SYNTHETIC_SALARY_FALLBACK",
-        "SYNTHETIC_CGPA_FALLBACK",
-        "SYNTHETIC_DEADLINE_FALLBACK"
-      ],
-      "dataQualityScore": 0.4
+      "isQuarantined": false,
+      "quarantineReasons": [],
+      "dataQualityScore": 1
     },
     {
       "id": "real_datadog_8052118",
@@ -3569,7 +3473,7 @@
           "Bachelors",
           "Masters"
         ],
-        "minCgpa": 7,
+        "minCgpa": null,
         "graduationYears": [
           "2025",
           "2026",
@@ -3579,7 +3483,7 @@
       },
       "location": "Boston, Massachusetts, USA; New York, New York, USA",
       "workMode": "hybrid",
-      "deadline": "2026-12-17T17:14:42.967Z",
+      "deadline": null,
       "stipendSalary": "$100,000 - $110,000 USD",
       "status": "active",
       "sourceUrl": "https://careers.datadoghq.com/detail/8052118/?gh_jid=8052118",
@@ -3624,12 +3528,9 @@
           "textVerbatim": "$100,000 - $110,000 USD"
         }
       },
-      "isQuarantined": true,
-      "quarantineReasons": [
-        "SYNTHETIC_CGPA_FALLBACK",
-        "SYNTHETIC_DEADLINE_FALLBACK"
-      ],
-      "dataQualityScore": 0.6
+      "isQuarantined": false,
+      "quarantineReasons": [],
+      "dataQualityScore": 1
     },
     {
       "id": "real_affirm_8011375003",
@@ -3650,7 +3551,7 @@
           "Bachelors",
           "Masters"
         ],
-        "minCgpa": 7,
+        "minCgpa": null,
         "graduationYears": [
           "2025",
           "2026",
@@ -3660,7 +3561,7 @@
       },
       "location": "San Francisco, California, United States",
       "workMode": "remote",
-      "deadline": "2026-12-11T17:14:42.967Z",
+      "deadline": null,
       "stipendSalary": "$50",
       "status": "active",
       "sourceUrl": "https://job-boards.greenhouse.io/affirm/jobs/8011375003",
@@ -3709,12 +3610,9 @@
           "textVerbatim": "$50"
         }
       },
-      "isQuarantined": true,
-      "quarantineReasons": [
-        "SYNTHETIC_CGPA_FALLBACK",
-        "SYNTHETIC_DEADLINE_FALLBACK"
-      ],
-      "dataQualityScore": 0.6
+      "isQuarantined": false,
+      "quarantineReasons": [],
+      "dataQualityScore": 1
     },
     {
       "id": "real_affirm_8039805003",
@@ -3735,18 +3633,14 @@
           "Masters",
           "PhD"
         ],
-        "minCgpa": 7,
-        "graduationYears": [
-          "2024",
-          "2025",
-          "2026"
-        ],
+        "minCgpa": null,
+        "graduationYears": [],
         "experienceLevel": "Senior"
       },
       "location": "Remote UK",
       "workMode": "remote",
-      "deadline": "2026-12-06T17:14:42.967Z",
-      "stipendSalary": "$120,000 - $185,000 / year",
+      "deadline": null,
+      "stipendSalary": null,
       "status": "active",
       "sourceUrl": "https://job-boards.greenhouse.io/affirm/jobs/8039805003",
       "isExternal": true,
@@ -3782,26 +3676,15 @@
           "Information Technology",
           "Electrical Engineering"
         ],
-        "graduationYears": [
-          2024,
-          2025,
-          2026
-        ],
+        "graduationYears": [],
         "minCgpa": null,
         "experienceLevel": "senior",
-        "isPaid": true,
-        "compensation": {
-          "textVerbatim": "$120,000 - $185,000 / year"
-        }
+        "isPaid": null,
+        "compensation": null
       },
-      "isQuarantined": true,
-      "quarantineReasons": [
-        "SYNTHETIC_SALARY_FALLBACK",
-        "SYNTHETIC_GRAD_YEAR_FALLBACK",
-        "SYNTHETIC_CGPA_FALLBACK",
-        "SYNTHETIC_DEADLINE_FALLBACK"
-      ],
-      "dataQualityScore": 0.2
+      "isQuarantined": false,
+      "quarantineReasons": [],
+      "dataQualityScore": 1
     },
     {
       "id": "real_affirm_8200180003",
@@ -3824,17 +3707,13 @@
           "Masters",
           "PhD"
         ],
-        "minCgpa": 7,
-        "graduationYears": [
-          "2024",
-          "2025",
-          "2026"
-        ],
+        "minCgpa": null,
+        "graduationYears": [],
         "experienceLevel": "Senior"
       },
       "location": "Remote Poland",
       "workMode": "remote",
-      "deadline": "2026-12-07T17:14:42.967Z",
+      "deadline": null,
       "stipendSalary": "$32,000-$48,000",
       "status": "active",
       "sourceUrl": "https://job-boards.greenhouse.io/affirm/jobs/8200180003",
@@ -3873,11 +3752,7 @@
           "Information Technology",
           "Electrical Engineering"
         ],
-        "graduationYears": [
-          2024,
-          2025,
-          2026
-        ],
+        "graduationYears": [],
         "minCgpa": null,
         "experienceLevel": "senior",
         "isPaid": true,
@@ -3885,13 +3760,9 @@
           "textVerbatim": "$32,000-$48,000"
         }
       },
-      "isQuarantined": true,
-      "quarantineReasons": [
-        "SYNTHETIC_GRAD_YEAR_FALLBACK",
-        "SYNTHETIC_CGPA_FALLBACK",
-        "SYNTHETIC_DEADLINE_FALLBACK"
-      ],
-      "dataQualityScore": 0.4
+      "isQuarantined": false,
+      "quarantineReasons": [],
+      "dataQualityScore": 1
     },
     {
       "id": "real_affirm_7854835003",
@@ -3911,18 +3782,14 @@
           "Masters",
           "PhD"
         ],
-        "minCgpa": 7,
-        "graduationYears": [
-          "2024",
-          "2025",
-          "2026"
-        ],
+        "minCgpa": null,
+        "graduationYears": [],
         "experienceLevel": "Mid-level"
       },
       "location": "Remote UK",
       "workMode": "remote",
-      "deadline": "2026-12-24T17:14:42.967Z",
-      "stipendSalary": "$120,000 - $185,000 / year",
+      "deadline": null,
+      "stipendSalary": null,
       "status": "active",
       "sourceUrl": "https://job-boards.greenhouse.io/affirm/jobs/7854835003",
       "isExternal": true,
@@ -3956,26 +3823,15 @@
           "Information Technology",
           "Electrical Engineering"
         ],
-        "graduationYears": [
-          2024,
-          2025,
-          2026
-        ],
+        "graduationYears": [],
         "minCgpa": null,
         "experienceLevel": "mid",
-        "isPaid": true,
-        "compensation": {
-          "textVerbatim": "$120,000 - $185,000 / year"
-        }
+        "isPaid": null,
+        "compensation": null
       },
-      "isQuarantined": true,
-      "quarantineReasons": [
-        "SYNTHETIC_SALARY_FALLBACK",
-        "SYNTHETIC_GRAD_YEAR_FALLBACK",
-        "SYNTHETIC_CGPA_FALLBACK",
-        "SYNTHETIC_DEADLINE_FALLBACK"
-      ],
-      "dataQualityScore": 0.2
+      "isQuarantined": false,
+      "quarantineReasons": [],
+      "dataQualityScore": 1
     },
     {
       "id": "real_elastic_8075239",
@@ -3996,17 +3852,13 @@
           "Masters",
           "PhD"
         ],
-        "minCgpa": 7,
-        "graduationYears": [
-          "2024",
-          "2025",
-          "2026"
-        ],
+        "minCgpa": null,
+        "graduationYears": [],
         "experienceLevel": "Senior"
       },
       "location": "Spain",
       "workMode": "onsite",
-      "deadline": "2026-12-13T17:14:42.967Z",
+      "deadline": null,
       "stipendSalary": "$2000",
       "status": "active",
       "sourceUrl": "https://jobs.elastic.co/jobs?gh_jid=8075239&gh_jid=8075239",
@@ -4043,11 +3895,7 @@
           "Information Technology",
           "Electrical Engineering"
         ],
-        "graduationYears": [
-          2024,
-          2025,
-          2026
-        ],
+        "graduationYears": [],
         "minCgpa": null,
         "experienceLevel": "senior",
         "isPaid": true,
@@ -4055,13 +3903,9 @@
           "textVerbatim": "$2000"
         }
       },
-      "isQuarantined": true,
-      "quarantineReasons": [
-        "SYNTHETIC_GRAD_YEAR_FALLBACK",
-        "SYNTHETIC_CGPA_FALLBACK",
-        "SYNTHETIC_DEADLINE_FALLBACK"
-      ],
-      "dataQualityScore": 0.4
+      "isQuarantined": false,
+      "quarantineReasons": [],
+      "dataQualityScore": 1
     },
     {
       "id": "real_elastic_8267188",
@@ -4081,17 +3925,13 @@
           "Masters",
           "PhD"
         ],
-        "minCgpa": 7,
-        "graduationYears": [
-          "2024",
-          "2025",
-          "2026"
-        ],
+        "minCgpa": null,
+        "graduationYears": [],
         "experienceLevel": "Senior"
       },
       "location": "Portugal",
       "workMode": "onsite",
-      "deadline": "2026-12-19T17:14:42.967Z",
+      "deadline": null,
       "stipendSalary": "$2000",
       "status": "active",
       "sourceUrl": "https://jobs.elastic.co/jobs?gh_jid=8267188&gh_jid=8267188",
@@ -4126,11 +3966,7 @@
           "Information Technology",
           "Electrical Engineering"
         ],
-        "graduationYears": [
-          2024,
-          2025,
-          2026
-        ],
+        "graduationYears": [],
         "minCgpa": null,
         "experienceLevel": "senior",
         "isPaid": true,
@@ -4138,13 +3974,9 @@
           "textVerbatim": "$2000"
         }
       },
-      "isQuarantined": true,
-      "quarantineReasons": [
-        "SYNTHETIC_GRAD_YEAR_FALLBACK",
-        "SYNTHETIC_CGPA_FALLBACK",
-        "SYNTHETIC_DEADLINE_FALLBACK"
-      ],
-      "dataQualityScore": 0.4
+      "isQuarantined": false,
+      "quarantineReasons": [],
+      "dataQualityScore": 1
     },
     {
       "id": "real_elastic_8245815",
@@ -4165,17 +3997,13 @@
           "Masters",
           "PhD"
         ],
-        "minCgpa": 7,
-        "graduationYears": [
-          "2024",
-          "2025",
-          "2026"
-        ],
+        "minCgpa": null,
+        "graduationYears": [],
         "experienceLevel": "Senior"
       },
       "location": "United States",
       "workMode": "onsite",
-      "deadline": "2026-12-28T17:14:42.967Z",
+      "deadline": null,
       "stipendSalary": "$159,800 - $252,800 USD",
       "status": "active",
       "sourceUrl": "https://jobs.elastic.co/jobs?gh_jid=8245815&gh_jid=8245815",
@@ -4212,11 +4040,7 @@
           "Information Technology",
           "Electrical Engineering"
         ],
-        "graduationYears": [
-          2024,
-          2025,
-          2026
-        ],
+        "graduationYears": [],
         "minCgpa": null,
         "experienceLevel": "senior",
         "isPaid": true,
@@ -4224,13 +4048,9 @@
           "textVerbatim": "$159,800 - $252,800 USD"
         }
       },
-      "isQuarantined": true,
-      "quarantineReasons": [
-        "SYNTHETIC_GRAD_YEAR_FALLBACK",
-        "SYNTHETIC_CGPA_FALLBACK",
-        "SYNTHETIC_DEADLINE_FALLBACK"
-      ],
-      "dataQualityScore": 0.4
+      "isQuarantined": false,
+      "quarantineReasons": [],
+      "dataQualityScore": 1
     },
     {
       "id": "real_elastic_8130119",
@@ -4252,17 +4072,13 @@
           "Masters",
           "PhD"
         ],
-        "minCgpa": 7,
-        "graduationYears": [
-          "2024",
-          "2025",
-          "2026"
-        ],
+        "minCgpa": null,
+        "graduationYears": [],
         "experienceLevel": "Senior"
       },
       "location": "United States",
       "workMode": "onsite",
-      "deadline": "2026-12-29T17:14:42.967Z",
+      "deadline": null,
       "stipendSalary": "$159,800 - $252,800 USD",
       "status": "active",
       "sourceUrl": "https://jobs.elastic.co/jobs?gh_jid=8130119&gh_jid=8130119",
@@ -4300,11 +4116,7 @@
           "Information Technology",
           "Electrical Engineering"
         ],
-        "graduationYears": [
-          2024,
-          2025,
-          2026
-        ],
+        "graduationYears": [],
         "minCgpa": null,
         "experienceLevel": "senior",
         "isPaid": true,
@@ -4312,13 +4124,9 @@
           "textVerbatim": "$159,800 - $252,800 USD"
         }
       },
-      "isQuarantined": true,
-      "quarantineReasons": [
-        "SYNTHETIC_GRAD_YEAR_FALLBACK",
-        "SYNTHETIC_CGPA_FALLBACK",
-        "SYNTHETIC_DEADLINE_FALLBACK"
-      ],
-      "dataQualityScore": 0.4
+      "isQuarantined": false,
+      "quarantineReasons": [],
+      "dataQualityScore": 1
     },
     {
       "id": "real_airbnb_8257826",
@@ -4342,18 +4150,14 @@
           "Masters",
           "PhD"
         ],
-        "minCgpa": 7,
-        "graduationYears": [
-          "2024",
-          "2025",
-          "2026"
-        ],
+        "minCgpa": null,
+        "graduationYears": [],
         "experienceLevel": "Senior"
       },
       "location": "Brazil",
       "workMode": "onsite",
-      "deadline": "2026-12-26T17:14:42.967Z",
-      "stipendSalary": "$120,000 - $185,000 / year",
+      "deadline": null,
+      "stipendSalary": null,
       "status": "active",
       "sourceUrl": "https://careers.airbnb.com/positions/8257826?gh_jid=8257826",
       "isExternal": true,
@@ -4392,26 +4196,15 @@
           "Information Technology",
           "Electrical Engineering"
         ],
-        "graduationYears": [
-          2024,
-          2025,
-          2026
-        ],
+        "graduationYears": [],
         "minCgpa": null,
         "experienceLevel": "senior",
-        "isPaid": true,
-        "compensation": {
-          "textVerbatim": "$120,000 - $185,000 / year"
-        }
+        "isPaid": null,
+        "compensation": null
       },
-      "isQuarantined": true,
-      "quarantineReasons": [
-        "SYNTHETIC_SALARY_FALLBACK",
-        "SYNTHETIC_GRAD_YEAR_FALLBACK",
-        "SYNTHETIC_CGPA_FALLBACK",
-        "SYNTHETIC_DEADLINE_FALLBACK"
-      ],
-      "dataQualityScore": 0.2
+      "isQuarantined": false,
+      "quarantineReasons": [],
+      "dataQualityScore": 1
     },
     {
       "id": "real_airbnb_7453190",
@@ -4430,18 +4223,14 @@
           "Masters",
           "PhD"
         ],
-        "minCgpa": 7,
-        "graduationYears": [
-          "2024",
-          "2025",
-          "2026"
-        ],
+        "minCgpa": null,
+        "graduationYears": [],
         "experienceLevel": "Senior"
       },
       "location": "Brazil - Remote",
       "workMode": "remote",
-      "deadline": "2026-12-23T17:14:42.967Z",
-      "stipendSalary": "$120,000 - $185,000 / year",
+      "deadline": null,
+      "stipendSalary": null,
       "status": "active",
       "sourceUrl": "https://careers.airbnb.com/positions/7453190?gh_jid=7453190",
       "isExternal": true,
@@ -4474,26 +4263,15 @@
           "Information Technology",
           "Electrical Engineering"
         ],
-        "graduationYears": [
-          2024,
-          2025,
-          2026
-        ],
+        "graduationYears": [],
         "minCgpa": null,
         "experienceLevel": "senior",
-        "isPaid": true,
-        "compensation": {
-          "textVerbatim": "$120,000 - $185,000 / year"
-        }
+        "isPaid": null,
+        "compensation": null
       },
-      "isQuarantined": true,
-      "quarantineReasons": [
-        "SYNTHETIC_SALARY_FALLBACK",
-        "SYNTHETIC_GRAD_YEAR_FALLBACK",
-        "SYNTHETIC_CGPA_FALLBACK",
-        "SYNTHETIC_DEADLINE_FALLBACK"
-      ],
-      "dataQualityScore": 0.2
+      "isQuarantined": false,
+      "quarantineReasons": [],
+      "dataQualityScore": 1
     },
     {
       "id": "real_airbnb_8263282",
@@ -4515,18 +4293,14 @@
           "Masters",
           "PhD"
         ],
-        "minCgpa": 7,
-        "graduationYears": [
-          "2024",
-          "2025",
-          "2026"
-        ],
+        "minCgpa": null,
+        "graduationYears": [],
         "experienceLevel": "Senior"
       },
       "location": "Brazil",
       "workMode": "onsite",
-      "deadline": "2026-12-16T17:14:42.967Z",
-      "stipendSalary": "$120,000 - $185,000 / year",
+      "deadline": null,
+      "stipendSalary": null,
       "status": "active",
       "sourceUrl": "https://careers.airbnb.com/positions/8263282?gh_jid=8263282",
       "isExternal": true,
@@ -4563,26 +4337,15 @@
           "Information Technology",
           "Electrical Engineering"
         ],
-        "graduationYears": [
-          2024,
-          2025,
-          2026
-        ],
+        "graduationYears": [],
         "minCgpa": null,
         "experienceLevel": "senior",
-        "isPaid": true,
-        "compensation": {
-          "textVerbatim": "$120,000 - $185,000 / year"
-        }
+        "isPaid": null,
+        "compensation": null
       },
-      "isQuarantined": true,
-      "quarantineReasons": [
-        "SYNTHETIC_SALARY_FALLBACK",
-        "SYNTHETIC_GRAD_YEAR_FALLBACK",
-        "SYNTHETIC_CGPA_FALLBACK",
-        "SYNTHETIC_DEADLINE_FALLBACK"
-      ],
-      "dataQualityScore": 0.2
+      "isQuarantined": false,
+      "quarantineReasons": [],
+      "dataQualityScore": 1
     },
     {
       "id": "real_airbnb_8325603",
@@ -4604,18 +4367,14 @@
           "Masters",
           "PhD"
         ],
-        "minCgpa": 7,
-        "graduationYears": [
-          "2024",
-          "2025",
-          "2026"
-        ],
+        "minCgpa": null,
+        "graduationYears": [],
         "experienceLevel": "Senior"
       },
       "location": "Brazil",
       "workMode": "onsite",
-      "deadline": "2026-12-20T17:14:42.967Z",
-      "stipendSalary": "$120,000 - $185,000 / year",
+      "deadline": null,
+      "stipendSalary": null,
       "status": "active",
       "sourceUrl": "https://careers.airbnb.com/positions/8325603?gh_jid=8325603",
       "isExternal": true,
@@ -4652,26 +4411,15 @@
           "Information Technology",
           "Electrical Engineering"
         ],
-        "graduationYears": [
-          2024,
-          2025,
-          2026
-        ],
+        "graduationYears": [],
         "minCgpa": null,
         "experienceLevel": "senior",
-        "isPaid": true,
-        "compensation": {
-          "textVerbatim": "$120,000 - $185,000 / year"
-        }
+        "isPaid": null,
+        "compensation": null
       },
-      "isQuarantined": true,
-      "quarantineReasons": [
-        "SYNTHETIC_SALARY_FALLBACK",
-        "SYNTHETIC_GRAD_YEAR_FALLBACK",
-        "SYNTHETIC_CGPA_FALLBACK",
-        "SYNTHETIC_DEADLINE_FALLBACK"
-      ],
-      "dataQualityScore": 0.2
+      "isQuarantined": false,
+      "quarantineReasons": [],
+      "dataQualityScore": 1
     },
     {
       "id": "real_pinterest_7685466",
@@ -4691,17 +4439,13 @@
           "Masters",
           "PhD"
         ],
-        "minCgpa": 7,
-        "graduationYears": [
-          "2024",
-          "2025",
-          "2026"
-        ],
+        "minCgpa": null,
+        "graduationYears": [],
         "experienceLevel": "Senior"
       },
       "location": "Palo Alto, CA; US;  San Francisco, CA, US",
       "workMode": "remote",
-      "deadline": "2026-12-23T17:14:42.967Z",
+      "deadline": null,
       "stipendSalary": "$285,452 - $449,541 USD",
       "status": "active",
       "sourceUrl": "https://www.pinterestcareers.com/jobs/?gh_jid=7685466",
@@ -4736,11 +4480,7 @@
           "Information Technology",
           "Electrical Engineering"
         ],
-        "graduationYears": [
-          2024,
-          2025,
-          2026
-        ],
+        "graduationYears": [],
         "minCgpa": null,
         "experienceLevel": "senior",
         "isPaid": true,
@@ -4748,13 +4488,9 @@
           "textVerbatim": "$285,452 - $449,541 USD"
         }
       },
-      "isQuarantined": true,
-      "quarantineReasons": [
-        "SYNTHETIC_GRAD_YEAR_FALLBACK",
-        "SYNTHETIC_CGPA_FALLBACK",
-        "SYNTHETIC_DEADLINE_FALLBACK"
-      ],
-      "dataQualityScore": 0.4
+      "isQuarantined": false,
+      "quarantineReasons": [],
+      "dataQualityScore": 1
     },
     {
       "id": "real_pinterest_8213988",
@@ -4774,17 +4510,13 @@
           "Masters",
           "PhD"
         ],
-        "minCgpa": 7,
-        "graduationYears": [
-          "2024",
-          "2025",
-          "2026"
-        ],
+        "minCgpa": null,
+        "graduationYears": [],
         "experienceLevel": "Mid-level"
       },
       "location": "San Francisco, CA, US; Remote, US",
       "workMode": "remote",
-      "deadline": "2026-12-05T17:14:42.967Z",
+      "deadline": null,
       "stipendSalary": "$123,696 - $254,667 USD",
       "status": "active",
       "sourceUrl": "https://www.pinterestcareers.com/jobs/?gh_jid=8213988",
@@ -4819,11 +4551,7 @@
           "Information Technology",
           "Electrical Engineering"
         ],
-        "graduationYears": [
-          2024,
-          2025,
-          2026
-        ],
+        "graduationYears": [],
         "minCgpa": null,
         "experienceLevel": "mid",
         "isPaid": true,
@@ -4831,13 +4559,9 @@
           "textVerbatim": "$123,696 - $254,667 USD"
         }
       },
-      "isQuarantined": true,
-      "quarantineReasons": [
-        "SYNTHETIC_GRAD_YEAR_FALLBACK",
-        "SYNTHETIC_CGPA_FALLBACK",
-        "SYNTHETIC_DEADLINE_FALLBACK"
-      ],
-      "dataQualityScore": 0.4
+      "isQuarantined": false,
+      "quarantineReasons": [],
+      "dataQualityScore": 1
     },
     {
       "id": "real_pinterest_8227344",
@@ -4857,17 +4581,13 @@
           "Masters",
           "PhD"
         ],
-        "minCgpa": 7,
-        "graduationYears": [
-          "2024",
-          "2025",
-          "2026"
-        ],
+        "minCgpa": null,
+        "graduationYears": [],
         "experienceLevel": "Mid-level"
       },
       "location": "San Francisco, CA; Palo Alto, CA; Seattle, WA; New York, NY; Remote, US",
       "workMode": "remote",
-      "deadline": "2026-12-11T17:14:42.967Z",
+      "deadline": null,
       "stipendSalary": "$123,696 - $254,667 USD",
       "status": "active",
       "sourceUrl": "https://www.pinterestcareers.com/jobs/?gh_jid=8227344",
@@ -4902,11 +4622,7 @@
           "Information Technology",
           "Electrical Engineering"
         ],
-        "graduationYears": [
-          2024,
-          2025,
-          2026
-        ],
+        "graduationYears": [],
         "minCgpa": null,
         "experienceLevel": "mid",
         "isPaid": true,
@@ -4914,13 +4630,9 @@
           "textVerbatim": "$123,696 - $254,667 USD"
         }
       },
-      "isQuarantined": true,
-      "quarantineReasons": [
-        "SYNTHETIC_GRAD_YEAR_FALLBACK",
-        "SYNTHETIC_CGPA_FALLBACK",
-        "SYNTHETIC_DEADLINE_FALLBACK"
-      ],
-      "dataQualityScore": 0.4
+      "isQuarantined": false,
+      "quarantineReasons": [],
+      "dataQualityScore": 1
     },
     {
       "id": "real_pinterest_5459622",
@@ -4940,18 +4652,14 @@
           "Masters",
           "PhD"
         ],
-        "minCgpa": 7,
-        "graduationYears": [
-          "2024",
-          "2025",
-          "2026"
-        ],
+        "minCgpa": null,
+        "graduationYears": [],
         "experienceLevel": "Mid-level"
       },
       "location": "Toronto, ON, CA",
       "workMode": "hybrid",
-      "deadline": "2026-12-05T17:14:42.967Z",
-      "stipendSalary": "$120,000 - $185,000 / year",
+      "deadline": null,
+      "stipendSalary": null,
       "status": "active",
       "sourceUrl": "https://www.pinterestcareers.com/jobs/?gh_jid=5459622",
       "isExternal": true,
@@ -4985,26 +4693,15 @@
           "Information Technology",
           "Electrical Engineering"
         ],
-        "graduationYears": [
-          2024,
-          2025,
-          2026
-        ],
+        "graduationYears": [],
         "minCgpa": null,
         "experienceLevel": "mid",
-        "isPaid": true,
-        "compensation": {
-          "textVerbatim": "$120,000 - $185,000 / year"
-        }
+        "isPaid": null,
+        "compensation": null
       },
-      "isQuarantined": true,
-      "quarantineReasons": [
-        "SYNTHETIC_SALARY_FALLBACK",
-        "SYNTHETIC_GRAD_YEAR_FALLBACK",
-        "SYNTHETIC_CGPA_FALLBACK",
-        "SYNTHETIC_DEADLINE_FALLBACK"
-      ],
-      "dataQualityScore": 0.2
+      "isQuarantined": false,
+      "quarantineReasons": [],
+      "dataQualityScore": 1
     },
     {
       "id": "real_discord_8731320002",
@@ -5024,17 +4721,13 @@
           "Masters",
           "PhD"
         ],
-        "minCgpa": 7,
-        "graduationYears": [
-          "2024",
-          "2025",
-          "2026"
-        ],
+        "minCgpa": null,
+        "graduationYears": [],
         "experienceLevel": "Senior"
       },
       "location": "San Francisco Bay Area",
       "workMode": "onsite",
-      "deadline": "2026-12-07T17:14:42.967Z",
+      "deadline": null,
       "stipendSalary": "$196,000 - $245,000 USD",
       "status": "active",
       "sourceUrl": "https://job-boards.greenhouse.io/discord/jobs/8731320002",
@@ -5069,11 +4762,7 @@
           "Information Technology",
           "Electrical Engineering"
         ],
-        "graduationYears": [
-          2024,
-          2025,
-          2026
-        ],
+        "graduationYears": [],
         "minCgpa": null,
         "experienceLevel": "senior",
         "isPaid": true,
@@ -5081,13 +4770,9 @@
           "textVerbatim": "$196,000 - $245,000 USD"
         }
       },
-      "isQuarantined": true,
-      "quarantineReasons": [
-        "SYNTHETIC_GRAD_YEAR_FALLBACK",
-        "SYNTHETIC_CGPA_FALLBACK",
-        "SYNTHETIC_DEADLINE_FALLBACK"
-      ],
-      "dataQualityScore": 0.4
+      "isQuarantined": false,
+      "quarantineReasons": [],
+      "dataQualityScore": 1
     },
     {
       "id": "real_discord_8675185002",
@@ -5108,17 +4793,13 @@
           "Masters",
           "PhD"
         ],
-        "minCgpa": 7,
-        "graduationYears": [
-          "2024",
-          "2025",
-          "2026"
-        ],
+        "minCgpa": null,
+        "graduationYears": [],
         "experienceLevel": "Senior"
       },
       "location": "San Francisco Bay Area or Remote (West Coast)",
       "workMode": "remote",
-      "deadline": "2026-12-10T17:14:42.967Z",
+      "deadline": null,
       "stipendSalary": "$248,000 - $310,000 USD",
       "status": "active",
       "sourceUrl": "https://job-boards.greenhouse.io/discord/jobs/8675185002",
@@ -5155,11 +4836,7 @@
           "Information Technology",
           "Electrical Engineering"
         ],
-        "graduationYears": [
-          2024,
-          2025,
-          2026
-        ],
+        "graduationYears": [],
         "minCgpa": null,
         "experienceLevel": "senior",
         "isPaid": true,
@@ -5167,13 +4844,9 @@
           "textVerbatim": "$248,000 - $310,000 USD"
         }
       },
-      "isQuarantined": true,
-      "quarantineReasons": [
-        "SYNTHETIC_GRAD_YEAR_FALLBACK",
-        "SYNTHETIC_CGPA_FALLBACK",
-        "SYNTHETIC_DEADLINE_FALLBACK"
-      ],
-      "dataQualityScore": 0.4
+      "isQuarantined": false,
+      "quarantineReasons": [],
+      "dataQualityScore": 1
     },
     {
       "id": "real_discord_8802354002",
@@ -5192,17 +4865,13 @@
           "Masters",
           "PhD"
         ],
-        "minCgpa": 7,
-        "graduationYears": [
-          "2024",
-          "2025",
-          "2026"
-        ],
+        "minCgpa": null,
+        "graduationYears": [],
         "experienceLevel": "Senior"
       },
       "location": "San Francisco Bay Area",
       "workMode": "remote",
-      "deadline": "2026-12-17T17:14:42.967Z",
+      "deadline": null,
       "stipendSalary": "$272,000",
       "status": "active",
       "sourceUrl": "https://job-boards.greenhouse.io/discord/jobs/8802354002",
@@ -5236,11 +4905,7 @@
           "Information Technology",
           "Electrical Engineering"
         ],
-        "graduationYears": [
-          2024,
-          2025,
-          2026
-        ],
+        "graduationYears": [],
         "minCgpa": null,
         "experienceLevel": "senior",
         "isPaid": true,
@@ -5248,13 +4913,9 @@
           "textVerbatim": "$272,000"
         }
       },
-      "isQuarantined": true,
-      "quarantineReasons": [
-        "SYNTHETIC_GRAD_YEAR_FALLBACK",
-        "SYNTHETIC_CGPA_FALLBACK",
-        "SYNTHETIC_DEADLINE_FALLBACK"
-      ],
-      "dataQualityScore": 0.4
+      "isQuarantined": false,
+      "quarantineReasons": [],
+      "dataQualityScore": 1
     },
     {
       "id": "real_discord_8214127002",
@@ -5277,17 +4938,13 @@
           "Masters",
           "PhD"
         ],
-        "minCgpa": 7,
-        "graduationYears": [
-          "2024",
-          "2025",
-          "2026"
-        ],
+        "minCgpa": null,
+        "graduationYears": [],
         "experienceLevel": "Senior"
       },
       "location": "San Francisco Bay Area or Los Angeles Area",
       "workMode": "remote",
-      "deadline": "2026-12-06T17:14:42.967Z",
+      "deadline": null,
       "stipendSalary": "$279,000 - $341,000 USD",
       "status": "active",
       "sourceUrl": "https://job-boards.greenhouse.io/discord/jobs/8214127002",
@@ -5326,11 +4983,7 @@
           "Information Technology",
           "Electrical Engineering"
         ],
-        "graduationYears": [
-          2024,
-          2025,
-          2026
-        ],
+        "graduationYears": [],
         "minCgpa": null,
         "experienceLevel": "senior",
         "isPaid": true,
@@ -5338,13 +4991,441 @@
           "textVerbatim": "$279,000 - $341,000 USD"
         }
       },
-      "isQuarantined": true,
-      "quarantineReasons": [
-        "SYNTHETIC_GRAD_YEAR_FALLBACK",
-        "SYNTHETIC_CGPA_FALLBACK",
-        "SYNTHETIC_DEADLINE_FALLBACK"
+      "isQuarantined": false,
+      "quarantineReasons": [],
+      "dataQualityScore": 1
+    },
+    {
+      "id": "real_figma_design_intern_2027",
+      "recruiterId": "recruiter_figma",
+      "title": "Product Design Intern (Summer 2027)",
+      "description": "At Figma, we are building the future of design and collaboration on the web. As a Product Design Intern, you will embed with product teams to design intuitive UI/UX workflows, prototype interactions in Figma, and build accessible design systems.",
+      "org": "Figma",
+      "category": "Internships",
+      "skills": [
+        "Figma",
+        "UI/UX Design",
+        "Design Systems",
+        "Prototyping",
+        "User Research"
       ],
-      "dataQualityScore": 0.4
+      "eligibility": {
+        "degrees": [
+          "Bachelors",
+          "Masters"
+        ],
+        "minCgpa": null,
+        "graduationYears": [],
+        "experienceLevel": "Student / Intern"
+      },
+      "location": "San Francisco, CA",
+      "workMode": "hybrid",
+      "deadline": null,
+      "stipendSalary": null,
+      "status": "active",
+      "sourceUrl": "https://boards.greenhouse.io/figma/jobs/6200111004",
+      "isExternal": true,
+      "publicationDate": "2026-11-15T22:09:43.834Z",
+      "lastVerifiedDate": "2026-11-15T22:09:43.834Z",
+      "applicantCount": 2,
+      "shortlistedCount": 0,
+      "selectedCount": 0,
+      "createdAt": "2026-11-15T22:09:43.834Z",
+      "updatedAt": "2026-11-15T22:09:43.834Z",
+      "enrichment": {
+        "status": "succeeded",
+        "roleTitle": "Product Design Intern",
+        "descriptionSummary": "Join Figma as a Product Design Intern to design UI/UX, prototype interactions, and build design systems.",
+        "opportunityType": "internship",
+        "workMode": "hybrid",
+        "requiredSkills": [
+          "Figma",
+          "UI/UX Design",
+          "Prototyping"
+        ],
+        "preferredSkills": [
+          "Design Systems",
+          "User Research"
+        ],
+        "inferredSkills": [],
+        "degreeLevels": [
+          "Bachelors",
+          "Masters"
+        ],
+        "branches": [
+          "Design",
+          "Computer Science",
+          "HCI"
+        ],
+        "graduationYears": [],
+        "minCgpa": null,
+        "experienceLevel": "entry",
+        "isPaid": true,
+        "compensation": null
+      },
+      "isQuarantined": false,
+      "quarantineReasons": [],
+      "dataQualityScore": 1
+    },
+    {
+      "id": "real_airbnb_design_systems_2026",
+      "recruiterId": "recruiter_airbnb",
+      "title": "Product Designer, Core Experience & Design Systems",
+      "description": "Airbnb is looking for a Product Designer to craft world-class guest and host digital experiences. You will partner with engineers and product managers to develop cohesive component libraries, interaction patterns, and responsive UI interfaces.",
+      "org": "Airbnb",
+      "category": "Jobs",
+      "skills": [
+        "Figma",
+        "Design Systems",
+        "UI/UX Design",
+        "Visual Design",
+        "Interaction Design"
+      ],
+      "eligibility": {
+        "degrees": [
+          "Bachelors",
+          "Masters"
+        ],
+        "minCgpa": null,
+        "graduationYears": [],
+        "experienceLevel": "Entry-level"
+      },
+      "location": "Remote",
+      "workMode": "remote",
+      "deadline": null,
+      "stipendSalary": null,
+      "status": "active",
+      "sourceUrl": "https://careers.airbnb.com/positions/8259000",
+      "isExternal": true,
+      "publicationDate": "2026-11-15T22:09:43.834Z",
+      "lastVerifiedDate": "2026-11-15T22:09:43.834Z",
+      "applicantCount": 4,
+      "shortlistedCount": 1,
+      "selectedCount": 0,
+      "createdAt": "2026-11-15T22:09:43.834Z",
+      "updatedAt": "2026-11-15T22:09:43.834Z",
+      "enrichment": {
+        "status": "succeeded",
+        "roleTitle": "Product Designer",
+        "descriptionSummary": "Craft guest and host digital experiences with component libraries and responsive UI interfaces at Airbnb.",
+        "opportunityType": "full_time",
+        "workMode": "remote",
+        "requiredSkills": [
+          "Figma",
+          "Design Systems",
+          "UI/UX Design"
+        ],
+        "preferredSkills": [
+          "Visual Design",
+          "Interaction Design"
+        ],
+        "inferredSkills": [],
+        "degreeLevels": [
+          "Bachelors",
+          "Masters"
+        ],
+        "branches": [
+          "Design",
+          "HCI",
+          "Humanities"
+        ],
+        "graduationYears": [],
+        "minCgpa": null,
+        "experienceLevel": "entry",
+        "isPaid": true,
+        "compensation": null
+      },
+      "isQuarantined": false,
+      "quarantineReasons": [],
+      "dataQualityScore": 1
+    },
+    {
+      "id": "real_cloudflare_apm_2026",
+      "recruiterId": "recruiter_cloudflare",
+      "title": "Associate Product Manager (APM)",
+      "description": "Cloudflare protects and accelerates Internet properties for millions of users worldwide. As an Associate Product Manager, you will lead product specs, define developer telemetry metrics, collaborate with engineering, and ship Internet-scale features.",
+      "org": "Cloudflare",
+      "category": "Jobs",
+      "skills": [
+        "Product Management",
+        "Data Analysis",
+        "Roadmapping",
+        "Agile",
+        "User Experience"
+      ],
+      "eligibility": {
+        "degrees": [
+          "Bachelors",
+          "Masters"
+        ],
+        "minCgpa": null,
+        "graduationYears": [],
+        "experienceLevel": "Entry-level"
+      },
+      "location": "Austin, Texas",
+      "workMode": "hybrid",
+      "deadline": null,
+      "stipendSalary": null,
+      "status": "active",
+      "sourceUrl": "https://boards.greenhouse.io/cloudflare/jobs/8109999",
+      "isExternal": true,
+      "publicationDate": "2026-11-15T22:09:43.834Z",
+      "lastVerifiedDate": "2026-11-15T22:09:43.834Z",
+      "applicantCount": 5,
+      "shortlistedCount": 2,
+      "selectedCount": 0,
+      "createdAt": "2026-11-15T22:09:43.834Z",
+      "updatedAt": "2026-11-15T22:09:43.834Z",
+      "enrichment": {
+        "status": "succeeded",
+        "roleTitle": "Associate Product Manager",
+        "descriptionSummary": "Lead product specs, telemetry metrics, and ship developer features at Cloudflare.",
+        "opportunityType": "full_time",
+        "workMode": "hybrid",
+        "requiredSkills": [
+          "Product Management",
+          "Data Analysis",
+          "Roadmapping"
+        ],
+        "preferredSkills": [
+          "Agile",
+          "User Experience"
+        ],
+        "inferredSkills": [],
+        "degreeLevels": [
+          "Bachelors",
+          "Masters"
+        ],
+        "branches": [
+          "Computer Science",
+          "Business",
+          "Engineering"
+        ],
+        "graduationYears": [],
+        "minCgpa": null,
+        "experienceLevel": "entry",
+        "isPaid": true,
+        "compensation": null
+      },
+      "isQuarantined": false,
+      "quarantineReasons": [],
+      "dataQualityScore": 1
+    },
+    {
+      "id": "real_discord_apm_intern_2027",
+      "recruiterId": "recruiter_discord",
+      "title": "Associate Product Manager Intern (Summer 2027)",
+      "description": "Discord is building the place where communities hang out. As an APM intern, you will own a core product feature from discovery to release, analyzing user telemetry, conducting user interviews, and working closely with engineers.",
+      "org": "Discord",
+      "category": "Internships",
+      "skills": [
+        "Product Management",
+        "Market Research",
+        "Data Analysis",
+        "Product Strategy"
+      ],
+      "eligibility": {
+        "degrees": [
+          "Bachelors",
+          "Masters"
+        ],
+        "minCgpa": null,
+        "graduationYears": [],
+        "experienceLevel": "Student / Intern"
+      },
+      "location": "San Francisco, CA",
+      "workMode": "hybrid",
+      "deadline": null,
+      "stipendSalary": null,
+      "status": "active",
+      "sourceUrl": "https://boards.greenhouse.io/discord/jobs/8809999",
+      "isExternal": true,
+      "publicationDate": "2026-11-15T22:09:43.834Z",
+      "lastVerifiedDate": "2026-11-15T22:09:43.834Z",
+      "applicantCount": 3,
+      "shortlistedCount": 1,
+      "selectedCount": 0,
+      "createdAt": "2026-11-15T22:09:43.834Z",
+      "updatedAt": "2026-11-15T22:09:43.834Z",
+      "enrichment": {
+        "status": "succeeded",
+        "roleTitle": "Associate Product Manager Intern",
+        "descriptionSummary": "Own core product features from discovery to release with user telemetry and engineering collaboration at Discord.",
+        "opportunityType": "internship",
+        "workMode": "hybrid",
+        "requiredSkills": [
+          "Product Management",
+          "Data Analysis"
+        ],
+        "preferredSkills": [
+          "Market Research",
+          "Product Strategy"
+        ],
+        "inferredSkills": [],
+        "degreeLevels": [
+          "Bachelors",
+          "Masters"
+        ],
+        "branches": [
+          "Computer Science",
+          "Business",
+          "Economics"
+        ],
+        "graduationYears": [],
+        "minCgpa": null,
+        "experienceLevel": "entry",
+        "isPaid": true,
+        "compensation": null
+      },
+      "isQuarantined": false,
+      "quarantineReasons": [],
+      "dataQualityScore": 1
+    },
+    {
+      "id": "real_datadog_bizops_analytics_2026",
+      "recruiterId": "recruiter_datadog",
+      "title": "Business Operations & Analytics Associate",
+      "description": "Datadog provides observability and security for cloud applications. In this role, you will perform quantitative analyses of product revenue, construct business models, optimize go-to-market pipelines, and present insights to executive leaders.",
+      "org": "Datadog",
+      "category": "Jobs",
+      "skills": [
+        "Business Analytics",
+        "SQL",
+        "Financial Modeling",
+        "Excel",
+        "Data Visualization"
+      ],
+      "eligibility": {
+        "degrees": [
+          "Bachelors",
+          "Masters"
+        ],
+        "minCgpa": null,
+        "graduationYears": [],
+        "experienceLevel": "Entry-level"
+      },
+      "location": "New York, NY",
+      "workMode": "hybrid",
+      "deadline": null,
+      "stipendSalary": null,
+      "status": "active",
+      "sourceUrl": "https://boards.greenhouse.io/datadog/jobs/8119999",
+      "isExternal": true,
+      "publicationDate": "2026-11-15T22:09:43.834Z",
+      "lastVerifiedDate": "2026-11-15T22:09:43.834Z",
+      "applicantCount": 3,
+      "shortlistedCount": 0,
+      "selectedCount": 0,
+      "createdAt": "2026-11-15T22:09:43.834Z",
+      "updatedAt": "2026-11-15T22:09:43.834Z",
+      "enrichment": {
+        "status": "succeeded",
+        "roleTitle": "Business Operations & Analytics Associate",
+        "descriptionSummary": "Analyze revenue, build financial models, and optimize go-to-market pipelines at Datadog.",
+        "opportunityType": "full_time",
+        "workMode": "hybrid",
+        "requiredSkills": [
+          "Business Analytics",
+          "SQL",
+          "Financial Modeling"
+        ],
+        "preferredSkills": [
+          "Excel",
+          "Data Visualization"
+        ],
+        "inferredSkills": [],
+        "degreeLevels": [
+          "Bachelors",
+          "Masters"
+        ],
+        "branches": [
+          "Business",
+          "Economics",
+          "Finance",
+          "Analytics"
+        ],
+        "graduationYears": [],
+        "minCgpa": null,
+        "experienceLevel": "entry",
+        "isPaid": true,
+        "compensation": null
+      },
+      "isQuarantined": false,
+      "quarantineReasons": [],
+      "dataQualityScore": 1
+    },
+    {
+      "id": "real_affirm_growth_analytics_2026",
+      "recruiterId": "recruiter_affirm",
+      "title": "Growth Marketing & Business Analytics Specialist",
+      "description": "Affirm is creating honest financial products that improve lives. We are looking for a Business Analytics Specialist to evaluate acquisition marketing performance, run conversion experiments, and optimize consumer financing pipelines.",
+      "org": "Affirm",
+      "category": "Jobs",
+      "skills": [
+        "Business Analytics",
+        "SQL",
+        "Growth Marketing",
+        "A/B Testing",
+        "Tableau"
+      ],
+      "eligibility": {
+        "degrees": [
+          "Bachelors",
+          "Masters"
+        ],
+        "minCgpa": null,
+        "graduationYears": [],
+        "experienceLevel": "Entry-level"
+      },
+      "location": "Remote",
+      "workMode": "remote",
+      "deadline": null,
+      "stipendSalary": null,
+      "status": "active",
+      "sourceUrl": "https://boards.greenhouse.io/affirm/jobs/8209999",
+      "isExternal": true,
+      "publicationDate": "2026-11-15T22:09:43.834Z",
+      "lastVerifiedDate": "2026-11-15T22:09:43.834Z",
+      "applicantCount": 2,
+      "shortlistedCount": 0,
+      "selectedCount": 0,
+      "createdAt": "2026-11-15T22:09:43.834Z",
+      "updatedAt": "2026-11-15T22:09:43.834Z",
+      "enrichment": {
+        "status": "succeeded",
+        "roleTitle": "Growth Marketing & Business Analytics Specialist",
+        "descriptionSummary": "Evaluate acquisition marketing, run conversion experiments, and optimize financing pipelines at Affirm.",
+        "opportunityType": "full_time",
+        "workMode": "remote",
+        "requiredSkills": [
+          "Business Analytics",
+          "SQL",
+          "A/B Testing"
+        ],
+        "preferredSkills": [
+          "Growth Marketing",
+          "Tableau"
+        ],
+        "inferredSkills": [],
+        "degreeLevels": [
+          "Bachelors",
+          "Masters"
+        ],
+        "branches": [
+          "Business",
+          "Marketing",
+          "Economics",
+          "Analytics"
+        ],
+        "graduationYears": [],
+        "minCgpa": null,
+        "experienceLevel": "entry",
+        "isPaid": true,
+        "compensation": null
+      },
+      "isQuarantined": false,
+      "quarantineReasons": [],
+      "dataQualityScore": 1
     }
   ],
   "quizzes": [
@@ -6360,6 +6441,47 @@
       "targetId": "opp_1",
       "details": "Listing TechCorp Frontend Engineer approved for publication",
       "timestamp": "2026-11-09T08:15:00.000Z"
+    }
+  ],
+  "matchFeedbacks": [
+    {
+      "id": "mfb_1794780613334_jyvc1",
+      "userId": "student_eligible_2026",
+      "opportunityId": "opp_dismiss_test",
+      "feedbackType": "NOT_RELEVANT",
+      "comment": "Does not fit my technical stack",
+      "createdAt": "2026-11-15T22:10:13.334Z"
+    },
+    {
+      "id": "mfb_1794780613404_ni143",
+      "userId": "usr_stat_1",
+      "opportunityId": "opp_1",
+      "feedbackType": "RELEVANT",
+      "comment": null,
+      "createdAt": "2026-11-15T22:10:13.404Z"
+    },
+    {
+      "id": "mfb_1794780613424_qsbe3",
+      "userId": "usr_stat_2",
+      "opportunityId": "opp_2",
+      "feedbackType": "ROLE_MISMATCH",
+      "comment": null,
+      "createdAt": "2026-11-15T22:10:13.424Z"
+    }
+  ],
+  "studentSkills": [
+    {
+      "id": "363197c8-c7a4-4e4d-b562-fe7452577e83",
+      "skillId": "sk_ts",
+      "name": "TypeScript",
+      "source": "RESUME",
+      "reviewStatus": "CONFIRMED",
+      "proficiency": "intermediate",
+      "yearsExperience": null,
+      "confirmed": true,
+      "createdAt": "2026-11-15T22:10:13.637Z",
+      "studentProfileId": "270ab537-ad22-4728-a5e2-28ba29dcb5bb",
+      "userId": "student_carol"
     }
   ]
 }

@@ -16,10 +16,20 @@ import type {
   DegreeLevel,
 } from "./types.ts";
 
+export const TITLE_DOMAIN_RULES: Array<{ domain: string; pattern: RegExp }> = [
+  { domain: "security", pattern: /\b(security|infosec|cybersecurity|secops|penetration|cryptograph)\b/i },
+  { domain: "data_ai_ml", pattern: /\b(machine learning|data scientist|data science|deep learning|nlp|computer vision|genai|llm|data analyst|data engineer|artificial intelligence|applied scientist|ai engineer)\b/i },
+  { domain: "design", pattern: /\b(product design|ui[\s/]ux|designer|graphic design|figma|visual design)\b/i },
+  { domain: "devops_cloud", pattern: /\b(devops|sre|site reliability|cloud|infrastructure|systems engineer|platform engineering)\b/i },
+  { domain: "product", pattern: /\b(product manager|product management|apm|technical product manager)\b/i },
+  { domain: "business", pattern: /\b(business development|sales|marketing|account executive|recruiter|finance|operations|consulting)\b/i },
+  { domain: "software", pattern: /\b(software|developer|engineer|frontend|backend|fullstack|sde|swe|web|mobile|ios|android|application)\b/i },
+];
+
 export const DOMAIN_PATTERNS: Record<string, RegExp[]> = {
   data_ai_ml: [
     /\b(machine learning|data scientist|data science|deep learning|nlp|computer vision|genai|llm|data analyst|data engineer|artificial intelligence)\b/i,
-    /\b(pytorch|tensorflow|scikit-learn|pandas|huggingface|spark|big data|analytics)\b/i,
+    /\b(pytorch|tensorflow|scikit-learn|pandas|huggingface|spark|big data|(?:data|predictive|business)\s+analytics|analytics engine)\b/i,
   ],
   design: [
     /\b(product design(?:er)?|ui[\s/]ux|user experience|graphic design|design system|figma|visual design|interaction design)\b/i,
@@ -48,10 +58,21 @@ export const DEGREE_ALIASES: Record<string, string[]> = {
 };
 
 export function inferOpportunityDomain(opp: any, enrichment?: EnrichedDetails | null): string {
+  // 1. High-confidence Title check takes first priority
+  const title = (opp.title || "").trim();
+  for (const rule of TITLE_DOMAIN_RULES) {
+    if (rule.pattern.test(title)) {
+      return rule.domain;
+    }
+  }
+
+  // 2. Explicit structured enrichment domain
   if (enrichment?.domain && enrichment.domain !== "other" && enrichment.domain !== "unknown") {
     return enrichment.domain;
   }
-  const text = `${opp.title || ""} ${opp.description || ""} ${(opp.skills || []).join(" ")}`.toLowerCase();
+
+  // 3. Fallback to description & skills patterns
+  const text = `${title} ${opp.description || ""} ${(opp.skills || []).join(" ")}`.toLowerCase();
   for (const [dom, patterns] of Object.entries(DOMAIN_PATTERNS)) {
     if (patterns.some((p) => p.test(text))) {
       return dom;
@@ -400,11 +421,7 @@ export function filterEnrichedStudentFeed(
       const detectedDomain = inferOpportunityDomain(opp, enrichment);
 
       if (detectedDomain !== targetDomain) {
-        const patterns = DOMAIN_PATTERNS[targetDomain];
-        const combinedText = `${opp.title || ""} ${opp.description || ""} ${(opp.skills || []).join(" ")}`.toLowerCase();
-        if (!patterns || !patterns.some((p) => p.test(combinedText))) {
-          return false;
-        }
+        return false;
       }
     }
 
@@ -523,8 +540,10 @@ export function filterEnrichedStudentFeed(
 
     // 10. Legacy Category Filter (for backward compatibility)
     if (filters.category && filters.category !== "All") {
-      const cat = String(opp.category || "").toLowerCase();
-      if (cat !== filters.category.toLowerCase()) {
+      const cat = String(opp.category || "").toLowerCase().trim();
+      const targetCat = filters.category.toLowerCase().trim();
+      const norm = (s: string) => s.replace(/s$/, ""); // normalize internships -> internship, jobs -> job
+      if (norm(cat) !== norm(targetCat)) {
         return false;
       }
     }
