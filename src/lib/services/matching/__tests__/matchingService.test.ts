@@ -268,4 +268,36 @@ describe("Phase 6 Chunk 6.1: Opportunity Matching & Hard Eligibility Gates", () 
       assert.ok(result.reasons.some((r) => r.includes("preferences")));
     });
   });
+
+  describe("6. Matching Telemetry & Relevance Feedback Loop", () => {
+    it("records student relevance feedback and correctly isolates dismissed opportunities", async () => {
+      const { service } = createMockEnvironment();
+
+      const recorded = await service.recordFeedback(
+        "student_eligible_2026",
+        "opp_dismiss_test",
+        "NOT_RELEVANT",
+        "Does not fit my technical stack"
+      );
+
+      assert.strictEqual(recorded.userId, "student_eligible_2026");
+      assert.strictEqual(recorded.opportunityId, "opp_dismiss_test");
+      assert.strictEqual(recorded.feedbackType, "NOT_RELEVANT");
+
+      const dismissed = await service.getUserDismissedOpportunityIds("student_eligible_2026");
+      assert.ok(dismissed.has("opp_dismiss_test"));
+    });
+
+    it("calculates aggregate telemetry feedback metrics accurately", async () => {
+      const { service } = createMockEnvironment();
+
+      await service.recordFeedback("usr_stat_1", "opp_1", "RELEVANT");
+      await service.recordFeedback("usr_stat_2", "opp_2", "ROLE_MISMATCH");
+
+      const stats = await service.getFeedbackStats();
+      assert.ok(stats.totalFeedbacks >= 2);
+      assert.ok(stats.relevantCount >= 1);
+      assert.ok(typeof stats.acceptanceRate === "number");
+    });
+  });
 });

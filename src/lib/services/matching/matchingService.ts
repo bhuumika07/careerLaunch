@@ -83,12 +83,29 @@ export interface OpportunityMatchResult {
   reasons: string[];
 }
 
+export type MatchFeedbackType =
+  | "RELEVANT"
+  | "NOT_RELEVANT"
+  | "ROLE_MISMATCH"
+  | "LOCATION_MISMATCH"
+  | "ALREADY_APPLIED";
+
+export interface MatchFeedbackEntity {
+  id: string;
+  userId: string;
+  opportunityId: string;
+  feedbackType: MatchFeedbackType;
+  comment?: string | null;
+  createdAt: string;
+}
+
 export interface RecommendedFeedOptions {
   minScore?: number;
   workplaceType?: string;
   domain?: string;
   limit?: number;
   offset?: number;
+  includeDismissed?: boolean;
 }
 
 export interface RecommendedFeedResponse {
@@ -561,6 +578,14 @@ export class MatchingService {
     // STRICT INVARIANT: Exclude ineligible opportunities from recommended feed
     let eligible = scoredResults.filter((r) => r.isEligible);
 
+    // Exclude opportunities dismissed by the user (unless includeDismissed = true)
+    if (!options?.includeDismissed) {
+      const dismissedIds = await this.getUserDismissedOpportunityIds(userId);
+      if (dismissedIds.size > 0) {
+        eligible = eligible.filter((r) => !dismissedIds.has(r.opportunityId));
+      }
+    }
+
     // Optional filters
     if (options?.minScore) {
       eligible = eligible.filter((r) => r.overallScore >= options.minScore!);
@@ -591,6 +616,130 @@ export class MatchingService {
       total,
       items: paginated,
       studentTargetRoles,
+    };
+  }
+
+  /**
+   * Retrieves set of opportunity IDs dismissed by user via feedback (NOT_RELEVANT, ALREADY_APPLIED).
+   */
+  async getUserDismissedOpportunityIds(userId: string): Promise<Set<string>> {
+    const db = readDbStore();
+    const feedbacks: MatchFeedbackEntity[] = db.matchFeedbacks || [];
+
+    const dismissed = new Set<string>();
+    for (const fb of feedbacks) {
+      if (fb.userId === userId) {
+        if (fb.feedbackType === "NOT_RELEVANT" || fb.feedbackType === "ALREADY_APPLIED") {
+          dismissed.add(fb.opportunityId);
+        }
+      }
+    }
+    return dismissed;
+  }
+
+  /**
+   * Records student relevance feedback and updates the recommendation telemetry loop.
+   */
+  async recordFeedback(
+    userId: string,
+    opportunityId: string,
+    feedbackType: MatchFeedbackType,
+    comment?: string | null
+  ): Promise<MatchFeedbackEntity> {
+    if (!userId || !opportunityId) {
+      throw new Error("userId and opportunityId are required to record feedback.");
+    }
+
+    const validTypes: MatchFeedbackType[] = [
+      "RELEVANT",
+      "NOT_RELEVANT",
+      "ROLE_MISMATCH",
+      "LOCATION_MISMATCH",
+      "ALREADY_APPLIED",
+    ];
+
+    if (!validTypes.includes(feedbackType)) {
+      throw new Error(`Invalid feedbackType '${feedbackType}'. Must be one of: ${validTypes.join(", ")}`);
+    }
+
+    const db = readDbStore();
+    db.matchFeedbacks = db.matchFeedbacks || [];
+
+    const newFeedback: MatchFeedbackEntity = {
+      id: `mfb_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+      userId,
+      opportunityId,
+      feedbackType,
+      comment: comment || null,
+      createdAt: new Date().toISOString(),
+    };
+
+    // Replace if user already submitted feedback on this opportunity
+    const existingIndex = db.matchFeedbacks.findIndex(
+      (f: any) => f.userId === userId && f.opportunityId === opportunityId
+    );
+
+    if (existingIndex > -1) {
+      db.matchFeedbacks[existingIndex] = newFeedback;
+    } else {
+      db.matchFeedbacks.push(newFeedback);
+    }
+
+    try {
+      const dbPath = path.resolve(process.cwd(), "src/data/db.json");
+      fs.writeFileSync(dbPath, JSON.stringify(db, null, 2), "utf-8");
+    } catch (err) {
+      console.error("[matchingService] Failed writing feedback to db.json", err);
+    }
+
+    return newFeedback;
+  }
+
+  /**
+   * Computes feedback telemetry metrics across recommendation interactions.
+   */
+  async getFeedbackStats(): Promise<{
+    totalFeedbacks: number;
+    relevantCount: number;
+    dismissedCount: number;
+    acceptanceRate: number;
+    breakdown: Record<MatchFeedbackType, number>;
+  }> {
+    const db = readDbStore();
+    const feedbacks: MatchFeedbackEntity[] = db.matchFeedbacks || [];
+
+    const breakdown: Record<MatchFeedbackType, number> = {
+      RELEVANT: 0,
+      NOT_RELEVANT: 0,
+      ROLE_MISMATCH: 0,
+      LOCATION_MISMATCH: 0,
+      ALREADY_APPLIED: 0,
+    };
+
+    let relevantCount = 0;
+    let dismissedCount = 0;
+
+    for (const fb of feedbacks) {
+      if (breakdown[fb.feedbackType] !== undefined) {
+        breakdown[fb.feedbackType]++;
+      }
+      if (fb.feedbackType === "RELEVANT") {
+        relevantCount++;
+      } else {
+        dismissedCount++;
+      }
+    }
+
+    const totalFeedbacks = feedbacks.length;
+    const acceptanceRate =
+      totalFeedbacks > 0 ? Math.round((relevantCount / totalFeedbacks) * 100) : 100;
+
+    return {
+      totalFeedbacks,
+      relevantCount,
+      dismissedCount,
+      acceptanceRate,
+      breakdown,
     };
   }
 }

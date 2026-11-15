@@ -92,6 +92,27 @@ export default function RecommendedOpportunitiesPage() {
     fetchRecommendations();
   }, [fetchRecommendations]);
 
+  const [feedbackNotice, setFeedbackNotice] = React.useState<string | null>(null);
+
+  const handleFeedback = async (opportunityId: string, feedbackType: string) => {
+    try {
+      await fetch("/api/student/recommended/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ opportunityId, feedbackType }),
+      });
+      setItems((prev) => prev.filter((i) => i.opportunityId !== opportunityId));
+      setFeedbackNotice(
+        feedbackType === "NOT_RELEVANT"
+          ? "Opportunity hidden from your recommendations."
+          : "Feedback recorded."
+      );
+      setTimeout(() => setFeedbackNotice(null), 3000);
+    } catch (err) {
+      console.error("Failed recording feedback:", err);
+    }
+  };
+
   const filteredItems = React.useMemo(() => {
     return items
       .filter((item) => {
@@ -140,6 +161,19 @@ export default function RecommendedOpportunitiesPage() {
                 {role}
               </Badge>
             ))}
+          </div>
+        )}
+
+        {feedbackNotice && (
+          <div className="p-3 bg-muted border border-border rounded-xl text-xs text-foreground flex items-center justify-between animate-in fade-in duration-150">
+            <span>{feedbackNotice}</span>
+            <button
+              type="button"
+              onClick={() => setFeedbackNotice(null)}
+              className="text-xs text-muted-foreground hover:text-foreground cursor-pointer font-medium"
+            >
+              Dismiss
+            </button>
           </div>
         )}
       </div>
@@ -345,6 +379,15 @@ export default function RecommendedOpportunitiesPage() {
                 </div>
 
                 <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => handleFeedback(item.opportunityId, "NOT_RELEVANT")}
+                    className="text-xs text-muted-foreground hover:text-foreground px-2.5 py-1 rounded-full hover:bg-muted transition-colors cursor-pointer"
+                    title="Hide this opportunity from your recommendations"
+                  >
+                    Not Relevant
+                  </button>
+
                   <Link href={`/opportunities/${item.opportunityId}`}>
                     <Button variant="outline" size="sm" className="text-xs rounded-full cursor-pointer">
                       View Details
