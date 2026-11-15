@@ -204,12 +204,23 @@ export function postProcessAndGroundPayload(
   payload.timeline.provenance = groundProvenance(payload.timeline.provenance, "timeline");
   payload.eligibility.provenance = groundProvenance(payload.eligibility.provenance, "eligibility");
 
-  // 2. Ground required & preferred skill snippets
+  // 2. Ground required & preferred skill snippets and enforce skills separation
   for (const skill of payload.skills.required_skills) {
     if (skill.source_snippet) {
       const check = verifyAndGroundSnippet(skill.source_snippet, normalizedText);
       if (!check.grounded) {
         unsupportedClaims.push(`Required skill "${skill.name}" snippet "${skill.source_snippet}" not found in source text.`);
+      }
+
+      // Enforce skills separation rule: preferred skill wrongly placed in required_skills
+      const lowerSnip = skill.source_snippet.toLowerCase();
+      if (/\b(?:preferred|nice to have|plus|bonus|optional|advantageous)\b/i.test(lowerSnip)) {
+        extractionErrors.push(
+          `Skills separation violation: Skill "${skill.name}" contains preferred marker in snippet "${skill.source_snippet}" but was placed in required_skills.`
+        );
+        reviewReasons.push(
+          `Preferred skill "${skill.name}" was wrongly placed in required_skills.`
+        );
       }
     }
   }
@@ -221,6 +232,43 @@ export function postProcessAndGroundPayload(
         unsupportedClaims.push(`Preferred skill "${skill.name}" snippet "${skill.source_snippet}" not found in source text.`);
       }
     }
+  }
+
+  // 3. Schema & Enum Validation
+  const VALID_PRIMARY_TYPES = [
+    "internship",
+    "full_time",
+    "part_time",
+    "contract",
+    "fellowship",
+    "research",
+    "job",
+    "unknown",
+  ];
+  if (!VALID_PRIMARY_TYPES.includes(payload.opportunity_type.primary_type)) {
+    extractionErrors.push(
+      `Invalid opportunity_type: "${payload.opportunity_type.primary_type}". Must be one of: ${VALID_PRIMARY_TYPES.join(", ")}`
+    );
+    reviewReasons.push(`Schema violation: Invalid opportunity_type enum "${payload.opportunity_type.primary_type}".`);
+  }
+
+  const VALID_WORK_MODES = ["onsite", "remote", "hybrid", "unspecified", "unknown"];
+  if (payload.location && !VALID_WORK_MODES.includes(payload.location.work_mode)) {
+    extractionErrors.push(
+      `Invalid work_mode: "${payload.location.work_mode}". Must be one of: ${VALID_WORK_MODES.join(", ")}`
+    );
+    reviewReasons.push(`Schema violation: Invalid work_mode enum "${payload.location.work_mode}".`);
+  }
+
+  const ISO_DATE_REGEX = /^\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z?)?$/;
+  if (
+    payload.timeline?.application_deadline &&
+    !ISO_DATE_REGEX.test(payload.timeline.application_deadline)
+  ) {
+    extractionErrors.push(
+      `Invalid date format for application_deadline: "${payload.timeline.application_deadline}". Expected YYYY-MM-DD or ISO-8601.`
+    );
+    reviewReasons.push("Schema violation: Invalid deadline date format.");
   }
 
   // 3. Contradiction Detection:

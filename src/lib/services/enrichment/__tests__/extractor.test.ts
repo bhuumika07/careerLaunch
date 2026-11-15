@@ -319,5 +319,76 @@ Deadline: 2026-06-30
       assert.equal(result.attempts, 2);
       assert.match(result.error!, /JSON parse error/);
     });
+
+    it("detects schema violations (invalid enum and date format)", async () => {
+      const invalidSchemaPayload = JSON.parse(JSON.stringify(validSampleOutput));
+      invalidSchemaPayload.opportunity_type.primary_type = "invalid_type_enum";
+      invalidSchemaPayload.timeline.application_deadline = "31st Dec 2026"; // Not ISO-8601
+
+      const mockClient = new MockLlmExtractionClient(JSON.stringify(invalidSchemaPayload));
+      const input = {
+        opportunity_id: "opp_schema_viol",
+        raw_title: "Frontend Developer",
+        raw_company: "Acme Corp",
+        normalized_description: sampleNormalizedDescription,
+      };
+
+      const result = await extractOpportunityEnrichment(input, mockClient);
+      assert.equal(result.success, true);
+      assert.ok(result.payload);
+      assert.equal(result.payload.quality.needs_manual_review, true);
+      assert.ok(result.payload.quality.review_reasons.some((r) => r.includes("Invalid opportunity_type enum")));
+      assert.ok(result.payload.quality.review_reasons.some((r) => r.includes("Invalid deadline date format")));
+    });
+
+    it("enforces skills separation: flags preferred skill wrongly placed in required_skills", async () => {
+      const skillsViolationPayload = JSON.parse(JSON.stringify(validSampleOutput));
+      // Put Tailwind CSS (which description explicitly states is preferred) into required_skills
+      skillsViolationPayload.skills.required_skills.push({
+        name: "Tailwind CSS",
+        category: "framework",
+        source_snippet: "Experience with Tailwind CSS is preferred",
+      });
+
+      const mockClient = new MockLlmExtractionClient(JSON.stringify(skillsViolationPayload));
+      const input = {
+        opportunity_id: "opp_skills_viol",
+        raw_title: "Frontend Developer",
+        raw_company: "Acme Corp",
+        normalized_description: sampleNormalizedDescription,
+      };
+
+      const result = await extractOpportunityEnrichment(input, mockClient);
+      assert.equal(result.success, true);
+      assert.ok(result.payload);
+      assert.equal(result.payload.quality.needs_manual_review, true);
+      assert.ok(
+        result.payload.quality.review_reasons.some((r) =>
+          r.includes('Preferred skill "Tailwind CSS" was wrongly placed in required_skills')
+        )
+      );
+    });
+
+    it("identifies and records missing required fields", async () => {
+      const missingFieldsPayload = JSON.parse(JSON.stringify(validSampleOutput));
+      missingFieldsPayload.timeline.application_deadline = null;
+      missingFieldsPayload.qualifications.degree_levels = [];
+      missingFieldsPayload.opportunity_type.primary_type = "unknown";
+
+      const mockClient = new MockLlmExtractionClient(JSON.stringify(missingFieldsPayload));
+      const input = {
+        opportunity_id: "opp_missing_fields",
+        raw_title: "General Role",
+        raw_company: "Acme Corp",
+        normalized_description: sampleNormalizedDescription,
+      };
+
+      const result = await extractOpportunityEnrichment(input, mockClient);
+      assert.equal(result.success, true);
+      assert.ok(result.payload);
+      assert.ok(result.payload.quality.missing_fields.includes("timeline.application_deadline"));
+      assert.ok(result.payload.quality.missing_fields.includes("qualifications.degree_levels"));
+      assert.ok(result.payload.quality.missing_fields.includes("opportunity_type.primary_type"));
+    });
   });
 });
