@@ -8,47 +8,74 @@ import {
   Sparkles,
   ChevronDown,
   ChevronUp,
-  CheckCircle2,
-  TrendingUp,
   Scale,
   X,
   Check,
-  AlertCircle,
   HelpCircle,
   Briefcase,
-  Layers,
-  Info,
+  Target,
+  RefreshCw,
 } from "lucide-react";
 import { PillButton } from "@/components/ui/pill-button";
 import { Badge } from "@/components/ui/badge";
-import { CareerRecommendation } from "@/lib/db";
 import { cn } from "@/lib/utils";
 
+interface RoleRecommendationDto {
+  roleId: string;
+  canonicalName: string;
+  description: string;
+  domain: string;
+  matchScore: number;
+  matchedSkills: string[];
+  missingSkills: string[];
+  activeOpportunityCount: number;
+  reasons: string[];
+  isSelected: boolean;
+  requiredSkills: string[];
+  relatedSkills: string[];
+}
+
+const DOMAIN_OPTIONS = [
+  { id: "all", label: "All Domains" },
+  { id: "software", label: "Software Engineering" },
+  { id: "data_ai_ml", label: "Data, AI & ML" },
+  { id: "security", label: "Security & Infosec" },
+  { id: "devops_cloud", label: "DevOps & Cloud" },
+];
+
 export default function CareerDiscoveryResultsPage() {
-  const [recommendations, setRecommendations] = React.useState<CareerRecommendation[]>([]);
+  const [recommendations, setRecommendations] = React.useState<RoleRecommendationDto[]>([]);
   const [loading, setLoading] = React.useState(true);
+  const [selectedDomain, setSelectedDomain] = React.useState<string>("all");
   const [expandedRoles, setExpandedRoles] = React.useState<Record<string, boolean>>({});
+  const [targetingRoleId, setTargetingRoleId] = React.useState<string | null>(null);
 
   // Compare Mode State
   const [selectedForCompare, setSelectedForCompare] = React.useState<string[]>([]);
   const [compareModalOpen, setCompareModalOpen] = React.useState(false);
 
-  React.useEffect(() => {
-    const fetchResults = async () => {
-      try {
-        const res = await fetch("/api/career-discovery");
-        const data = await res.json();
-        if (res.ok && data.success && data.discovery) {
-          setRecommendations(data.discovery.recommendations || []);
-        }
-      } catch {
-        // fallback
-      } finally {
-        setLoading(false);
+  const fetchRecommendations = React.useCallback(async (domain = "all") => {
+    setLoading(true);
+    try {
+      const url =
+        domain && domain !== "all"
+          ? `/api/student/career-profiles?domain=${encodeURIComponent(domain)}`
+          : "/api/student/career-profiles";
+      const res = await fetch(url);
+      const data = await res.json();
+      if (res.ok && data.success && Array.isArray(data.recommendations)) {
+        setRecommendations(data.recommendations);
       }
-    };
-    fetchResults();
+    } catch (err) {
+      console.error("Failed fetching career role recommendations:", err);
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  React.useEffect(() => {
+    fetchRecommendations(selectedDomain);
+  }, [fetchRecommendations, selectedDomain]);
 
   const toggleExpand = (roleId: string) => {
     setExpandedRoles((prev) => ({
@@ -57,12 +84,35 @@ export default function CareerDiscoveryResultsPage() {
     }));
   };
 
+  const handleToggleTarget = async (roleId: string, currentStatus: boolean) => {
+    setTargetingRoleId(roleId);
+    try {
+      const res = await fetch("/api/student/career-profiles", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ roleId, selected: !currentStatus }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setRecommendations((prev) =>
+          prev.map((role) =>
+            role.roleId === roleId ? { ...role, isSelected: !currentStatus } : role
+          )
+        );
+      }
+    } catch (err) {
+      console.error("Failed to update target role:", err);
+    } finally {
+      setTargetingRoleId(null);
+    }
+  };
+
   const toggleCompareSelection = (roleId: string) => {
     if (selectedForCompare.includes(roleId)) {
       setSelectedForCompare((prev) => prev.filter((id) => id !== roleId));
     } else {
       if (selectedForCompare.length >= 3) {
-        alert("You can compare up to 3 career paths simultaneously.");
+        alert("You can compare up to 3 career roles simultaneously.");
         return;
       }
       setSelectedForCompare((prev) => [...prev, roleId]);
@@ -81,14 +131,14 @@ export default function CareerDiscoveryResultsPage() {
             className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground font-medium"
           >
             <ArrowLeft className="size-3.5" />
-            Retake Questionnaire
+            Back to Questionnaire
           </Link>
           <h1 className="font-heading text-2xl sm:text-3xl font-bold text-foreground tracking-tight flex items-center gap-2.5">
             <Compass className="size-7 text-primary" />
-            Your Recommended Career Paths
+            Discovered Career Roles
           </h1>
           <p className="text-xs sm:text-sm text-muted-foreground">
-            Rules-based compatibility scoring based on your interests, work habits, and existing technical foundation.
+            Scored deterministically from your confirmed skills, academic background, projects, and verified active job openings.
           </p>
         </div>
 
@@ -100,7 +150,7 @@ export default function CareerDiscoveryResultsPage() {
               size="md"
               onClick={() => setCompareModalOpen(true)}
               icon={<Scale className="size-4" />}
-              className="shadow-sm animate-pulse"
+              className="shadow-sm"
             >
               Compare Selected ({selectedForCompare.length})
             </PillButton>
@@ -108,33 +158,30 @@ export default function CareerDiscoveryResultsPage() {
         </div>
       </div>
 
-      {/* Illustrative Notice & Dual-Metric Disclaimer */}
-      <div className="p-4 rounded-2xl bg-background border border-border text-xs text-foreground/90 flex items-start gap-3">
-        <Info className="size-5 shrink-0 text-primary mt-0.5" />
-        <div className="space-y-1">
-          <div className="font-semibold text-foreground flex items-center gap-2">
-            <span>Critical Metric Distinction: Interest vs. Job Readiness</span>
-            <Badge variant="outline" className="text-[10px] bg-amber-50 border-amber-300 text-amber-800">
-              Illustrative Sample Outputs
-            </Badge>
-          </div>
-          <p className="text-muted-foreground leading-relaxed">
-            Career paths feature two independent indices: <strong>Interest Compatibility</strong> (how much you enjoy the day-to-day discipline) and <strong>Current Job Readiness</strong> (your verifiable skills and portfolio prerequisites). High interest does not imply immediate job readiness, but highlights high-leverage domains to focus your study.
-          </p>
+      {/* Domain Filters & Controls */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 rounded-2xl border border-border">
+        <div className="flex flex-wrap gap-2">
+          {DOMAIN_OPTIONS.map((opt) => (
+            <button
+              key={opt.id}
+              type="button"
+              onClick={() => setSelectedDomain(opt.id)}
+              className={cn(
+                "px-3 py-1.5 rounded-full text-xs font-medium transition-colors cursor-pointer",
+                selectedDomain === opt.id
+                  ? "bg-primary text-primary-foreground font-semibold"
+                  : "bg-muted text-muted-foreground hover:text-foreground"
+              )}
+            >
+              {opt.label}
+            </button>
+          ))}
         </div>
-      </div>
 
-      {/* Comparison Selector Strip */}
-      <div className="bg-white p-4 rounded-2xl border border-border flex items-center justify-between text-xs text-muted-foreground flex-wrap gap-3">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3 text-xs text-muted-foreground">
           <Scale className="size-4 text-primary" />
           <span>
-            Select <strong>2 or 3 roles</strong> using the checkbox to launch the side-by-side comparison matrix.
-          </span>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="font-semibold text-foreground/90">
-            {selectedForCompare.length}/3 selected
+            {selectedForCompare.length}/3 selected for compare
           </span>
           {selectedForCompare.length > 0 && (
             <button
@@ -148,35 +195,54 @@ export default function CareerDiscoveryResultsPage() {
         </div>
       </div>
 
-      {/* Career Path Cards Grid */}
+      {/* Role Cards Grid */}
       {loading ? (
-        <div className="p-16 text-center text-muted-foreground bg-white rounded-2xl border border-border">
-          Calculating career trajectory matrices...
+        <div className="p-16 text-center text-muted-foreground bg-white rounded-2xl border border-border flex flex-col items-center gap-3">
+          <RefreshCw className="size-5 animate-spin text-primary" />
+          <span>Scoring career profiles and analyzing live active opportunities...</span>
+        </div>
+      ) : recommendations.length === 0 ? (
+        <div className="p-16 text-center text-muted-foreground bg-white rounded-2xl border border-border space-y-2">
+          <p className="font-semibold text-foreground">No roles match the selected criteria.</p>
+          <p className="text-xs">
+            Only career roles with verified active hiring opportunities are presented. Try selecting &quot;All Domains&quot;.
+          </p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {recommendations.map((role, idx) => {
             const isCompared = selectedForCompare.includes(role.roleId);
             const isExpanded = !!expandedRoles[role.roleId];
+            const isTargeting = targetingRoleId === role.roleId;
 
             return (
               <div
                 key={role.roleId}
                 className={cn(
                   "p-6 sm:p-7 rounded-3xl border bg-white shadow-xs transition-all flex flex-col justify-between space-y-6",
-                  isCompared ? "border-primary ring-2 ring-primary/20" : "border-border hover:border-border"
+                  role.isSelected ? "border-primary/60 ring-1 ring-primary/30" : "border-border hover:border-border",
+                  isCompared ? "ring-2 ring-primary" : ""
                 )}
               >
                 <div className="space-y-4">
-                  {/* Top Bar: Match Rank + Compare Checkbox */}
+                  {/* Top Bar: Rank, Domain, Active Openings, Compare Checkbox */}
                   <div className="flex items-start justify-between gap-3">
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
                       <span className="size-6 rounded-full bg-muted text-foreground/90 text-xs font-bold flex items-center justify-center">
                         #{idx + 1}
                       </span>
                       <Badge variant="outline" className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                        {role.marketDemand} Market Demand
+                        {role.domain.replace("_", " & ")}
                       </Badge>
+                      <Badge variant="default" className="text-[10px] font-medium bg-emerald-50 text-emerald-800 border-emerald-200">
+                        {role.activeOpportunityCount} active opening{role.activeOpportunityCount === 1 ? "" : "s"}
+                      </Badge>
+                      {role.isSelected && (
+                        <Badge variant="default" className="text-[10px] font-semibold bg-primary/15 text-primary border-primary/30 flex items-center gap-1">
+                          <Target className="size-3" />
+                          Targeted
+                        </Badge>
+                      )}
                     </div>
 
                     <button
@@ -185,7 +251,7 @@ export default function CareerDiscoveryResultsPage() {
                       className={cn(
                         "px-2.5 py-1 rounded-lg text-xs font-medium border flex items-center gap-1.5 transition-colors cursor-pointer",
                         isCompared
-                          ? "bg-primary border-primary text-foreground font-semibold"
+                          ? "bg-primary border-primary text-primary-foreground font-semibold"
                           : "border-border text-muted-foreground hover:bg-background"
                       )}
                     >
@@ -197,71 +263,73 @@ export default function CareerDiscoveryResultsPage() {
                   {/* Title & Description */}
                   <div>
                     <h3 className="font-heading text-lg sm:text-xl font-bold text-foreground">
-                      {role.title}
+                      {role.canonicalName}
                     </h3>
                     <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
-                      {role.shortDescription}
+                      {role.description}
                     </p>
                   </div>
 
-                  {/* TWO DISTINCT METRICS (CRITICAL REQUIREMENT) */}
-                  <div className="p-4 rounded-2xl bg-background border border-border space-y-3">
-                    {/* 1. Interest Compatibility */}
-                    <div className="space-y-1">
-                      <div className="flex items-center justify-between text-xs">
-                        <span className="font-semibold text-foreground/90 flex items-center gap-1.5">
-                          <Sparkles className="size-3.5 text-primary" />
-                          Interest Compatibility
-                        </span>
-                        <span className="font-bold text-primary">{role.interestCompatibility}%</span>
-                      </div>
-                      <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
-                        <div
-                          className="bg-primary h-2 rounded-full"
-                          style={{ width: `${role.interestCompatibility}%` }}
-                        />
-                      </div>
-                    </div>
-
-                    {/* 2. Current Job Readiness */}
-                    <div className="space-y-1">
-                      <div className="flex items-center justify-between text-xs">
-                        <span className="font-semibold text-foreground/90 flex items-center gap-1.5">
-                          <CheckCircle2 className="size-3.5 text-success" />
-                          Current Job Readiness
-                        </span>
-                        <span className="font-bold text-success">{role.currentJobReadiness}%</span>
-                      </div>
-                      <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
-                        <div
-                          className="bg-success/20 h-2 rounded-full"
-                          style={{ width: `${role.currentJobReadiness}%` }}
-                        />
-                      </div>
-                      <span className="text-[10px] text-muted-foreground block pt-0.5">
-                        {role.skillsAlreadyAcquired.length} of {role.skillsAlreadyAcquired.length + role.skillsToDevelop.length} core prerequisites verified
+                  {/* Compatibility Score */}
+                  <div className="p-4 rounded-2xl bg-background border border-border space-y-2">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="font-semibold text-foreground/90 flex items-center gap-1.5">
+                        <Sparkles className="size-3.5 text-primary" />
+                        Profile Compatibility
                       </span>
+                      <span className="font-bold text-primary text-sm">{role.matchScore}%</span>
                     </div>
-                  </div>
-
-                  {/* Skills to Develop Chips */}
-                  <div className="space-y-2">
-                    <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider block">
-                      Skills to Develop:
+                    <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
+                      <div
+                        className="bg-primary h-2 rounded-full transition-all duration-300"
+                        style={{ width: `${role.matchScore}%` }}
+                      />
+                    </div>
+                    <span className="text-[10px] text-muted-foreground block pt-0.5">
+                      {role.matchedSkills.length} verified skill matches • {role.missingSkills.length} prerequisites to bridge
                     </span>
-                    <div className="flex flex-wrap gap-1.5">
-                      {role.skillsToDevelop.map((skill) => (
-                        <span
-                          key={skill}
-                          className="px-2.5 py-1 rounded-lg bg-amber-50 border border-amber-200 text-amber-900 text-xs font-medium"
-                        >
-                          + {skill}
-                        </span>
-                      ))}
-                    </div>
                   </div>
 
-                  {/* Expandable "Why this was recommended" */}
+                  {/* Verified Skills & Missing Skills */}
+                  <div className="space-y-3 text-xs">
+                    {role.matchedSkills.length > 0 && (
+                      <div className="space-y-1.5">
+                        <span className="text-[10px] font-semibold text-emerald-800 uppercase tracking-wider block">
+                          Your Matched Skills:
+                        </span>
+                        <div className="flex flex-wrap gap-1.5">
+                          {role.matchedSkills.map((skill) => (
+                            <span
+                              key={skill}
+                              className="px-2 py-0.5 rounded-md bg-emerald-50 border border-emerald-200 text-emerald-900 text-[11px] font-medium"
+                            >
+                              ✓ {skill}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {role.missingSkills.length > 0 && (
+                      <div className="space-y-1.5">
+                        <span className="text-[10px] font-semibold text-amber-800 uppercase tracking-wider block">
+                          Prerequisites to Bridge:
+                        </span>
+                        <div className="flex flex-wrap gap-1.5">
+                          {role.missingSkills.map((skill) => (
+                            <span
+                              key={skill}
+                              className="px-2 py-0.5 rounded-md bg-amber-50 border border-amber-200 text-amber-900 text-[11px] font-medium"
+                            >
+                              + {skill}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Why this was recommended Accordion */}
                   <div className="border-t border-border/50 pt-3">
                     <button
                       type="button"
@@ -270,37 +338,61 @@ export default function CareerDiscoveryResultsPage() {
                     >
                       <span className="flex items-center gap-1.5">
                         <HelpCircle className="size-3.5 text-primary" />
-                        Why was this recommended?
+                        Why was this role recommended?
                       </span>
                       {isExpanded ? <ChevronUp className="size-4" /> : <ChevronDown className="size-4" />}
                     </button>
 
                     {isExpanded && (
                       <div className="mt-2 p-3 bg-background rounded-xl border border-border text-xs text-muted-foreground space-y-1.5 animate-in fade-in duration-150">
-                        {role.whyRecommended.map((reason, rIdx) => (
+                        {role.reasons.map((reason, rIdx) => (
                           <div key={rIdx} className="flex items-start gap-2">
                             <span className="text-primary font-bold">•</span>
                             <span>{reason}</span>
                           </div>
                         ))}
-                        <div className="pt-1 text-[11px] text-muted-foreground border-t border-border mt-2">
-                          Typical Entry Roles: {role.typicalRoles.join(", ")} • Est: {role.averageEntrySalary}
-                        </div>
                       </div>
                     )}
                   </div>
                 </div>
 
-                {/* Card CTA */}
-                <div className="pt-2">
-                  <Link href={`/opportunities?q=${encodeURIComponent(role.title.split(" ")[0])}`}>
+                {/* Card Actions: Target Toggle & Explore Openings */}
+                <div className="pt-2 flex flex-col sm:flex-row items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => handleToggleTarget(role.roleId, role.isSelected)}
+                    disabled={isTargeting}
+                    className={cn(
+                      "w-full sm:w-auto flex-1 px-4 py-2 rounded-xl text-xs font-medium border flex items-center justify-center gap-1.5 transition-colors cursor-pointer",
+                      role.isSelected
+                        ? "bg-emerald-50 border-emerald-300 text-emerald-800 hover:bg-emerald-100"
+                        : "bg-white border-border text-foreground hover:bg-muted"
+                    )}
+                  >
+                    {role.isSelected ? (
+                      <>
+                        <Check className="size-3.5 text-emerald-700" />
+                        <span>Targeted Career Interest</span>
+                      </>
+                    ) : (
+                      <>
+                        <Target className="size-3.5 text-primary" />
+                        <span>Target this Role</span>
+                      </>
+                    )}
+                  </button>
+
+                  <Link
+                    href={`/opportunities?q=${encodeURIComponent(role.canonicalName)}`}
+                    className="w-full sm:w-auto flex-1"
+                  >
                     <PillButton
                       variant="secondary"
                       size="sm"
                       className="w-full justify-center text-xs"
                       icon={<Briefcase className="size-3.5" />}
                     >
-                      Explore Active {role.title.split(" ")[0]} Opportunities
+                      Explore Jobs ({role.activeOpportunityCount})
                     </PillButton>
                   </Link>
                 </div>
@@ -320,10 +412,10 @@ export default function CareerDiscoveryResultsPage() {
               <div>
                 <h3 className="font-heading text-xl font-bold text-foreground flex items-center gap-2">
                   <Scale className="size-5 text-primary" />
-                  Career Path Comparison Matrix
+                  Career Role Comparison Matrix
                 </h3>
                 <p className="text-xs text-muted-foreground mt-0.5">
-                  Side-by-side analysis of interest, readiness, and skill gaps across selected roles.
+                  Side-by-side analysis of match scores, verified openings, and skill prerequisites.
                 </p>
               </div>
               <button
@@ -336,57 +428,70 @@ export default function CareerDiscoveryResultsPage() {
             </div>
 
             <div className="overflow-x-auto flex-1">
-              <div className="grid grid-cols-3 gap-4 min-w-[640px]">
+              <div
+                className={cn(
+                  "grid gap-4 min-w-[640px]",
+                  comparedRoles.length === 2 ? "grid-cols-2" : "grid-cols-3"
+                )}
+              >
                 {comparedRoles.map((role) => (
                   <div
                     key={role.roleId}
                     className="p-5 rounded-2xl bg-background border border-border space-y-4"
                   >
                     <div>
-                      <h4 className="font-heading font-bold text-sm text-foreground">{role.title}</h4>
+                      <h4 className="font-heading font-bold text-sm text-foreground">{role.canonicalName}</h4>
                       <Badge variant="outline" className="text-[10px] mt-1">
-                        {role.marketDemand} Demand
+                        {role.domain.replace("_", " & ")}
                       </Badge>
                     </div>
 
                     <div className="space-y-2 text-xs">
                       <div className="flex justify-between border-b border-border pb-1">
-                        <span className="text-muted-foreground">Interest Compatibility:</span>
-                        <strong className="text-primary">{role.interestCompatibility}%</strong>
+                        <span className="text-muted-foreground">Compatibility:</span>
+                        <strong className="text-primary">{role.matchScore}%</strong>
                       </div>
                       <div className="flex justify-between border-b border-border pb-1">
-                        <span className="text-muted-foreground">Current Job Readiness:</span>
-                        <strong className="text-success">{role.currentJobReadiness}%</strong>
+                        <span className="text-muted-foreground">Active Openings:</span>
+                        <strong className="text-emerald-700">{role.activeOpportunityCount} verified</strong>
                       </div>
                       <div className="flex justify-between border-b border-border pb-1">
-                        <span className="text-muted-foreground">Typical Starting Package:</span>
-                        <span className="text-foreground/90">{role.averageEntrySalary}</span>
+                        <span className="text-muted-foreground">Target Status:</span>
+                        <span className="text-foreground/90">{role.isSelected ? "Targeted" : "Not targeted"}</span>
                       </div>
                     </div>
 
                     <div className="space-y-1">
-                      <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider block">
-                        Verified Strengths:
+                      <span className="text-[10px] font-semibold text-emerald-800 uppercase tracking-wider block">
+                        Matched Skills:
                       </span>
                       <div className="flex flex-wrap gap-1">
-                        {role.skillsAlreadyAcquired.map((s) => (
-                          <span key={s} className="px-2 py-0.5 bg-success/20 text-success text-[10px] rounded font-medium">
-                            ✓ {s}
-                          </span>
-                        ))}
+                        {role.matchedSkills.length > 0 ? (
+                          role.matchedSkills.map((s) => (
+                            <span key={s} className="px-2 py-0.5 bg-emerald-100 text-emerald-900 text-[10px] rounded font-medium">
+                              ✓ {s}
+                            </span>
+                          ))
+                        ) : (
+                          <span className="text-[10px] text-muted-foreground italic">None yet</span>
+                        )}
                       </div>
                     </div>
 
                     <div className="space-y-1">
-                      <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider block">
-                        Skills to Bridge:
+                      <span className="text-[10px] font-semibold text-amber-800 uppercase tracking-wider block">
+                        Prerequisites to Bridge:
                       </span>
                       <div className="flex flex-wrap gap-1">
-                        {role.skillsToDevelop.map((s) => (
-                          <span key={s} className="px-2 py-0.5 bg-amber-100 text-amber-900 text-[10px] rounded font-medium">
-                            + {s}
-                          </span>
-                        ))}
+                        {role.missingSkills.length > 0 ? (
+                          role.missingSkills.map((s) => (
+                            <span key={s} className="px-2 py-0.5 bg-amber-100 text-amber-900 text-[10px] rounded font-medium">
+                              + {s}
+                            </span>
+                          ))
+                        ) : (
+                          <span className="text-[10px] text-muted-foreground italic">All prerequisites met!</span>
+                        )}
                       </div>
                     </div>
                   </div>
