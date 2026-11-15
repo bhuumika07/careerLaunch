@@ -284,6 +284,19 @@ export class ExtendedProfileService {
     return null;
   }
 
+  private async getStudentProfile(userId: string): Promise<any> {
+    const prisma = await this.getPrisma();
+    if (prisma?.studentProfile?.findUnique) {
+      try {
+        const p = await prisma.studentProfile.findUnique({ where: { userId } });
+        if (p) return p;
+      } catch {
+        // fallback
+      }
+    }
+    return profileService.getProfile(userId);
+  }
+
   /**
    * Resolves a typed skill name to a canonical Skill record using SkillAlias.
    * If unmapped, returns { skillId: null, reviewStatus: 'NEEDS_REVIEW' }.
@@ -363,7 +376,7 @@ export class ExtendedProfileService {
     rawInput: unknown
   ): Promise<StudentSkillDto> {
     const input = StudentSkillInputSchema.parse(rawInput);
-    const profile = await profileService.getProfile(userId);
+    const profile = await this.getStudentProfile(userId);
     const resolved = await this.resolveSkill(input.name);
 
     const prisma = await this.getPrisma();
@@ -494,7 +507,7 @@ export class ExtendedProfileService {
   }
 
   async getStudentSkills(userId: string): Promise<StudentSkillDto[]> {
-    const profile = await profileService.getProfile(userId);
+    const profile = await this.getStudentProfile(userId);
     const prisma = await this.getPrisma();
 
     if (prisma?.studentSkill) {
@@ -530,7 +543,7 @@ export class ExtendedProfileService {
   // Career Interests Management (GET/PUT /api/student/career-interests)
   // ----------------------------------------------------------------------
   async getCareerInterests(userId: string): Promise<CareerInterestDto[]> {
-    const profile = await profileService.getProfile(userId);
+    const profile = await this.getStudentProfile(userId);
     const prisma = await this.getPrisma();
 
     if (prisma?.careerInterest) {
@@ -563,7 +576,7 @@ export class ExtendedProfileService {
     rawPayload: unknown
   ): Promise<CareerInterestDto[]> {
     const validated = CareerInterestsPayloadSchema.parse(rawPayload);
-    const profile = await profileService.getProfile(userId);
+    const profile = await this.getStudentProfile(userId);
     const prisma = await this.getPrisma();
 
     if (prisma?.careerInterest) {
@@ -632,7 +645,7 @@ export class ExtendedProfileService {
   // ----------------------------------------------------------------------
   async addOrUpdateProject(userId: string, rawInput: unknown): Promise<StudentProjectDto> {
     const input = StudentProjectInputSchema.parse(rawInput);
-    const profile = await profileService.getProfile(userId);
+    const profile = await this.getStudentProfile(userId);
 
     const db = readDbStore();
     db.studentProjects = db.studentProjects || [];
@@ -654,7 +667,7 @@ export class ExtendedProfileService {
   }
 
   async getProjects(userId: string): Promise<StudentProjectDto[]> {
-    const profile = await profileService.getProfile(userId);
+    const profile = await this.getStudentProfile(userId);
     const db = readDbStore();
     return (db.studentProjects || []).filter(
       (p: any) => p.userId === userId || p.studentProfileId === profile.id
@@ -663,7 +676,7 @@ export class ExtendedProfileService {
 
   async addOrUpdateExperience(userId: string, rawInput: unknown): Promise<StudentExperienceDto> {
     const input = StudentExperienceInputSchema.parse(rawInput);
-    const profile = await profileService.getProfile(userId);
+    const profile = await this.getStudentProfile(userId);
 
     const db = readDbStore();
     db.studentExperiences = db.studentExperiences || [];
@@ -689,7 +702,7 @@ export class ExtendedProfileService {
   }
 
   async getExperiences(userId: string): Promise<StudentExperienceDto[]> {
-    const profile = await profileService.getProfile(userId);
+    const profile = await this.getStudentProfile(userId);
     const db = readDbStore();
     return (db.studentExperiences || []).filter(
       (e: any) => e.userId === userId || e.studentProfileId === profile.id
@@ -698,7 +711,7 @@ export class ExtendedProfileService {
 
   async updatePreferences(userId: string, rawInput: unknown): Promise<StudentPreferenceDto> {
     const input = StudentPreferenceInputSchema.parse(rawInput);
-    const profile = await profileService.getProfile(userId);
+    const profile = await this.getStudentProfile(userId);
 
     const db = readDbStore();
     db.studentPreferences = db.studentPreferences || [];
@@ -727,7 +740,7 @@ export class ExtendedProfileService {
   }
 
   async getPreferences(userId: string): Promise<StudentPreferenceDto | null> {
-    const profile = await profileService.getProfile(userId);
+    const profile = await this.getStudentProfile(userId);
     const db = readDbStore();
     const found = (db.studentPreferences || []).find(
       (p: any) => p.userId === userId || p.studentProfileId === profile.id

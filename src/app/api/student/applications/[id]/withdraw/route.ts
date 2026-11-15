@@ -1,50 +1,55 @@
+// src/app/api/student/applications/[id]/withdraw/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { readDb, writeDb } from "@/lib/db";
 import { requireRole, handleAuthError } from "@/lib/auth-guard";
+import { applicationTrackingService } from "@/lib/services/applications/applicationTrackingService";
+import { z } from "zod";
 
-// POST /api/student/applications/[id]/withdraw
+const WithdrawSchema = z.object({
+  reason: z.string().nullable().optional(),
+});
+
+/**
+ * POST /api/student/applications/[id]/withdraw
+ * Withdraws a student's active application with an audit trail note.
+ * Invariant: Never deletes application data. Status transitions to WITHDRAWN.
+ */
 export async function POST(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     const { user } = await requireRole(["student"], req);
-    const { id } = await params;
+    const { id } = await context.params;
 
-    const db = readDb();
-    const appIndex = db.applications.findIndex(
-      (a) => a.id === id && a.studentId === user.id
+    let reason: string | undefined;
+    try {
+      const body = await req.json();
+      const validation = WithdrawSchema.safeParse(body);
+      if (validation.success && validation.data.reason) {
+        reason = validation.data.reason;
+      }
+    } catch {
+      // Body is optional
+    }
+
+    const application = await applicationTrackingService.withdrawApplication(
+      user.id,
+      id,
+      reason
     );
-
-    if (appIndex === -1) {
-      return NextResponse.json(
-        { success: false, error: "Application not found." },
-        { status: 404 }
-      );
-    }
-
-    const application = db.applications[appIndex];
-    if (application.status === "Selected") {
-      return NextResponse.json(
-        { success: false, error: "Cannot withdraw an offer that has already reached selection." },
-        { status: 400 }
-      );
-    }
-
-    // Decrement applicantCount on opportunity
-    const opp = db.opportunities.find((o) => o.id === application.opportunityId);
-    if (opp && opp.applicantCount > 0) {
-      opp.applicantCount--;
-    }
-
-    db.applications.splice(appIndex, 1);
-    writeDb(db);
 
     return NextResponse.json({
       success: true,
       message: "Application withdrawn successfully.",
+      application,
     });
-  } catch (error) {
+  } catch (error: any) {
+    if (error.message?.includes("already withdrawn") || error.message?.includes("Cannot withdraw")) {
+      return NextResponse.json(
+        { success: false, error: error.message },
+        { status: 400 }
+      );
+    }
     return handleAuthError(error);
   }
 }

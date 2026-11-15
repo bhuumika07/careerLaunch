@@ -1,114 +1,144 @@
+// src/app/api/student/applications/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { readDb, writeDb, ApplicationRecord, ApplicationStatus } from "@/lib/db";
 import { requireRole, handleAuthError } from "@/lib/auth-guard";
-import { opportunityQueryService } from "@/lib/services/opportunities/opportunityQueryService";
+import { applicationTrackingService } from "@/lib/services/applications/applicationTrackingService";
+import { z } from "zod";
 
-// GET /api/student/applications - List student's tracked applications
+const SubmitApplicationSchema = z.object({
+  opportunityId: z.string().min(1, "Opportunity ID is required"),
+  resumeId: z.string().nullable().optional(),
+  coverNote: z.string().nullable().optional(),
+});
+
+function normalizeStatusString(status: string): string {
+  if (!status) return status;
+  const upper = status.toUpperCase().replace(/[\s-]+/g, "_");
+  if (upper === "APPLIED" || upper === "SUBMIT") return "SUBMITTED";
+  if (upper === "IN_REVIEW" || upper === "UNDER_REVIEW") return "UNDER_REVIEW";
+  if (upper === "INTERVIEW" || upper === "SHORTLISTED") return "INTERVIEWING";
+  if (upper === "SELECTED") return "OFFERED";
+  return upper;
+}
+
+const UpdateStatusSchema = z.object({
+  id: z.string().min(1, "Application ID is required"),
+  status: z.enum([
+    "SUBMITTED",
+    "UNDER_REVIEW",
+    "INTERVIEWING",
+    "OFFERED",
+    "REJECTED",
+    "WITHDRAWN",
+  ]),
+  note: z.string().optional(),
+});
+
+/**
+ * GET /api/student/applications
+ * Retrieves all tracked applications for the authenticated student with timeline history.
+ */
 export async function GET(req: NextRequest) {
   try {
     const { user } = await requireRole(["student"], req);
-
-    // Hydrate applications with canonical opportunities (preserving saved applications even if quarantined/closed)
-    const hydrated = await opportunityQueryService.getStudentApplicationsWithOpportunities(user.id);
+    const applications = await applicationTrackingService.getStudentApplications(user.id);
 
     return NextResponse.json({
       success: true,
-      applications: hydrated,
+      applications,
     });
   } catch (error) {
     return handleAuthError(error);
   }
 }
 
-// POST /api/student/applications - Track new external application
+/**
+ * POST /api/student/applications
+ * Submits a new application for an active opportunity.
+ * Invariant: Rejects duplicate active applications.
+ */
 export async function POST(req: NextRequest) {
   try {
     const { user } = await requireRole(["student"], req);
     const body = await req.json();
-    const { opportunityId, status = "Applied", notes = "" } = body;
 
-    if (!opportunityId) {
-      return NextResponse.json({ success: false, error: "Opportunity ID required" }, { status: 400 });
-    }
-
-    const db = readDb();
-    const now = new Date().toISOString();
-
-    // Check if already tracked
-    let existing = (db.applications || []).find((a) => a.studentId === user.id && a.opportunityId === opportunityId);
-
-    if (existing) {
-      existing.status = status as ApplicationStatus;
-      if (notes) existing.coverNote = notes;
-      existing.updatedAt = now;
-      existing.history = existing.history || [];
-      existing.history.push({
-        status: status as ApplicationStatus,
-        timestamp: now,
-        note: "Updated via tracking prompt",
-      });
-      writeDb(db);
-      return NextResponse.json({ success: true, application: existing });
-    }
-
-    const newApp: ApplicationRecord = {
-      id: `app_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
-      opportunityId,
-      studentId: user.id,
-      resumeId: "",
-      coverNote: notes,
-      status: status as ApplicationStatus,
-      appliedAt: now,
-      updatedAt: now,
-      history: [
+    const validation = SubmitApplicationSchema.safeParse(body);
+    if (!validation.success) {
+      return NextResponse.json(
         {
-          status: status as ApplicationStatus,
-          timestamp: now,
-          note: "Self-reported external application",
+          success: false,
+          error: "Validation failed",
+          details: validation.error.flatten(),
         },
-      ],
-    };
+        { status: 400 }
+      );
+    }
 
-    db.applications = db.applications || [];
-    db.applications.push(newApp);
-    writeDb(db);
+    const { opportunityId, resumeId, coverNote } = validation.data;
+    const application = await applicationTrackingService.submitApplication(
+      user.id,
+      opportunityId,
+      { resumeId, coverNote }
+    );
 
-    return NextResponse.json({ success: true, application: newApp }, { status: 201 });
-  } catch (error) {
+    return NextResponse.json({
+      success: true,
+      application,
+    });
+  } catch (error: any) {
+    if (error.message?.includes("already submitted")) {
+      return NextResponse.json(
+        { success: false, error: error.message },
+        { status: 409 }
+      );
+    }
     return handleAuthError(error);
   }
 }
 
-// PATCH /api/student/applications - Update tracking status or notes
+/**
+ * PATCH /api/student/applications
+ * Updates an application's status following state machine rules.
+ */
 export async function PATCH(req: NextRequest) {
   try {
     const { user } = await requireRole(["student"], req);
     const body = await req.json();
-    const { id, status, notes, interviewRound } = body;
 
-    const db = readDb();
-    const app = (db.applications || []).find((a) => a.id === id && a.studentId === user.id);
-    if (!app) {
-      return NextResponse.json({ success: false, error: "Application record not found" }, { status: 404 });
+    const normalizedStatus = normalizeStatusString(body.status);
+    const validation = UpdateStatusSchema.safeParse({ ...body, status: normalizedStatus });
+    if (!validation.success) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Validation failed",
+          details: validation.error.flatten(),
+        },
+        { status: 400 }
+      );
     }
 
-    const now = new Date().toISOString();
-    if (status) {
-      app.status = status;
-      app.history = app.history || [];
-      app.history.push({
-        status,
-        timestamp: now,
-        note: `Status updated to ${status}`,
-      });
-    }
-    if (notes !== undefined) app.coverNote = notes;
-    if (interviewRound) app.interviewRound = interviewRound;
-    app.updatedAt = now;
+    const { id, status, note } = validation.data;
+    const application = await applicationTrackingService.updateApplicationStatus(
+      user.id,
+      id,
+      status,
+      note
+    );
 
-    writeDb(db);
-    return NextResponse.json({ success: true, application: app });
-  } catch (error) {
+    return NextResponse.json({
+      success: true,
+      application,
+    });
+  } catch (error: any) {
+    if (
+      error.message?.includes("Invalid status transition") ||
+      error.message?.includes("not found")
+    ) {
+      return NextResponse.json(
+        { success: false, error: error.message },
+        { status: 400 }
+      );
+    }
     return handleAuthError(error);
   }
 }

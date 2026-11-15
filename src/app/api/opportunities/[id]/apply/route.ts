@@ -1,76 +1,70 @@
+// src/app/api/opportunities/[id]/apply/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { readDb, writeDb, ApplicationRecord } from "@/lib/db";
 import { requireRole, handleAuthError } from "@/lib/auth-guard";
+import { applicationTrackingService } from "@/lib/services/applications/applicationTrackingService";
+import { z } from "zod";
 
-// POST /api/opportunities/[id]/apply - Student applies
+const ApplyBodySchema = z.object({
+  resumeId: z.string().nullable().optional(),
+  coverNote: z.string().nullable().optional(),
+});
+
+/**
+ * POST /api/opportunities/[id]/apply
+ * Submits application for the authenticated student using the centralized application service.
+ */
 export async function POST(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     const { user } = await requireRole(["student"], req);
-    const { id } = await params;
-    const body = await req.json();
+    const { id: opportunityId } = await context.params;
 
-    const { resumeId, coverNote } = body;
+    let resumeId: string | undefined;
+    let coverNote: string | undefined;
 
-    const db = readDb();
-    const opportunity = db.opportunities.find((o) => o.id === id);
-
-    if (!opportunity) {
-      return NextResponse.json(
-        { success: false, error: "Opportunity not found." },
-        { status: 404 }
-      );
+    try {
+      const body = await req.json();
+      const parsed = ApplyBodySchema.safeParse(body);
+      if (parsed.success) {
+        resumeId = parsed.data.resumeId || undefined;
+        coverNote = parsed.data.coverNote || undefined;
+      }
+    } catch {
+      // Body is optional
     }
 
-    if (opportunity.status !== "active") {
-      return NextResponse.json(
-        { success: false, error: "This opportunity is no longer accepting applications." },
-        { status: 400 }
-      );
-    }
-
-    // Check if student already applied
-    const existing = db.applications.find(
-      (a) => a.studentId === user.id && a.opportunityId === id
+    const application = await applicationTrackingService.submitApplication(
+      user.id,
+      opportunityId,
+      { resumeId, coverNote }
     );
-
-    if (existing) {
-      return NextResponse.json(
-        { success: false, error: "You have already submitted an application for this opportunity." },
-        { status: 400 }
-      );
-    }
-
-    const now = new Date().toISOString();
-    const newApplication: ApplicationRecord = {
-      id: `app_${Date.now()}`,
-      studentId: user.id,
-      opportunityId: id,
-      resumeId: resumeId || undefined,
-      status: "Submitted",
-      appliedAt: now,
-      coverNote: coverNote || "",
-      history: [
-        {
-          status: "Submitted",
-          timestamp: now,
-          note: "Application submitted by candidate via platform.",
-        },
-      ],
-    };
-
-    db.applications.push(newApplication);
-    opportunity.applicantCount = (opportunity.applicantCount || 0) + 1;
-    writeDb(db);
 
     return NextResponse.json({
       success: true,
-      application: newApplication,
-      message: "Application submitted successfully! Track progress in your Applications dashboard.",
+      message: "Application submitted successfully.",
+      application,
     });
-  } catch (error) {
+  } catch (error: any) {
+    if (error.message?.includes("already submitted")) {
+      return NextResponse.json(
+        { success: false, error: error.message },
+        { status: 409 }
+      );
+    }
+    if (error.message?.includes("Opportunity not found")) {
+      return NextResponse.json(
+        { success: false, error: error.message },
+        { status: 404 }
+      );
+    }
+    if (error.message?.includes("Cannot apply")) {
+      return NextResponse.json(
+        { success: false, error: error.message },
+        { status: 400 }
+      );
+    }
     return handleAuthError(error);
   }
 }
