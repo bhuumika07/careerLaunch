@@ -31,7 +31,7 @@ import { Badge } from "@/components/ui/badge";
 import { Opportunity } from "@/lib/db";
 import { cn } from "@/lib/utils";
 
-export default function OpportunityDetailPage() {
+function OpportunityDetailContent() {
   const params = useParams();
   const router = useRouter();
   const id = params.id as string;
@@ -536,6 +536,23 @@ export default function OpportunityDetailPage() {
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+export default function OpportunityDetailPage() {
+  return (
+    <div data-theme="light" className="min-h-screen bg-background text-foreground">
+      <React.Suspense
+        fallback={
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 flex flex-col items-center justify-center gap-3 text-muted-foreground">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+            <p className="text-sm">Loading opportunity details...</p>
+          </div>
+        }
+      >
+        <OpportunityDetailContent />
+      </React.Suspense>
     </div>
   );
 }
