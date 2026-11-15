@@ -23,10 +23,14 @@ export interface EnrichmentAdminMetrics {
   needsReviewCount: number;
   failedCount: number;
   pendingCount: number;
+  successRate: number; // percentage succeeded
+  failureRate: number; // percentage failed
+  reviewRate: number; // percentage needs_review
   averageConfidence: number;
   lowConfidenceRate: number; // percentage below 0.65
   unsupportedClaimsCount: number;
   topMissingFields: Array<{ field: string; count: number }>;
+  versionBreakdown: Record<string, number>;
 }
 
 export interface DiagnosticDetail {
@@ -84,10 +88,14 @@ export function computeEnrichmentMetrics(
       needsReviewCount: 0,
       failedCount: 0,
       pendingCount: 0,
+      successRate: 0,
+      failureRate: 0,
+      reviewRate: 0,
       averageConfidence: 0,
       lowConfidenceRate: 0,
       unsupportedClaimsCount: 0,
       topMissingFields: [],
+      versionBreakdown: {},
     };
   }
 
@@ -99,6 +107,7 @@ export function computeEnrichmentMetrics(
   let lowConfidenceCount = 0;
   let totalUnsupportedClaims = 0;
   const missingFieldFrequency: Record<string, number> = {};
+  const versionBreakdown: Record<string, number> = {};
 
   for (const item of enrichments) {
     const status = String(item.status || "pending").toLowerCase();
@@ -106,6 +115,10 @@ export function computeEnrichmentMetrics(
     else if (status === "needs_review") needsReview++;
     else if (status === "failed") failed++;
     else pending++;
+
+    // Track prompt / model versions
+    const versionKey = `${item.extractionModel || "unknown"} / ${item.promptVersion || "unknown"}`;
+    versionBreakdown[versionKey] = (versionBreakdown[versionKey] || 0) + 1;
 
     const conf =
       typeof item.overallConfidence === "number"
@@ -146,6 +159,12 @@ export function computeEnrichmentMetrics(
     total > 0 ? Number((totalConfidence / total).toFixed(3)) : 0;
   const lowConfidenceRate =
     total > 0 ? Number(((lowConfidenceCount / total) * 100).toFixed(1)) : 0;
+  const successRate =
+    total > 0 ? Number(((succeeded / total) * 100).toFixed(1)) : 0;
+  const failureRate =
+    total > 0 ? Number(((failed / total) * 100).toFixed(1)) : 0;
+  const reviewRate =
+    total > 0 ? Number(((needsReview / total) * 100).toFixed(1)) : 0;
 
   const topMissingFields = Object.entries(missingFieldFrequency)
     .map(([field, count]) => ({ field, count }))
@@ -158,10 +177,14 @@ export function computeEnrichmentMetrics(
     needsReviewCount: needsReview,
     failedCount: failed,
     pendingCount: pending,
+    successRate,
+    failureRate,
+    reviewRate,
     averageConfidence,
     lowConfidenceRate,
     unsupportedClaimsCount: totalUnsupportedClaims,
     topMissingFields,
+    versionBreakdown,
   };
 }
 

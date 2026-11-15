@@ -619,4 +619,226 @@ describe("Phase 3 E2E Integration: AI Opportunity Enrichment Journey", () => {
     assert.equal(updatedRecord.isCurrent, true);
     assert.equal(updatedRecord.minExperienceMonths, 0);
   });
+
+  describe("Regression Fixtures: Real-Looking Listings (Clean, Vague, Contradictory)", () => {
+    it("clean fixture: extracts rich data with high confidence and zero review triggers", async () => {
+      testDb = createTestDb();
+
+      const cleanHtml = `
+        <h3>Software Engineer - Core Platform</h3>
+        <p>Stripe is hiring a Software Engineer in Seattle, WA. Work Mode: Hybrid.</p>
+        <p>Requirements: 2+ years of experience with Ruby, Go, or Java. Strong SQL skills required.</p>
+        <p>Compensation: $140,000 - $175,000 per year. Deadline: 2026-12-31.</p>
+      `;
+
+      testDb.opportunities.push({
+        id: "opp_clean_1",
+        title: "Software Engineer - Core Platform",
+        organizationName: "Stripe",
+        description: cleanHtml,
+        status: "ACTIVE",
+        lastVerifiedAt: recentVerified,
+        applicationDeadline: futureDeadline,
+      });
+
+      const cleanClient = {
+        async generateCompletion() {
+          return {
+            rawText: JSON.stringify({
+              basic: {
+                role_title: "Software Engineer - Core Platform",
+                company: "Stripe",
+                description_summary: "Core platform software engineering role focusing on distributed systems.",
+              },
+              opportunity_type: { primary_type: "full_time" },
+              skills: {
+                required_skills: [
+                  { name: "Go", category: "programming_language", source_snippet: "Ruby, Go, or Java" },
+                  { name: "SQL", category: "database", source_snippet: "Strong SQL skills required" },
+                ],
+                preferred_skills: [],
+                inferred_skills: [],
+              },
+              qualifications: { degree_levels: ["Bachelors"], branches: [], graduation_years: [] },
+              experience: { experience_level: "mid", min_experience_months: 24, max_experience_months: null },
+              location: { work_mode: "hybrid", cities: ["Seattle"], country: "United States" },
+              compensation: { is_paid: true, min_amount: 140000, max_amount: 175000, currency: "USD", interval: "yearly" },
+              timeline: { application_deadline: "2026-12-31" },
+              eligibility: {},
+              confidence: {
+                overall_score: 0.95,
+                field_scores: {
+                  skills: 1.0,
+                  opportunity_type: 1.0,
+                  qualifications: 0.9,
+                  location: 1.0,
+                  compensation: 1.0,
+                  timeline: 1.0,
+                },
+              },
+              quality: {
+                missing_fields: [],
+                unsupported_claims: [],
+                extraction_errors: [],
+                needs_manual_review: false,
+                review_reasons: [],
+              },
+            }),
+          };
+        },
+      };
+
+      const service = new OpportunityEnrichmentService(testDb.mockPrisma, cleanClient as any);
+      const res = await service.enrichOpportunity({ opportunityId: "opp_clean_1" });
+
+      assert.equal(res.success, true);
+      assert.equal(res.status, "succeeded");
+      assert.equal(res.isCurrent, true);
+
+      // Attach saved enrichment to opportunity (simulating relation join)
+      testDb.opportunities[0].enrichment = testDb.enrichments[0];
+
+      // Immediately visible in student feed
+      const feed = filterEnrichedStudentFeed(testDb.opportunities, { now, skills: ["Go"] });
+      assert.equal(feed.totalCount, 1);
+      assert.equal(feed.opportunities[0].id, "opp_clean_1");
+      assert.ok(feed.opportunities[0].enrichment != null);
+    });
+
+    it("vague fixture: flags missing fields and triggers manual review", async () => {
+      testDb = createTestDb();
+
+      const vagueText = "Looking for a rockstar developer to do cool stuff. Apply now!";
+
+      testDb.opportunities.push({
+        id: "opp_vague_1",
+        title: "Rockstar Developer",
+        organizationName: "Stealth Startup",
+        description: vagueText,
+        status: "ACTIVE",
+        lastVerifiedAt: recentVerified,
+      });
+
+      const vagueClient = {
+        async generateCompletion() {
+          return {
+            rawText: JSON.stringify({
+              basic: {
+                role_title: "Rockstar Developer",
+                company: "Stealth Startup",
+                description_summary: "Developer role at stealth startup.",
+              },
+              opportunity_type: { primary_type: "unknown" },
+              skills: { required_skills: [], preferred_skills: [], inferred_skills: [] },
+              qualifications: { degree_levels: [], branches: [], graduation_years: [] },
+              experience: { experience_level: "unknown" },
+              location: { work_mode: "unspecified" },
+              compensation: { is_paid: null },
+              timeline: { application_deadline: null },
+              eligibility: {},
+              confidence: {
+                overall_score: 0.45, // Low confidence
+                field_scores: {
+                  skills: 0.2,
+                  opportunity_type: 0.3,
+                  qualifications: 0.2,
+                  location: 0.4,
+                  compensation: 0.2,
+                  timeline: 0.2,
+                },
+              },
+              quality: {
+                missing_fields: ["skills", "opportunity_type.primary_type", "timeline.application_deadline"],
+                unsupported_claims: [],
+                extraction_errors: [],
+                needs_manual_review: true,
+                review_reasons: ["Low overall confidence (0.45 < 0.65 threshold)."],
+              },
+            }),
+          };
+        },
+      };
+
+      const service = new OpportunityEnrichmentService(testDb.mockPrisma, vagueClient as any);
+      const res = await service.enrichOpportunity({ opportunityId: "opp_vague_1" });
+
+      assert.equal(res.success, true);
+      assert.equal(res.status, "needs_review");
+
+      // Review-state enrichment is hidden from students!
+      const feed = filterEnrichedStudentFeed(testDb.opportunities, { now });
+      const item = feed.opportunities.find((o) => o.id === "opp_vague_1")!;
+      assert.ok(item);
+      assert.equal(item.enrichment, null); // Hidden from student
+    });
+
+    it("contradictory fixture: detects intern vs senior experience and remote vs daily commute", async () => {
+      testDb = createTestDb();
+
+      const contradictoryText = `
+        Position: Frontend Engineering Intern.
+        Location: Remote (Must attend Manhattan headquarters daily for standup).
+        Requirements: Minimum 5+ years of production experience in frontend architecture.
+      `;
+
+      testDb.opportunities.push({
+        id: "opp_contra_1",
+        title: "Frontend Engineering Intern",
+        organizationName: "Contradiction Co",
+        description: contradictoryText,
+        status: "ACTIVE",
+        lastVerifiedAt: recentVerified,
+      });
+
+      const contradictoryClient = {
+        async generateCompletion() {
+          return {
+            rawText: JSON.stringify({
+              basic: {
+                role_title: "Frontend Engineering Intern",
+                company: "Contradiction Co",
+              },
+              opportunity_type: { primary_type: "internship" },
+              skills: { required_skills: [], preferred_skills: [], inferred_skills: [] },
+              qualifications: { degree_levels: ["Bachelors"], branches: [], graduation_years: [] },
+              experience: {
+                experience_level: "intern",
+                min_experience_months: 60, // 5 years for an intern!
+              },
+              location: {
+                work_mode: "remote",
+                cities: ["New York"],
+                provenance: { source_snippet: "headquarters daily for standup" },
+              },
+              compensation: {},
+              timeline: {},
+              eligibility: {},
+              confidence: {
+                overall_score: 0.85,
+                field_scores: { skills: 0.8, opportunity_type: 0.8, qualifications: 0.8, location: 0.8, compensation: 0.8, timeline: 0.8 },
+              },
+              quality: {
+                missing_fields: [],
+                unsupported_claims: [],
+                extraction_errors: [],
+                needs_manual_review: false,
+                review_reasons: [],
+              },
+            }),
+          };
+        },
+      };
+
+      const service = new OpportunityEnrichmentService(testDb.mockPrisma, contradictoryClient as any);
+      const res = await service.enrichOpportunity({ opportunityId: "opp_contra_1" });
+
+      assert.equal(res.success, true);
+      assert.equal(res.status, "needs_review");
+
+      // Verify diagnostics capture the contradictions
+      const diagnostics = getEnrichmentDiagnostics(res.enrichmentId!, testDb.enrichments, testDb.opportunities);
+      assert.ok(diagnostics);
+      assert.ok(diagnostics.status === "needs_review");
+    });
+  });
 });
