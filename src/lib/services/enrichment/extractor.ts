@@ -166,9 +166,69 @@ export function calculateWeightedConfidence(
  * Evaluates deterministic human review rules and grounds provenance snippets.
  */
 export function postProcessAndGroundPayload(
-  payload: OpportunityEnrichmentPayload,
+  payload: any,
   normalizedText: string
 ): OpportunityEnrichmentPayload {
+  // Ensure default root structures exist for defensive safety
+  payload.quality = payload.quality || {
+    missing_fields: [],
+    unsupported_claims: [],
+    extraction_errors: [],
+    needs_manual_review: false,
+    review_reasons: [],
+  };
+
+  payload.skills = payload.skills || {
+    required_skills: [],
+    preferred_skills: [],
+    inferred_skills: [],
+  };
+  payload.skills.required_skills = payload.skills.required_skills || [];
+  payload.skills.preferred_skills = payload.skills.preferred_skills || [];
+  payload.skills.inferred_skills = payload.skills.inferred_skills || [];
+
+  payload.qualifications = payload.qualifications || {
+    degree_levels: [],
+    branches: [],
+    graduation_years: [],
+    min_cgpa: null,
+    academic_requirements: null,
+  };
+  payload.qualifications.degree_levels = payload.qualifications.degree_levels || [];
+  payload.qualifications.branches = payload.qualifications.branches || [];
+  payload.qualifications.graduation_years = payload.qualifications.graduation_years || [];
+
+  payload.experience = payload.experience || {
+    experience_level: "unknown",
+    min_experience_months: null,
+    max_experience_months: null,
+  };
+
+  payload.location = payload.location || {
+    work_mode: "unknown",
+    cities: [],
+    is_worldwide: false,
+  };
+
+  payload.timeline = payload.timeline || {
+    application_deadline: null,
+    start_date: null,
+    duration_text: null,
+  };
+
+  payload.eligibility = payload.eligibility || {
+    work_authorization: null,
+    explicit_restrictions: [],
+    target_audience: null,
+  };
+  payload.eligibility.explicit_restrictions = payload.eligibility.explicit_restrictions || [];
+
+  payload.confidence = payload.confidence || {
+    overall_score: 0.8,
+    field_scores: {},
+  };
+  payload.confidence.field_scores = payload.confidence.field_scores || {};
+
   const unsupportedClaims: string[] = [...(payload.quality.unsupported_claims || [])];
   const reviewReasons: string[] = [...(payload.quality.review_reasons || [])];
   const extractionErrors: string[] = [...(payload.quality.extraction_errors || [])];
@@ -196,13 +256,27 @@ export function postProcessAndGroundPayload(
   };
 
   // 1. Ground main provenance snippets
-  payload.opportunity_type.provenance = groundProvenance(payload.opportunity_type.provenance, "opportunity_type");
-  payload.qualifications.provenance = groundProvenance(payload.qualifications.provenance, "qualifications");
-  payload.experience.provenance = groundProvenance(payload.experience.provenance, "experience");
-  payload.location.provenance = groundProvenance(payload.location.provenance, "location");
-  payload.compensation.provenance = groundProvenance(payload.compensation.provenance, "compensation");
-  payload.timeline.provenance = groundProvenance(payload.timeline.provenance, "timeline");
-  payload.eligibility.provenance = groundProvenance(payload.eligibility.provenance, "eligibility");
+  if (payload.opportunity_type) {
+    payload.opportunity_type.provenance = groundProvenance(payload.opportunity_type.provenance, "opportunity_type");
+  }
+  if (payload.qualifications) {
+    payload.qualifications.provenance = groundProvenance(payload.qualifications.provenance, "qualifications");
+  }
+  if (payload.experience) {
+    payload.experience.provenance = groundProvenance(payload.experience.provenance, "experience");
+  }
+  if (payload.location) {
+    payload.location.provenance = groundProvenance(payload.location.provenance, "location");
+  }
+  if (payload.compensation) {
+    payload.compensation.provenance = groundProvenance(payload.compensation.provenance, "compensation");
+  }
+  if (payload.timeline) {
+    payload.timeline.provenance = groundProvenance(payload.timeline.provenance, "timeline");
+  }
+  if (payload.eligibility) {
+    payload.eligibility.provenance = groundProvenance(payload.eligibility.provenance, "eligibility");
+  }
 
   // 2. Ground required & preferred skill snippets and enforce skills separation
   for (const skill of payload.skills.required_skills) {
@@ -293,6 +367,7 @@ export function postProcessAndGroundPayload(
 
   // Compensation min > max
   if (
+    payload.compensation &&
     payload.compensation.min_amount != null &&
     payload.compensation.max_amount != null &&
     payload.compensation.min_amount > payload.compensation.max_amount
@@ -301,13 +376,13 @@ export function postProcessAndGroundPayload(
   }
 
   // Check missing required fields
-  if (payload.opportunity_type.primary_type === "unknown") {
+  if (payload.opportunity_type?.primary_type === "unknown") {
     missingFields.push("opportunity_type.primary_type");
   }
-  if (!payload.timeline.application_deadline) {
+  if (!payload.timeline?.application_deadline) {
     missingFields.push("timeline.application_deadline");
   }
-  if (payload.qualifications.degree_levels.length === 0) {
+  if (!payload.qualifications?.degree_levels || payload.qualifications.degree_levels.length === 0) {
     missingFields.push("qualifications.degree_levels");
   }
 

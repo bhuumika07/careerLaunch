@@ -187,3 +187,94 @@ export class MockLlmExtractionClient implements LlmExtractionClient {
   }
 }
 
+export interface GroqClientConfig {
+  apiKey?: string;
+  model?: string;
+  timeoutMs?: number;
+}
+
+/**
+ * Server-side Groq LLM Client (Phase 3 - Chunk 3.1)
+ *
+ * Strict Invariants:
+ * 1. Called server-side only behind LLMProvider / LlmExtractionClient.
+ * 2. GROQ_API_KEY is never exposed to client or browser.
+ * 3. Formats requests with JSON object response mode and wraps provider errors cleanly.
+ */
+export class GroqExtractionClient implements LLMProvider, LlmExtractionClient {
+  private apiKey: string;
+  private model: string;
+  private timeoutMs: number;
+  private groqInstance: any = null;
+
+  constructor(config: GroqClientConfig = {}) {
+    this.apiKey = config.apiKey || process.env.GROQ_API_KEY || "";
+    this.model = config.model || process.env.GROQ_MODEL || "llama-3.3-70b-versatile";
+    this.timeoutMs = config.timeoutMs ?? 30000;
+  }
+
+  public getModelName(): string {
+    return this.model;
+  }
+
+  private async getGroqClient(): Promise<any> {
+    if (!this.groqInstance) {
+      if (!this.apiKey) {
+        throw new Error(
+          "GROQ_API_KEY is not configured server-side. In CI/tests, use MockLlmExtractionClient."
+        );
+      }
+      try {
+        const { default: Groq } = await import("groq-sdk");
+        this.groqInstance = new Groq({ apiKey: this.apiKey });
+      } catch (err: any) {
+        throw new Error(`Failed to initialize groq-sdk: ${err.message || String(err)}`);
+      }
+    }
+    return this.groqInstance;
+  }
+
+  async extract(prompt: LLMPrompt, schema?: any): Promise<LLMOutput> {
+    return this.generateCompletion(prompt);
+  }
+
+  async generateCompletion(request: LlmCompletionRequest): Promise<LlmCompletionResponse> {
+    const groq = await this.getGroqClient();
+    const startTime = performance.now();
+
+    try {
+      const completion = await groq.chat.completions.create({
+        messages: [
+          { role: "system", content: request.systemPrompt },
+          { role: "user", content: request.userPrompt },
+        ],
+        model: this.model,
+        temperature: request.temperature ?? 0.1,
+        max_tokens: request.maxTokens ?? 3000,
+        response_format: { type: "json_object" },
+      });
+
+      const latencyMs = Math.round(performance.now() - startTime);
+      const choice = completion.choices?.[0];
+      const rawText = choice?.message?.content || "";
+
+      return {
+        rawText,
+        usage: completion.usage
+          ? {
+              promptTokens: completion.usage.prompt_tokens,
+              completionTokens: completion.usage.completion_tokens,
+              totalTokens: completion.usage.total_tokens,
+            }
+          : undefined,
+        latencyMs,
+      };
+    } catch (err: any) {
+      throw new Error(
+        `[GroqExtractionClient] Groq API call failed: ${err.message || String(err)}`
+      );
+    }
+  }
+}
+
+
