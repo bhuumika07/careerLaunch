@@ -39,6 +39,16 @@ const CATEGORIES = [
 
 const WORK_MODES = ["All", "remote", "hybrid", "onsite"];
 const EXP_LEVELS = ["All", "Student / Intern", "Entry-level", "Mid-level", "Senior"];
+const OPPORTUNITY_TYPES = [
+  { label: "All Types", value: "All" },
+  { label: "Internship", value: "internship" },
+  { label: "Full Time", value: "full_time" },
+  { label: "Part Time", value: "part_time" },
+  { label: "Contract", value: "contract" },
+];
+const DEGREE_LEVELS = ["All", "Bachelors", "Masters", "PhD"];
+const GRADUATION_YEARS = ["All", "2024", "2025", "2026", "2027"];
+const POPULAR_SKILL_TAGS = ["React", "TypeScript", "Python", "Node.js", "Java", "SQL", "AWS", "Docker"];
 
 function formatTimeAgo(dateStr?: string | null): string {
   if (!dateStr) return "";
@@ -65,7 +75,19 @@ function OpportunitiesExplorerContent() {
   const [selectedExp, setSelectedExp] = React.useState("All");
   const [urgencyDays, setUrgencyDays] = React.useState<string>("All");
 
+  // Phase 3 Enriched Discovery Filters
+  const [selectedOppType, setSelectedOppType] = React.useState<string>("All");
+  const [selectedDegree, setSelectedDegree] = React.useState<string>("All");
+  const [selectedGradYear, setSelectedGradYear] = React.useState<string>("All");
+  const [selectedSkills, setSelectedSkills] = React.useState<string[]>([]);
+
   const [bookmarkedIds, setBookmarkedIds] = React.useState<Set<string>>(new Set());
+
+  const toggleSkill = (skill: string) => {
+    setSelectedSkills((prev) =>
+      prev.includes(skill) ? prev.filter((s) => s !== skill) : [...prev, skill]
+    );
+  };
 
   const fetchOpportunities = React.useCallback(async () => {
     setLoading(true);
@@ -77,6 +99,12 @@ function OpportunitiesExplorerContent() {
       if (selectedExp !== "All") params.set("experienceLevel", selectedExp);
       if (urgencyDays !== "All") params.set("urgency", urgencyDays);
 
+      // Add Phase 3 enrichment params
+      if (selectedOppType !== "All") params.set("opportunityType", selectedOppType);
+      if (selectedDegree !== "All") params.set("degreeLevels", selectedDegree);
+      if (selectedGradYear !== "All") params.set("graduationYears", selectedGradYear);
+      if (selectedSkills.length > 0) params.set("skills", selectedSkills.join(","));
+
       const res = await fetch(`/api/opportunities?${params.toString()}`);
       const data = await res.json();
       if (res.ok && data.success) {
@@ -87,7 +115,17 @@ function OpportunitiesExplorerContent() {
     } finally {
       setLoading(false);
     }
-  }, [searchQuery, selectedCategory, selectedMode, selectedExp, urgencyDays]);
+  }, [
+    searchQuery,
+    selectedCategory,
+    selectedMode,
+    selectedExp,
+    urgencyDays,
+    selectedOppType,
+    selectedDegree,
+    selectedGradYear,
+    selectedSkills,
+  ]);
 
   React.useEffect(() => {
     fetchOpportunities();
@@ -256,6 +294,98 @@ function OpportunitiesExplorerContent() {
             </select>
           </div>
         </div>
+
+        {/* Phase 3 Enriched Discovery Filters */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-3 border-t border-border">
+          <div>
+            <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider block mb-1">
+              Opportunity Type
+            </label>
+            <select
+              value={selectedOppType}
+              onChange={(e) => setSelectedOppType(e.target.value)}
+              className="w-full p-2.5 rounded-xl border border-border bg-sky-50 text-xs text-foreground focus:outline-none focus:border-ring focus:ring-2 focus:ring-ring/40"
+            >
+              {OPPORTUNITY_TYPES.map((t) => (
+                <option key={t.value} value={t.value}>
+                  {t.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider block mb-1">
+              Degree Level
+            </label>
+            <select
+              value={selectedDegree}
+              onChange={(e) => setSelectedDegree(e.target.value)}
+              className="w-full p-2.5 rounded-xl border border-border bg-sky-50 text-xs text-foreground focus:outline-none focus:border-ring focus:ring-2 focus:ring-ring/40"
+            >
+              {DEGREE_LEVELS.map((d) => (
+                <option key={d} value={d}>
+                  {d === "All" ? "All Degree Levels" : d}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider block mb-1">
+              Graduation Year
+            </label>
+            <select
+              value={selectedGradYear}
+              onChange={(e) => setSelectedGradYear(e.target.value)}
+              className="w-full p-2.5 rounded-xl border border-border bg-sky-50 text-xs text-foreground focus:outline-none focus:border-ring focus:ring-2 focus:ring-ring/40"
+            >
+              {GRADUATION_YEARS.map((y) => (
+                <option key={y} value={y}>
+                  {y === "All" ? "All Graduation Years" : `Class of ${y}`}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {/* Skill Filter Pills */}
+        <div className="space-y-1.5 pt-2 border-t border-border">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+              Filter by Skills & Technologies
+            </span>
+            {selectedSkills.length > 0 && (
+              <button
+                type="button"
+                onClick={() => setSelectedSkills([])}
+                className="text-[11px] text-primary hover:underline font-medium cursor-pointer"
+              >
+                Clear skills ({selectedSkills.length})
+              </button>
+            )}
+          </div>
+          <div className="flex flex-wrap gap-1.5">
+            {POPULAR_SKILL_TAGS.map((skill) => {
+              const isSelected = selectedSkills.includes(skill);
+              return (
+                <button
+                  key={skill}
+                  type="button"
+                  onClick={() => toggleSkill(skill)}
+                  className={cn(
+                    "px-2.5 py-1 rounded-lg text-xs font-medium transition-all cursor-pointer border",
+                    isSelected
+                      ? "bg-primary text-primary-foreground border-primary shadow-xs"
+                      : "bg-sky-50 text-foreground/80 border-border hover:border-teal-600/40"
+                  )}
+                >
+                  {skill} {isSelected && "✓"}
+                </button>
+              );
+            })}
+          </div>
+        </div>
       </div>
 
       {/* Results Header */}
@@ -353,20 +483,78 @@ function OpportunitiesExplorerContent() {
                     </p>
                   </div>
 
-                  {/* Skills tags */}
-                  <div className="flex flex-wrap gap-1.5 pt-1">
-                    {opp.skills.slice(0, 4).map((skill) => (
-                      <span
-                        key={skill}
-                        className="px-2 py-0.5 rounded-md bg-sky-50 border border-border text-[10px] text-foreground/85 font-medium"
-                      >
-                        {skill}
-                      </span>
-                    ))}
-                    {opp.skills.length > 4 && (
-                      <span className="px-2 py-0.5 rounded-md bg-sky-50 text-[10px] text-muted-foreground">
-                        +{opp.skills.length - 4} more
-                      </span>
+                  {/* AI-Enriched Qualifications & Eligibility Badges (Phase 3) */}
+                  {(opp as any).enrichment && (
+                    <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
+                      {(opp as any).enrichment.degreeLevels?.length > 0 && (
+                        <span className="px-2 py-0.5 rounded-md bg-blue-50 border border-blue-200 text-[10px] text-blue-800 font-medium">
+                          🎓 {(opp as any).enrichment.degreeLevels.join(", ")}
+                        </span>
+                      )}
+                      {(opp as any).enrichment.graduationYears?.length > 0 && (
+                        <span className="px-2 py-0.5 rounded-md bg-indigo-50 border border-indigo-200 text-[10px] text-indigo-800 font-medium">
+                          Class of {(opp as any).enrichment.graduationYears.join(", ")}
+                        </span>
+                      )}
+                      {typeof (opp as any).enrichment.minCgpa === "number" && (
+                        <span className="px-2 py-0.5 rounded-md bg-amber-50 border border-amber-200 text-[10px] text-amber-800 font-medium">
+                          Min CGPA: {(opp as any).enrichment.minCgpa}
+                        </span>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Skills tags - Three-Tier or Standard */}
+                  <div className="space-y-1.5 pt-1">
+                    {(opp as any).enrichment?.requiredSkills?.length > 0 ? (
+                      <div className="space-y-1">
+                        <div className="flex flex-wrap items-center gap-1.5">
+                          <span className="text-[10px] uppercase font-bold text-muted-foreground">Required:</span>
+                          {(opp as any).enrichment.requiredSkills.slice(0, 4).map((skill: string) => (
+                            <span
+                              key={skill}
+                              className="px-2 py-0.5 rounded-md bg-emerald-50 border border-emerald-200 text-[10px] text-emerald-800 font-semibold"
+                            >
+                              {skill}
+                            </span>
+                          ))}
+                          {(opp as any).enrichment.requiredSkills.length > 4 && (
+                            <span className="text-[10px] text-muted-foreground">
+                              +{(opp as any).enrichment.requiredSkills.length - 4} more
+                            </span>
+                          )}
+                        </div>
+
+                        {(opp as any).enrichment.preferredSkills?.length > 0 && (
+                          <div className="flex flex-wrap items-center gap-1.5">
+                            <span className="text-[10px] uppercase font-medium text-muted-foreground">Preferred:</span>
+                            {(opp as any).enrichment.preferredSkills.slice(0, 3).map((skill: string) => (
+                              <span
+                                key={skill}
+                                className="px-2 py-0.5 rounded-md bg-purple-50 border border-purple-200 text-[10px] text-purple-700 font-medium"
+                              >
+                                {skill}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="flex flex-wrap gap-1.5">
+                        {opp.skills.slice(0, 4).map((skill) => (
+                          <span
+                            key={skill}
+                            className="px-2 py-0.5 rounded-md bg-sky-50 border border-border text-[10px] text-foreground/85 font-medium"
+                          >
+                            {skill}
+                          </span>
+                        ))}
+                        {opp.skills.length > 4 && (
+                          <span className="px-2 py-0.5 rounded-md bg-sky-50 text-[10px] text-muted-foreground">
+                            +{opp.skills.length - 4} more
+                          </span>
+                        )}
+                      </div>
                     )}
                   </div>
                 </div>

@@ -8,10 +8,11 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "node --experimental-strip-types --test src/lib/services/verification/__tests__/*.test.ts",
+    "test": "node --experimental-strip-types --test src/lib/services/**/__tests__/*.test.ts",
     "worker:verification": "node --experimental-strip-types src/workers/verificationWorker.ts",
     "scheduler:verification": "node --experimental-strip-types src/workers/verificationScheduler.ts",
-    "sweeper:freshness": "node --experimental-strip-types src/workers/freshnessSweeper.ts"
+    "sweeper:freshness": "node --experimental-strip-types src/workers/freshnessSweeper.ts",
+    "worker:enrichment": "node --experimental-strip-types src/workers/enrichmentWorker.ts"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",

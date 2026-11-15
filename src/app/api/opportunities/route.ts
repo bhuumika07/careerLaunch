@@ -4,9 +4,9 @@ import { requireRole, handleAuthError } from "@/lib/auth-guard";
 import {
   findDuplicateOpportunity,
 } from "@/lib/services/opportunity-manager";
-import { filterStudentActiveFeed } from "@/lib/services/verification/studentFeedQuery.ts";
+import { filterEnrichedStudentFeed } from "@/lib/services/enrichment/studentEnrichmentQuery.ts";
 
-// GET /api/opportunities - Search & Filter opportunities (Active & Fresh Student Feed)
+// GET /api/opportunities - Search & Filter opportunities (Active & Fresh Student Feed with AI Enrichment)
 export async function GET(req: NextRequest) {
   try {
     const url = new URL(req.url);
@@ -18,6 +18,24 @@ export async function GET(req: NextRequest) {
     const urgencyDays = urgency ? parseInt(urgency, 10) : undefined;
     const page = url.searchParams.get("page") ? parseInt(url.searchParams.get("page")!, 10) : 1;
     const limit = url.searchParams.get("limit") ? parseInt(url.searchParams.get("limit")!, 10) : 20;
+
+    // Phase 3 Enriched Discovery Filters
+    const skillsParam = url.searchParams.get("skills");
+    const skills = skillsParam ? skillsParam.split(",").map((s) => s.trim()).filter(Boolean) : undefined;
+    const opportunityType = url.searchParams.get("opportunityType") || url.searchParams.get("type") || undefined;
+    const degreesParam = url.searchParams.get("degreeLevels") || url.searchParams.get("degrees");
+    const degreeLevels = degreesParam ? degreesParam.split(",").map((d) => d.trim()).filter(Boolean) : undefined;
+    const branchesParam = url.searchParams.get("branches");
+    const branches = branchesParam ? branchesParam.split(",").map((b) => b.trim()).filter(Boolean) : undefined;
+    const gradYearsParam = url.searchParams.get("graduationYears") || url.searchParams.get("gradYears");
+    const graduationYears = gradYearsParam
+      ? gradYearsParam
+          .split(",")
+          .map((y) => parseInt(y.trim(), 10))
+          .filter((y) => !isNaN(y))
+      : undefined;
+    const minCgpaParam = url.searchParams.get("minCgpa");
+    const minCgpa = minCgpaParam ? parseFloat(minCgpaParam) : undefined;
 
     // Load from persistent DB with graceful fallback
     let rawOpps: any[] = [];
@@ -37,13 +55,19 @@ export async function GET(req: NextRequest) {
       rawOpps = db.opportunities || [];
     }
 
-    // Apply strict Chunk 10 active & fresh filtering
-    const feedResult = filterStudentActiveFeed(rawOpps, {
+    // Apply strict Chunk 10 active & fresh filtering + Phase 3 enrichment discovery
+    const feedResult = filterEnrichedStudentFeed(rawOpps, {
       query,
       category,
       workMode,
       experienceLevel,
       urgencyDays,
+      skills,
+      opportunityType,
+      degreeLevels,
+      branches,
+      graduationYears,
+      minCgpa,
       page,
       limit,
     });
