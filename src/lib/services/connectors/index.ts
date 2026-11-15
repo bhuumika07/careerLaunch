@@ -10,3 +10,7 @@ export * from "./framework/circuitBreaker.ts";
 export * from "./framework/rawPayloadStore.ts";
 export * from "./framework/baseConnector.ts";
 export * from "./framework/mockConnector.ts";
+export * from "./normalization/normalizationEngine.ts";
+export * from "./deduplication/deduplicationEngine.ts";
+export * from "./deduplication/dedupReporter.ts";
+export * from "./deduplication/testFixtures.ts";
