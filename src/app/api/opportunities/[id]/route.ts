@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { readDb, writeDb } from "@/lib/db";
 import { requireRole, handleAuthError } from "@/lib/auth-guard";
+import { opportunityQueryService } from "@/lib/services/opportunities/opportunityQueryService";
 
 // GET /api/opportunities/[id]
 export async function GET(
@@ -9,9 +10,10 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    const db = readDb();
+    const url = new URL(req.url);
+    const allowQuarantined = url.searchParams.get("includeQuarantined") === "true";
 
-    const opportunity = db.opportunities.find((o) => o.id === id);
+    const opportunity = await opportunityQueryService.getOpportunityById(id, { allowQuarantined });
     if (!opportunity) {
       return NextResponse.json(
         { success: false, error: "Opportunity not found." },

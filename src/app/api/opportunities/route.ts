@@ -4,7 +4,7 @@ import { requireRole, handleAuthError } from "@/lib/auth-guard";
 import {
   findDuplicateOpportunity,
 } from "@/lib/services/opportunity-manager";
-import { filterEnrichedStudentFeed } from "@/lib/services/enrichment/studentEnrichmentQuery.ts";
+import { opportunityQueryService } from "@/lib/services/opportunities/opportunityQueryService";
 
 // GET /api/opportunities - Search & Filter opportunities (Active & Fresh Student Feed with AI Enrichment)
 export async function GET(req: NextRequest) {
@@ -42,32 +42,8 @@ export async function GET(req: NextRequest) {
     const minCgpaParam = url.searchParams.get("minCgpa");
     const minCgpa = minCgpaParam ? parseFloat(minCgpaParam) : undefined;
 
-    // Load from persistent DB with graceful fallback
-    let rawOpps: any[] = [];
-    try {
-      if (process.env.DATABASE_URL) {
-        const { prisma } = await import("@/lib/prisma");
-        rawOpps = await (prisma.opportunity as any).findMany({
-          where: { isQuarantined: false },
-          include: { source: true, opportunityEnrichment: true },
-        });
-      }
-    } catch {
-      // Graceful fallback to file-based store
-    }
-
-    if (!rawOpps || rawOpps.length === 0) {
-      const db = readDb();
-      rawOpps = (db.opportunities || []).filter((o: any) => !o.isQuarantined);
-    }
-
-    // In local development / offline file fallback mode without active DB verification worker,
-    // allow seed opportunities to remain visible to explore filters
-    const isLocalFallback = !process.env.DATABASE_URL;
-    const freshnessThresholdHours = isLocalFallback ? 24 * 365 : undefined;
-
-    // Apply strict active & fresh filtering + Streamlined 4 Dimensions
-    const feedResult = filterEnrichedStudentFeed(rawOpps, {
+    // Query student feed via Canonical Opportunity Access Layer
+    const feedResult = await opportunityQueryService.getStudentFeed({
       query,
       domain,
       positionType,
@@ -83,7 +59,6 @@ export async function GET(req: NextRequest) {
       opportunityType: positionType,
       branches,
       minCgpa,
-      freshnessThresholdHours,
       page,
       limit,
     });

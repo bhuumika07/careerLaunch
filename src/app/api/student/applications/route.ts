@@ -1,26 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { readDb, writeDb, ApplicationRecord, ApplicationStatus } from "@/lib/db";
 import { requireRole, handleAuthError } from "@/lib/auth-guard";
+import { opportunityQueryService } from "@/lib/services/opportunities/opportunityQueryService";
 
 // GET /api/student/applications - List student's tracked applications
 export async function GET(req: NextRequest) {
   try {
     const { user } = await requireRole(["student"], req);
-    const db = readDb();
 
-    const studentApps = (db.applications || []).filter((a) => a.studentId === user.id);
-
-    // Hydrate with opportunity details
-    const hydrated = studentApps.map((app) => {
-      const opportunity = (db.opportunities || []).find((o) => o.id === app.opportunityId);
-      const isExpiredOrClosed = opportunity ? opportunity.status === "closed" || opportunity.status === "expired" : true;
-      return {
-        ...app,
-        opportunity: opportunity || null,
-        isExpiredOrClosed,
-        confirmationSource: "self_reported",
-      };
-    });
+    // Hydrate applications with canonical opportunities (preserving saved applications even if quarantined/closed)
+    const hydrated = await opportunityQueryService.getStudentApplicationsWithOpportunities(user.id);
 
     return NextResponse.json({
       success: true,
