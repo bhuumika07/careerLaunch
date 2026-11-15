@@ -1,16 +1,23 @@
+// src/app/api/student/roadmap/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { requireRole, handleAuthError } from "@/lib/auth-guard";
-import { roadmapEngine } from "@/lib/services/roadmap-engine";
+import { roleRoadmapService } from "@/lib/services/career-roles/roleRoadmapService";
 
+/**
+ * GET /api/student/roadmap
+ * Retrieves the role-specific learning roadmap and dynamic milestone progress for the authenticated student.
+ */
 export async function GET(req: NextRequest) {
   try {
     const { user } = await requireRole(["student"], req);
-    const { roadmap, adjustments } = roadmapEngine.getUserRoadmap(user.id);
+    const { searchParams } = new URL(req.url);
+    const roleId = searchParams.get("roleId") || null;
+
+    const data = await roleRoadmapService.getUserRoadmap(user.id, roleId);
 
     return NextResponse.json({
       success: true,
-      roadmap,
-      adjustments,
+      ...data,
     });
   } catch (error) {
     return handleAuthError(error);

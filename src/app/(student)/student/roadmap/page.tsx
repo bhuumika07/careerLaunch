@@ -14,10 +14,13 @@ import {
   ChevronDown,
   ChevronUp,
   X,
-  PlusCircle,
+  Target,
+  RefreshCw,
+  FolderGit2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { PillButton } from "@/components/ui/pill-button";
 
 interface RoadmapModule {
   id: string;
@@ -33,17 +36,19 @@ interface RoadmapModule {
     description: string;
     deliverables: string;
     estimatedHours: number;
+    technologies?: string[];
   };
   assessmentQuizId?: string;
   status: "pending" | "ongoing" | "completed";
   completedAt?: string;
-  addedToResume?: boolean;
+  autoCompleted?: boolean;
 }
 
 interface RoadmapData {
   id: string;
   careerRoleId: string;
   careerRoleTitle: string;
+  domain: string;
   currentModuleIndex: number;
   progressPercentage: number;
   milestonesCompleted: number;
@@ -51,24 +56,37 @@ interface RoadmapData {
   modules: RoadmapModule[];
 }
 
+interface AvailableRoadmapRoleDto {
+  id: string;
+  title: string;
+  domain: string;
+  isTargeted: boolean;
+}
+
 export default function StudentRoadmapPage() {
   const [roadmap, setRoadmap] = React.useState<RoadmapData | null>(null);
   const [adjustments, setAdjustments] = React.useState<any[]>([]);
+  const [availableRoles, setAvailableRoles] = React.useState<AvailableRoadmapRoleDto[]>([]);
+  const [selectedRoleId, setSelectedRoleId] = React.useState<string>("");
   const [loading, setLoading] = React.useState(true);
   const [expandedModules, setExpandedModules] = React.useState<Record<string, boolean>>({});
   const [projectToAddToResume, setProjectToAddToResume] = React.useState<any | null>(null);
-  const [activeModuleForModal, setActiveModuleForModal] = React.useState<string | null>(null);
   const [addingToResume, setAddingToResume] = React.useState(false);
   const [addedSuccess, setAddedSuccess] = React.useState(false);
 
-  const fetchRoadmap = React.useCallback(async () => {
+  const fetchRoadmap = React.useCallback(async (roleId?: string) => {
     try {
       setLoading(true);
-      const res = await fetch("/api/student/roadmap");
+      const url = roleId ? `/api/student/roadmap?roleId=${encodeURIComponent(roleId)}` : "/api/student/roadmap";
+      const res = await fetch(url);
       const json = await res.json();
-      if (json.success) {
+      if (res.ok && json.success) {
         setRoadmap(json.roadmap);
         setAdjustments(json.adjustments || []);
+        setAvailableRoles(json.availableRoles || []);
+        if (json.roadmap?.careerRoleId && !roleId) {
+          setSelectedRoleId(json.roadmap.careerRoleId);
+        }
         // Expand ongoing or first module by default
         const initExpanded: Record<string, boolean> = {};
         json.roadmap?.modules?.forEach((m: RoadmapModule, i: number) => {
@@ -84,8 +102,8 @@ export default function StudentRoadmapPage() {
   }, []);
 
   React.useEffect(() => {
-    fetchRoadmap();
-  }, [fetchRoadmap]);
+    fetchRoadmap(selectedRoleId || undefined);
+  }, [fetchRoadmap, selectedRoleId]);
 
   const toggleExpand = (id: string) => {
     setExpandedModules((prev) => ({ ...prev, [id]: !prev[id] }));
@@ -106,7 +124,6 @@ export default function StudentRoadmapPage() {
         setRoadmap(data.roadmap);
         if (data.promptAddToResume && data.completedProject) {
           setProjectToAddToResume(data.completedProject);
-          setActiveModuleForModal(moduleId);
         }
       }
     } catch (err) {
@@ -118,24 +135,21 @@ export default function StudentRoadmapPage() {
     if (!projectToAddToResume) return;
     setAddingToResume(true);
     try {
-      // Import project to profile projects list
-      const res = await fetch("/api/student/profile", {
-        method: "PATCH",
+      const res = await fetch("/api/student/projects", {
+        method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          projectToAdd: {
-            id: `prj_${Date.now()}`,
-            title: projectToAddToResume.title,
-            description: projectToAddToResume.description,
-            technologies: ["React", "TypeScript", "Next.js"],
-          },
+          title: projectToAddToResume.title,
+          description: projectToAddToResume.description,
+          technologies: projectToAddToResume.technologies || ["TypeScript", "Next.js"],
+          confirmed: true,
+          source: "STUDENT",
         }),
       });
       if (res.ok) {
         setAddedSuccess(true);
         setTimeout(() => {
           setProjectToAddToResume(null);
-          setActiveModuleForModal(null);
           setAddedSuccess(false);
         }, 1500);
       }
@@ -149,30 +163,68 @@ export default function StudentRoadmapPage() {
   return (
     <div className="space-y-8 max-w-7xl mx-auto pb-12">
       {/* Page Header */}
-      <div className="rounded-2xl bg-gradient-to-r from-background via-muted to-background border border-border/15 p-6 md:p-8 text-foreground shadow-xl relative overflow-hidden">
-        <div className="relative z-10 max-w-2xl space-y-3">
-          <Badge className="bg-accent/15/20 text-accent-text border-accent/40 hover:bg-accent/15/25">
-            Module-Based Learning Path
+      <div className="rounded-3xl bg-gradient-to-r from-background via-muted/50 to-background border border-border p-6 md:p-8 text-foreground shadow-xs relative overflow-hidden">
+        <div className="relative z-10 max-w-3xl space-y-3">
+          <Badge className="bg-primary/10 text-primary border-primary/20 hover:bg-primary/15 font-semibold text-xs">
+            Role-Calibrated Learning Curriculum
           </Badge>
-          <h1 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+          <h1 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-foreground flex items-center gap-2.5">
+            <Compass className="size-7 text-primary" />
             {roadmap?.careerRoleTitle || "Career Roadmap & Milestones"}
           </h1>
-          <p className="text-sm text-foreground/70 leading-relaxed">
-            Step-by-step career acceleration sequence with curated resources, capstone projects,
-            and continuous roadmap recalibration as you pass domain certifications.
+          <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+            Sequenced learning milestones and capstone deliverables mapped directly to verified industry expectations.
+            Milestones recalibrate automatically as you verify skills in your student profile.
           </p>
         </div>
       </div>
 
-      {/* Dynamic Adjustment Notice (Prompt 7 requirement) */}
+      {/* Target Role Selector & Adjustment Banner */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-5 rounded-2xl bg-white border border-border">
+        <div className="flex items-center gap-3">
+          <Target className="size-5 text-primary shrink-0" />
+          <div>
+            <span className="text-xs text-muted-foreground uppercase font-semibold">Current Career Track:</span>
+            <div className="flex items-center gap-2 mt-1">
+              <select
+                value={selectedRoleId}
+                onChange={(e) => setSelectedRoleId(e.target.value)}
+                className="bg-muted border border-border rounded-xl px-3 py-1.5 text-xs font-semibold text-foreground focus:outline-hidden focus:border-primary cursor-pointer"
+              >
+                {availableRoles.map((role) => (
+                  <option key={role.id} value={role.id}>
+                    {role.title} {role.isTargeted ? "★ (Targeted)" : ""}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </div>
+
+        {roadmap && (
+          <div className="flex items-center gap-4 text-xs">
+            <div className="flex items-center gap-2 bg-muted px-3 py-1.5 rounded-xl border border-border">
+              <span className="text-muted-foreground">Track Completion:</span>
+              <span className="font-bold text-primary text-sm">{roadmap.progressPercentage}%</span>
+            </div>
+            <div className="flex items-center gap-2 text-xs">
+              <Badge variant="default" className="bg-emerald-50 text-emerald-800 border-emerald-200">
+                {roadmap.milestonesCompleted} / {roadmap.totalMilestones} Milestones Completed
+              </Badge>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Dynamic Adjustment Notice */}
       {adjustments.length > 0 && (
-        <div className="p-4 rounded-2xl bg-accent/15/10 border border-accent/30 flex items-start gap-3">
-          <Sparkles className="size-5 text-accent-text shrink-0 mt-0.5" />
+        <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-start gap-3">
+          <Sparkles className="size-5 text-emerald-700 shrink-0 mt-0.5" />
           <div className="space-y-1">
-            <h4 className="font-heading font-bold text-xs text-accent-text uppercase tracking-wider">
-              Roadmap Calibrated Post-Assessment
+            <h4 className="font-heading font-bold text-xs text-emerald-900 uppercase tracking-wider">
+              Roadmap Calibrated from Profile Competencies
             </h4>
-            <div className="text-xs text-foreground/80 space-y-1">
+            <div className="text-xs text-emerald-800 space-y-1">
               {adjustments.map((adj, i) => (
                 <div key={i}>
                   • <span className="font-semibold">{adj.moduleTitle}</span> was auto-completed: {adj.reason}
@@ -183,77 +235,16 @@ export default function StudentRoadmapPage() {
         </div>
       )}
 
-      {/* Progress & Milestone Tracker Strip */}
-      {roadmap && (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="p-5 rounded-2xl bg-card border border-border space-y-2">
-            <span className="text-xs text-muted-foreground uppercase font-semibold">Total Progress</span>
-            <div className="flex items-baseline gap-2">
-              <span className="font-heading text-3xl font-bold text-foreground">
-                {roadmap.progressPercentage}%
-              </span>
-              <span className="text-xs text-muted-foreground">completed</span>
-            </div>
-            <div className="w-full bg-background/10 h-2 rounded-full overflow-hidden">
-              <div
-                className="bg-accent/15 h-full rounded-full transition-all duration-500"
-                style={{ width: `${roadmap.progressPercentage}%` }}
-              />
-            </div>
-          </div>
-
-          <div className="p-5 rounded-2xl bg-card border border-border space-y-2">
-            <span className="text-xs text-muted-foreground uppercase font-semibold">Milestones Verified</span>
-            <div className="flex items-baseline gap-2">
-              <span className="font-heading text-3xl font-bold text-success">
-                {roadmap.milestonesCompleted} / {roadmap.modules.length}
-              </span>
-              <span className="text-xs text-muted-foreground">modules finished</span>
-            </div>
-            <div className="text-xs text-muted-foreground">
-              {roadmap.modules.length - roadmap.milestonesCompleted} remaining to full career-readiness
-            </div>
-          </div>
-
-          <div className="p-5 rounded-2xl bg-card border border-border space-y-2">
-            <span className="text-xs text-muted-foreground uppercase font-semibold">Quick Actions</span>
-            <div className="flex items-center gap-2 pt-1">
-              <Link href="/student/assessments" className="flex-1">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="w-full text-xs font-semibold border-border hover:border-accent/60"
-                >
-                  <Award className="size-3.5 mr-1 text-accent-text" />
-                  Take Quiz
-                </Button>
-              </Link>
-              <Link href="/student/skill-gap" className="flex-1">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="w-full text-xs font-semibold border-border hover:border-accent/60"
-                >
-                  <Compass className="size-3.5 mr-1 text-info" />
-                  Skill-Gap Table
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Modules Stepper List */}
       <div className="space-y-4">
         <h2 className="font-heading text-lg font-bold text-foreground">
-          Roadmap Learning Modules
+          Sequenced Learning Modules
         </h2>
 
         {loading || !roadmap ? (
-          <div className="space-y-4">
-            {[1, 2, 3].map((n) => (
-              <div key={n} className="h-28 rounded-2xl bg-card border border-border animate-pulse" />
-            ))}
+          <div className="p-16 text-center text-muted-foreground bg-white rounded-2xl border border-border flex flex-col items-center gap-3">
+            <RefreshCw className="size-5 animate-spin text-primary" />
+            <span>Calibrating learning roadmap...</span>
           </div>
         ) : (
           <div className="space-y-4">
@@ -262,48 +253,53 @@ export default function StudentRoadmapPage() {
               return (
                 <div
                   key={mod.id}
-                  className={`rounded-2xl bg-card border transition-all ${
+                  className={`rounded-3xl bg-white border transition-all ${
                     mod.status === "completed"
-                      ? "border-success/30 bg-success/[0.02]"
+                      ? "border-emerald-200 bg-emerald-50/20"
                       : mod.status === "ongoing"
-                      ? "border-accent/50 shadow-sm"
+                      ? "border-primary/50 shadow-xs ring-1 ring-primary/20"
                       : "border-border"
                   }`}
                 >
                   {/* Module Header Bar */}
                   <div
                     onClick={() => toggleExpand(mod.id)}
-                    className="p-5 flex items-center justify-between cursor-pointer select-none"
+                    className="p-5 sm:p-6 flex items-center justify-between cursor-pointer select-none"
                   >
                     <div className="flex items-center gap-4">
                       <div
                         className={`size-9 rounded-full flex items-center justify-center font-bold text-xs shrink-0 ${
                           mod.status === "completed"
-                            ? "bg-success text-white"
+                            ? "bg-emerald-600 text-white"
                             : mod.status === "ongoing"
-                            ? "bg-accent/15 text-foreground"
-                            : "bg-background/10 text-muted-foreground"
+                            ? "bg-primary text-primary-foreground"
+                            : "bg-muted text-muted-foreground"
                         }`}
                       >
                         {mod.status === "completed" ? "✓" : index + 1}
                       </div>
 
                       <div className="space-y-1">
-                        <div className="flex items-center gap-2">
-                          <h3 className="font-heading font-bold text-base text-foreground">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <h3 className="font-heading font-bold text-base sm:text-lg text-foreground">
                             {mod.title}
                           </h3>
                           <Badge
                             className={`text-[10px] uppercase font-semibold ${
                               mod.status === "completed"
-                                ? "bg-success/15 text-success border-success/30"
+                                ? "bg-emerald-100 text-emerald-800 border-emerald-200"
                                 : mod.status === "ongoing"
-                                ? "bg-accent/15/15 text-accent-text border-accent/40"
-                                : "bg-background/5 text-muted-foreground border-border"
+                                ? "bg-primary/10 text-primary border-primary/20"
+                                : "bg-muted text-muted-foreground border-border"
                             }`}
                           >
                             {mod.status}
                           </Badge>
+                          {mod.autoCompleted && (
+                            <Badge variant="outline" className="text-[10px] text-emerald-700 border-emerald-300">
+                              Verified in Profile
+                            </Badge>
+                          )}
                         </div>
                         <p className="text-xs text-muted-foreground line-clamp-1">{mod.description}</p>
                       </div>
@@ -320,7 +316,7 @@ export default function StudentRoadmapPage() {
 
                   {/* Expanded Content */}
                   {isExpanded && (
-                    <div className="px-5 pb-5 pt-2 border-t border-border/60 space-y-5">
+                    <div className="px-5 sm:px-6 pb-6 pt-2 border-t border-border/60 space-y-6">
                       {/* Skills Covered Chips */}
                       <div className="space-y-1.5">
                         <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
@@ -330,7 +326,7 @@ export default function StudentRoadmapPage() {
                           {mod.skillsCovered.map((s, idx) => (
                             <span
                               key={idx}
-                              className="text-xs bg-background/5 border border-border px-2.5 py-0.5 rounded-full text-foreground"
+                              className="text-xs bg-muted border border-border px-2.5 py-0.5 rounded-full text-foreground font-medium"
                             >
                               {s}
                             </span>
@@ -346,7 +342,7 @@ export default function StudentRoadmapPage() {
                         <ul className="text-xs space-y-1.5 text-foreground/80">
                           {mod.objectives.map((obj, i) => (
                             <li key={i} className="flex items-start gap-2">
-                              <span className="text-accent-text font-bold mt-0.5">•</span>
+                              <span className="text-primary font-bold mt-0.5">•</span>
                               <span>{obj}</span>
                             </li>
                           ))}
@@ -354,97 +350,83 @@ export default function StudentRoadmapPage() {
                       </div>
 
                       {/* Resources */}
-                      <div className="space-y-2">
-                        <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                          Curated Resources:
-                        </span>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                          {mod.resources.map((res, rIdx) => (
-                            <a
-                              key={rIdx}
-                              href={res.url}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="p-2.5 rounded-xl border border-border hover:border-accent/40 hover:bg-background/[0.02] transition-colors flex items-center justify-between text-xs"
-                            >
-                              <div className="flex items-center gap-2">
-                                <Code2 className="size-3.5 text-accent-text" />
-                                <span className="font-medium text-foreground">{res.title}</span>
-                              </div>
-                              <ExternalLink className="size-3 text-muted-foreground" />
-                            </a>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Capstone Project Card */}
-                      {mod.project && (
-                        <div className="p-4 rounded-xl bg-background/[0.02] border border-border space-y-2">
-                          <div className="flex items-center justify-between">
-                            <span className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                              <FileCheck className="size-4 text-accent-text" />
-                              Capstone Project: {mod.project.title}
-                            </span>
-                            <span className="text-[10px] text-muted-foreground">
-                              ~{mod.project.estimatedHours} hrs
-                            </span>
-                          </div>
-                          <p className="text-xs text-muted-foreground leading-relaxed">
-                            {mod.project.description}
-                          </p>
-                          <div className="text-[11px] text-foreground/80 font-mono bg-background/5 p-2 rounded-lg border border-border/40">
-                            Deliverable: {mod.project.deliverables}
+                      {mod.resources && mod.resources.length > 0 && (
+                        <div className="space-y-2">
+                          <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                            Curated Resources:
+                          </span>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            {mod.resources.map((res, i) => (
+                              <a
+                                key={i}
+                                href={res.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="p-3 rounded-2xl bg-muted/50 border border-border hover:border-primary/40 flex items-center justify-between text-xs transition-colors"
+                              >
+                                <span className="font-medium text-foreground truncate">{res.title}</span>
+                                <ExternalLink className="size-3.5 text-muted-foreground shrink-0 ml-2" />
+                              </a>
+                            ))}
                           </div>
                         </div>
                       )}
 
-                      {/* Module Footer & Status Switcher */}
-                      <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-border">
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs text-muted-foreground">Mark Status:</span>
-                          <div className="inline-flex rounded-lg border border-border p-0.5 bg-background/5">
-                            <button
-                              type="button"
-                              onClick={() => handleUpdateStatus(mod.id, "pending")}
-                              className={`px-2.5 py-1 text-xs font-medium rounded-md cursor-pointer transition-colors ${
-                                mod.status === "pending" ? "bg-card text-foreground font-semibold shadow-xs" : "text-muted-foreground"
-                              }`}
-                            >
-                              Pending
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => handleUpdateStatus(mod.id, "ongoing")}
-                              className={`px-2.5 py-1 text-xs font-medium rounded-md cursor-pointer transition-colors ${
-                                mod.status === "ongoing" ? "bg-accent/15 text-foreground font-semibold shadow-xs" : "text-muted-foreground"
-                              }`}
-                            >
-                              Ongoing
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => handleUpdateStatus(mod.id, "completed")}
-                              className={`px-2.5 py-1 text-xs font-medium rounded-md cursor-pointer transition-colors ${
-                                mod.status === "completed" ? "bg-success text-white font-semibold shadow-xs" : "text-muted-foreground"
-                              }`}
-                            >
-                              Completed
-                            </button>
+                      {/* Capstone Project Deliverable */}
+                      {mod.project && (
+                        <div className="p-4 rounded-2xl bg-muted/40 border border-border space-y-2">
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                              <FolderGit2 className="size-4 text-primary" />
+                              Module Capstone Project: {mod.project.title}
+                            </span>
+                            <span className="text-[11px] text-muted-foreground">
+                              ~{mod.project.estimatedHours} hrs
+                            </span>
+                          </div>
+                          <p className="text-xs text-muted-foreground">{mod.project.description}</p>
+                          <div className="text-[11px] text-foreground/80 border-t border-border/50 pt-2 mt-2">
+                            <strong>Deliverable:</strong> {mod.project.deliverables}
                           </div>
                         </div>
+                      )}
 
-                        {mod.assessmentQuizId && (
-                          <Link href="/student/assessments">
+                      {/* Status Action Buttons */}
+                      <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border/60 pt-4">
+                        <div className="flex items-center gap-2">
+                          {mod.status !== "completed" ? (
+                            <Button
+                              size="sm"
+                              onClick={() => handleUpdateStatus(mod.id, "completed")}
+                              className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-full text-xs font-semibold cursor-pointer"
+                            >
+                              <CheckCircle2 className="size-3.5 mr-1" />
+                              Mark Module Completed
+                            </Button>
+                          ) : (
                             <Button
                               size="sm"
                               variant="outline"
-                              className="text-xs border-accent/40 text-accent-text hover:bg-accent/15/10 rounded-full"
+                              onClick={() => handleUpdateStatus(mod.id, "ongoing")}
+                              className="text-xs rounded-full cursor-pointer"
                             >
-                              <Award className="size-3.5 mr-1" />
-                              Take Associated Assessment
+                              Reopen Module
+                            </Button>
+                          )}
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <Link href="/student/skill-gap">
+                            <Button size="sm" variant="ghost" className="text-xs text-muted-foreground hover:text-foreground">
+                              View Skill Gap Matrix
                             </Button>
                           </Link>
-                        )}
+                          <Link href={`/opportunities?q=${encodeURIComponent(roadmap.careerRoleTitle)}`}>
+                            <PillButton variant="secondary" size="sm" className="text-xs">
+                              Explore Jobs
+                            </PillButton>
+                          </Link>
+                        </div>
                       </div>
                     </div>
                   )}
@@ -455,62 +437,52 @@ export default function StudentRoadmapPage() {
         )}
       </div>
 
-      {/* PROMPT 8: ADD TO RESUME CONFIRMATION MODAL */}
+      {/* Add Project to Portfolio Modal */}
       {projectToAddToResume && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-card text-foreground border border-border rounded-2xl w-full max-w-md p-6 space-y-5 shadow-2xl">
-            <div className="flex items-start justify-between">
-              <div className="size-12 rounded-full bg-accent/15/20 text-accent-text flex items-center justify-center">
-                <PlusCircle className="size-6" />
-              </div>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white rounded-3xl border border-border max-w-lg w-full p-6 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-border pb-3">
+              <h3 className="font-heading font-bold text-base text-foreground flex items-center gap-2">
+                <CheckCircle2 className="size-5 text-emerald-600" />
+                Milestone Complete! Add to Portfolio?
+              </h3>
               <button
                 type="button"
                 onClick={() => setProjectToAddToResume(null)}
-                className="size-8 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:text-foreground cursor-pointer"
+                className="p-1 text-muted-foreground hover:text-foreground cursor-pointer"
               >
                 <X className="size-4" />
               </button>
             </div>
 
-            <div className="space-y-2">
-              <h3 className="font-heading font-bold text-lg text-foreground">
-                Roadmap Project Completed!
-              </h3>
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                You just finished <span className="font-semibold text-foreground">{projectToAddToResume.title}</span>.
-                Would you like to import this verified milestone project into your resume and profile?
-              </p>
-              <div className="p-3 rounded-xl bg-background/5 border border-border text-xs text-muted-foreground">
-                <span className="font-medium text-foreground">Rule:</span> Achievements are never
-                fabricated or automatically included without your direct authorization.
-              </div>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Congratulations on completing this milestone! Would you like to record <strong>{projectToAddToResume.title}</strong> in your student profile project portfolio?
+            </p>
+
+            <div className="p-3 bg-muted rounded-2xl text-xs space-y-1">
+              <div className="font-semibold text-foreground">{projectToAddToResume.title}</div>
+              <div className="text-muted-foreground text-[11px]">{projectToAddToResume.deliverables}</div>
             </div>
 
-            {addedSuccess ? (
-              <div className="p-3 rounded-xl bg-success/10 border border-success/30 text-success text-xs font-semibold flex items-center justify-center gap-2">
-                <CheckCircle2 className="size-4" />
-                Project successfully added to your profile!
-              </div>
-            ) : (
-              <div className="flex items-center justify-end gap-3 pt-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setProjectToAddToResume(null)}
-                  className="cursor-pointer text-xs"
-                >
-                  Maybe Later
-                </Button>
-                <Button
-                  size="sm"
-                  disabled={addingToResume}
-                  onClick={handleConfirmAddToResume}
-                  className="bg-accent/15 hover:bg-accent/15/90 text-foreground font-semibold rounded-full cursor-pointer text-xs"
-                >
-                  {addingToResume ? "Adding..." : "Add to Resume"}
-                </Button>
-              </div>
-            )}
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-border">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setProjectToAddToResume(null)}
+                className="text-xs"
+              >
+                Skip for now
+              </Button>
+              <PillButton
+                variant="primary"
+                size="sm"
+                onClick={handleConfirmAddToResume}
+                disabled={addingToResume}
+                className="text-xs"
+              >
+                {addedSuccess ? "Added Successfully!" : addingToResume ? "Adding..." : "Add to Profile"}
+              </PillButton>
+            </div>
           </div>
         </div>
       )}

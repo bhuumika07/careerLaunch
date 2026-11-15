@@ -1,6 +1,7 @@
+// src/app/api/student/roadmap/[moduleId]/status/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { requireRole, handleAuthError } from "@/lib/auth-guard";
-import { roadmapEngine } from "@/lib/services/roadmap-engine";
+import { roleRoadmapService } from "@/lib/services/career-roles/roleRoadmapService";
 
 export async function POST(
   req: NextRequest,
@@ -16,7 +17,7 @@ export async function POST(
       return NextResponse.json({ error: "Invalid status value" }, { status: 400 });
     }
 
-    const { roadmap, completedProject } = roadmapEngine.updateModuleStatus(
+    const { roadmap, completedProject } = await roleRoadmapService.updateModuleStatus(
       user.id,
       moduleId,
       status
