@@ -40,6 +40,18 @@ const CATEGORIES = [
 const WORK_MODES = ["All", "remote", "hybrid", "onsite"];
 const EXP_LEVELS = ["All", "Student / Intern", "Entry-level", "Mid-level", "Senior"];
 
+function formatTimeAgo(dateStr?: string | null): string {
+  if (!dateStr) return "";
+  const diffMs = Date.now() - new Date(dateStr).getTime();
+  if (isNaN(diffMs) || diffMs < 0) return "just now";
+  const mins = Math.floor(diffMs / 60000);
+  if (mins < 60) return `${Math.max(1, mins)}m ago`;
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  return `${days}d ago`;
+}
+
 function OpportunitiesExplorerContent() {
   const searchParams = useSearchParams();
   const initialCategory = searchParams.get("category") || "All";
@@ -308,6 +320,12 @@ function OpportunitiesExplorerContent() {
                     </div>
 
                     <div className="flex items-center gap-2">
+                      {(opp as any).isFresh && (
+                        <Badge variant="outline" className="text-[10px] text-emerald-700 bg-emerald-50 border-emerald-200 flex items-center gap-1 font-semibold">
+                          <CheckCircle2 className="size-3 text-emerald-600" />
+                          Verified active
+                        </Badge>
+                      )}
                       {getUrgencyBadge(opp.deadline)}
                       <button
                         type="button"
@@ -354,20 +372,50 @@ function OpportunitiesExplorerContent() {
                 </div>
 
                 {/* Bottom line: Compensation + Location + Details */}
-                <div className="border-t border-border pt-4 flex items-center justify-between text-xs text-muted-foreground">
-                  <div className="flex items-center gap-3">
-                    <span className="font-bold text-foreground">{opp.stipendSalary || "Competitive"}</span>
-                    <span>•</span>
-                    <span className="flex items-center gap-1 text-muted-foreground">
-                      <MapPin className="size-3" />
-                      {opp.location}
-                    </span>
+                <div className="border-t border-border pt-3 space-y-2">
+                  <div className="flex items-center justify-between text-[11px] text-muted-foreground">
+                    <div className="flex items-center gap-3">
+                      {(opp as any).lastVerifiedAt && (
+                        <span className="flex items-center gap-1 text-slate-600">
+                          <Clock className="size-3 text-emerald-600" />
+                          Last verified {formatTimeAgo((opp as any).lastVerifiedAt)}
+                        </span>
+                      )}
+                      {(opp as any).sourceName && (
+                        <span>Source: <strong className="text-foreground">{(opp as any).sourceName}</strong></span>
+                      )}
+                    </div>
+
+                    {(opp as any).applicationUrl && (
+                      <span
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          window.open((opp as any).applicationUrl, "_blank", "noopener,noreferrer");
+                        }}
+                        className="inline-flex items-center gap-1 text-primary hover:underline font-semibold cursor-pointer"
+                      >
+                        View original opportunity
+                        <ExternalLink className="size-3" />
+                      </span>
+                    )}
                   </div>
 
-                  <span className="text-link font-semibold flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
-                    View Details
-                    <ArrowRight className="size-3.5" />
-                  </span>
+                  <div className="flex items-center justify-between text-xs text-muted-foreground pt-1">
+                    <div className="flex items-center gap-3">
+                      <span className="font-bold text-foreground">{opp.stipendSalary || "Competitive"}</span>
+                      <span>•</span>
+                      <span className="flex items-center gap-1 text-muted-foreground">
+                        <MapPin className="size-3" />
+                        {opp.location}
+                      </span>
+                    </div>
+
+                    <span className="text-link font-semibold flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+                      View Details
+                      <ArrowRight className="size-3.5" />
+                    </span>
+                  </div>
                 </div>
               </Link>
             );

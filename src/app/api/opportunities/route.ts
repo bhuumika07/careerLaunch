@@ -2,12 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { readDb, writeDb, Opportunity } from "@/lib/db";
 import { requireRole, handleAuthError } from "@/lib/auth-guard";
 import {
-  filterOpportunities,
   findDuplicateOpportunity,
-  refreshOpportunityStatus,
 } from "@/lib/services/opportunity-manager";
+import { filterStudentActiveFeed } from "@/lib/services/verification/studentFeedQuery.ts";
 
-// GET /api/opportunities - Search & Filter opportunities
+// GET /api/opportunities - Search & Filter opportunities (Active & Fresh Student Feed)
 export async function GET(req: NextRequest) {
   try {
     const url = new URL(req.url);
@@ -17,24 +16,45 @@ export async function GET(req: NextRequest) {
     const experienceLevel = url.searchParams.get("experienceLevel") || undefined;
     const urgency = url.searchParams.get("urgency");
     const urgencyDays = urgency ? parseInt(urgency, 10) : undefined;
+    const page = url.searchParams.get("page") ? parseInt(url.searchParams.get("page")!, 10) : 1;
+    const limit = url.searchParams.get("limit") ? parseInt(url.searchParams.get("limit")!, 10) : 20;
 
-    const db = readDb();
+    // Load from persistent DB with graceful fallback
+    let rawOpps: any[] = [];
+    try {
+      if (process.env.DATABASE_URL) {
+        const { prisma } = await import("@/lib/prisma");
+        rawOpps = await (prisma.opportunity as any).findMany({
+          include: { source: true },
+        });
+      }
+    } catch {
+      // Graceful fallback to file-based store
+    }
 
-    // Check expiry
-    const refreshed = db.opportunities.map(refreshOpportunityStatus);
+    if (!rawOpps || rawOpps.length === 0) {
+      const db = readDb();
+      rawOpps = db.opportunities || [];
+    }
 
-    const filtered = filterOpportunities(refreshed, {
+    // Apply strict Chunk 10 active & fresh filtering
+    const feedResult = filterStudentActiveFeed(rawOpps, {
       query,
       category,
       workMode,
       experienceLevel,
       urgencyDays,
+      page,
+      limit,
     });
 
     return NextResponse.json({
       success: true,
-      opportunities: filtered,
-      totalCount: filtered.length,
+      opportunities: feedResult.opportunities,
+      totalCount: feedResult.totalCount,
+      page: feedResult.page,
+      limit: feedResult.limit,
+      totalPages: feedResult.totalPages,
     });
   } catch (error) {
     console.error("Opportunity search API error:", error);

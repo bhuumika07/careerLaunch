@@ -1,0 +1,424 @@
+// -------------------------------------------------
+// Phase 2 schema – additive changes only (does NOT overwrite the existing schema.prisma)
+// -------------------------------------------------
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// -----------------------------------------------------------------
+// Enums (single definitions – duplicates removed)
+// -----------------------------------------------------------------
+enum OpportunityStatus {
+  PENDING          // waiting for first successful verification
+  ACTIVE           // at least one approved source says AVAILABLE
+  STALE            // no recent verification, keep for grace period
+  CLOSED           // all approved sources say CLOSED → not shown to students
+  EXPIRED          // past applicationDeadline
+  INVALID          // failed validation / corrupted data
+  REVIEW_REQUIRED // manual review needed before publishing
+}
+
+enum VerificationOutcome {
+  AVAILABLE   // source confirms listing is still published
+  CLOSED      // source confirms listing is removed
+  UNKNOWN     // timeout / error – do not change status
+  CONFLICT    // different sources disagree (e.g. one AVAILABLE, another CLOSED)
+}
+
+enum VerificationStatus {
+  verified
+  pending
+  unverified
+  rejected
+}
+
+enum LifecycleStatus {
+  active
+  expiring
+  expired
+  removed
+}
+
+enum SourceStatus {
+  active
+  paused
+  failing
+  disabled
+}
+
+enum SourceCategory {
+  jobs
+  internships
+  research
+  scholarships
+  hackathons
+  training
+  other
+}
+
+enum CollectionMethod {
+  api
+  rss
+  scrape
+  manual_import
+}
+
+enum ComplianceStatus {
+  unreviewed
+  permitted
+  restricted
+  blocked
+}
+
+enum ProcessingStatus {
+  collected
+  extracted
+  failed
+  skipped
+}
+
+enum WorkMode {
+  remote
+  hybrid
+  onsite
+  unspecified
+}
+
+enum CompensationType {
+  salary
+  hourly
+  stipend
+  equity
+  other
+}
+
+enum Currency {
+  USD
+  EUR
+  GBP
+  INR
+  // add more as needed
+}
+
+enum SourceHealthStatus {
+  HEALTHY
+  DEGRADED
+  FAILING
+  DISABLED
+}
+
+// -----------------------------------------------------------------
+// Core models – additions only (existing tables remain untouched)
+// -----------------------------------------------------------------
+model Source {
+  id                     String   @id @default(uuid())
+  name                   String
+  baseUrl                String
+  category               SourceCategory
+  collectionMethod       CollectionMethod
+  config                 Json
+  complianceStatus       ComplianceStatus @default(unreviewed)
+  complianceNotes        String?
+  termsUrl               String?
+  robotsCheckedAt        DateTime?
+  collectionFrequency    Int               // minutes between collection runs
+  reliabilityScore       Int @default(0)   // 0‑100
+  status                 SourceStatus @default(disabled)
+
+  // verification / health configuration (Phase 2)
+  verificationRateLimit   Int?   // requests per minute; null = default
+  verificationTimeoutSec  Int?   // per‑request timeout (seconds)
+  healthStatus            SourceHealthStatus @default(HEALTHY)
+  lastSuccessAt           DateTime?
+  lastFailureAt           DateTime?
+  lastErrorMessage        String?
+
+  // relations
+  rawListings             RawListing[]
+  collectionRuns          CollectionRun[]
+  opportunitySources      OpportunitySource[]
+  opportunities           Opportunity[] @relation("SourceOpportunity")
+  verificationLogs        VerificationLog[] @relation("SourceVerificationLogs")
+}
+
+model RawListing {
+  id                String   @id @default(uuid())
+  sourceId          String
+  sourceUrl         String   @unique   // URL to the raw listing page
+  externalId        String?
+  rawHtml           String?
+  rawJson           Json?
+  rawText           String?
+  contentHash       String
+  fetchedAt         DateTime @default(now())
+  httpStatus        Int
+  processingStatus  ProcessingStatus @default(collected)
+
+  source            Source @relation(fields: [sourceId], references: [id])
+}
+
+model Opportunity {
+  id                      String   @id @default(uuid())
+  title                   String
+  category                SourceCategory
+  organizationName        String
+  description             String?
+  responsibilities        String?
+  requiredSkills          String[]   // canonical skill IDs
+  preferredSkills         String[]   // canonical skill IDs
+  skillsExplicitOrInferred Json?     // {skillId: "explicit"|"inferred"}
+  eligibility             Json       // complex flags per field
+  locationCountry         String?
+  locationState           String?
+  locationCity            String?
+  workMode                WorkMode   @default(unspecified)
+  compensation            Json?      // {type, min, max, currency, period}
+  applicationDeadline     DateTime?   // authoritative deadline supplied by source
+  postedAt                DateTime?
+  sourceId                String
+  sourceUrl               String      // URL of the *canonical* listing (may be the same as first sourceUrl)
+  originalText            String?
+  applicationUrl          String?    // direct link to apply (if different from sourceUrl)
+  verificationStatus      VerificationStatus @default(pending) // legacy – keep for backward compatibility
+  lifecycleStatus         LifecycleStatus    @default(active)   // legacy – keep for backward compatibility
+
+  // Phase 2 – authoritative lifecycle status
+  status                  OpportunityStatus   @default(PENDING)
+  lastVerifiedAt          DateTime?
+  nextVerificationAt      DateTime?
+  lastVerificationOutcome VerificationOutcome?
+  consecutiveFailures     Int @default(0)
+  lastVerificationError   String?
+  closedAt                DateTime?
+
+  // relations
+  source                Source @relation("SourceOpportunity", fields: [sourceId], references: [id])
+  opportunitySources    OpportunitySource[]
+  opportunityChanges    OpportunityChange[]
+  applications          Application[]
+  verificationLogs      VerificationLog[] @relation("OpportunityVerificationLogs")
+
+  // indexes for verification scheduling and fast queries
+  @@index([category])
+  @@index([locationCountry, locationState, locationCity])
+  @@index([applicationDeadline])
+  @@index([lifecycleStatus])
+  @@index([status, nextVerificationAt])
+  @@index([status, lastVerifiedAt])
+}
+
+// Represents ONE external listing belonging to a canonical Opportunity.
+// Each source may provide its own external identifier, a listing URL, and an
+// application URL (which can differ from the listing URL). Verification is
+// tracked per listing.
+model OpportunitySource {
+  id                    String   @id @default(uuid())
+  opportunityId        String
+  sourceId             String
+  sourceUrl            String   // URL of the listing on the source site
+  externalId           String?  // source‑provided identifier (e.g. Greenhouse board ID)
+  applicationUrl       String?  // URL to apply directly (may be different from sourceUrl)
+
+  // verification state for this source listing
+  verificationStatus   VerificationStatus @default(pending)
+  lastVerificationAt   DateTime?
+  lastVerificationOutcome VerificationOutcome?
+  verificationError    String?
+
+  // timestamps
+  seenAt               DateTime @default(now())
+
+  // relations
+  opportunity          Opportunity @relation(fields: [opportunityId], references: [id])
+  source               Source      @relation(fields: [sourceId], references: [id])
+  verificationLogs    VerificationLog[] @relation("OpportunitySourceVerificationLogs")
+
+  // keep a uniqueness constraint mirroring the original composite key for backward compatibility
+  @@unique([opportunityId, sourceId, sourceUrl])
+}
+
+// VerificationLog records each verification attempt. It can be linked to a specific OpportunitySource (most common) or just to the canonical Opportunity.
+model VerificationLog {
+  id                     String   @id @default(uuid())
+  opportunityId          String
+  sourceId               String
+  opportunitySourceId    String?   // nullable – null when log is not tied to a specific source listing
+  outcome                VerificationOutcome
+  reason                 String?   // human‑readable description (e.g. "404 Not Found")
+  httpStatus             Int?
+  responseTimeMs         Int?
+  checkedAt              DateTime @default(now())
+
+  // relations
+  opportunity            Opportunity @relation("OpportunityVerificationLogs", fields: [opportunityId], references: [id])
+  source                 Source      @relation("SourceVerificationLogs", fields: [sourceId], references: [id])
+  opportunitySource      OpportunitySource? @relation("OpportunitySourceVerificationLogs", fields: [opportunitySourceId], references: [id])
+
+  // indexes for fast lookup
+  @@index([opportunityId, checkedAt])
+  @@index([sourceId, checkedAt])
+}
+
+model OpportunityChange {
+  id            String @id @default(uuid())
+  opportunityId String
+  field         String
+  oldValue      String?
+  newValue      String?
+  detectedAt    DateTime @default(now())
+
+  opportunity   Opportunity @relation(fields: [opportunityId], references: [id])
+}
+
+model CollectionRun {
+  id            String @id @default(uuid())
+  sourceId      String
+  startedAt     DateTime @default(now())
+  endedAt       DateTime?
+  status        SourceStatus
+  listingsFound Int @default(0)
+  newCount      Int @default(0)
+  updatedCount  Int @default(0)
+  failedCount   Int @default(0)
+  errorSummary  String?
+
+  source        Source @relation(fields: [sourceId], references: [id])
+}
+
+// -------------------------------------------------
+// Existing models – unchanged (preserved exactly as in the original schema)
+// -------------------------------------------------
+model User {
+  id        String @id @default(uuid())
+  email     String @unique
+  name      String?
+  role      String @default("STUDENT")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  auditLogs    AuditLog[] @relation("UserAuditLogs")
+  applications Application[]
+}
+
+model AuditLog {
+  id        String @id @default(uuid())
+  adminId   String
+  action    String
+  target    String?
+  targetId  String?
+  details   Json?
+  createdAt DateTime @default(now())
+
+  admin     User @relation("UserAuditLogs", fields: [adminId], references: [id])
+}
+
+model Application {
+  id                String @id @default(uuid())
+  userId            String
+  opportunityId     String
+  status            ApplicationStatus @default(saved)
+  appliedDate       DateTime?
+  notes             String?
+  resumeVersionId   String?
+  confirmationSource String @default("self_reported")
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  user          User @relation(fields: [userId], references: [id])
+  opportunity   Opportunity @relation(fields: [opportunityId], references: [id])
+}
+
+enum ApplicationStatus {
+  saved
+  applied
+  assessment
+  interview
+  selected
+  rejected
+  withdrawn
+}
+
+model Resume {
+  id         String @id @default(uuid())
+  studentId  String
+  title      String
+  createdAt  DateTime @default(now())
+  versions   ResumeVersion[]
+  @@index([studentId])
+}
+
+model ResumeVersion {
+  id               String @id @default(uuid())
+  resumeId         String
+  createdAt        DateTime @default(now())
+  resume           Resume   @relation(fields: [resumeId], references: [id])
+  parsedFieldReviews ParsedFieldReview[] @relation("ParsedFieldReviewRelation")
+}
+
+enum ReviewStatus {
+  pending
+  accepted
+  edited
+  rejected
+}
+
+model ParsedFieldReview {
+  id               String @id @default(uuid())
+  resumeVersionId  String
+  fieldPath        String
+  originalValue    String
+  correctedValue   String?
+  status           ReviewStatus
+
+  resumeVersion    ResumeVersion @relation("ParsedFieldReviewRelation", fields: [resumeVersionId], references: [id])
+}
+
+model Notification {
+  id            String @id @default(uuid())
+  userId        String
+  type          String   // e.g. "new_opportunity"
+  title         String
+  body          String?
+  link          String?
+  createdAt     DateTime @default(now())
+  readAt        DateTime?
+  opportunityId String?
+  applicationId String?
+}
+
+model NotificationPreference {
+  id                 String @id @default(uuid())
+  userId             String
+  channelInApp       Boolean @default(true)
+  channelEmail       Boolean @default(false)
+  frequency          String  @default("instant") // instant|daily|weekly
+  quietHoursStart    Int?
+  quietHoursEnd      Int?
+  typeToggles        Json    @default("{}")
+}
+
+model Skill {
+  id            String @id @default(uuid())
+  canonicalName String
+  type          String   // technical|soft|domain|tool
+  category      String?
+  aliases       SkillAlias[]
+}
+
+model SkillAlias {
+  id    String @id @default(uuid())
+  skillId String
+  alias String
+
+  skill Skill @relation(fields: [skillId], references: [id])
+}
+
+// -------------------------------------------------
+// End of Phase 2 additive schema
+// -------------------------------------------------
