@@ -29,11 +29,14 @@ export interface EnrichedFeedFilters {
   skills?: string[];
   workMode?: string;
   opportunityType?: string;
+  location?: string;
+  deadline?: string | Date;
   degreeLevels?: string[];
   branches?: string[];
   graduationYears?: number[];
   minCgpa?: number;
   experienceLevel?: string;
+  allowReviewState?: boolean; // Default false: hides needs_review from student feed
 }
 
 export interface EnrichedDetails {
@@ -45,6 +48,9 @@ export interface EnrichedDetails {
   requiredSkills: string[];
   preferredSkills: string[];
   inferredSkills: string[];
+  required_skills?: string[];
+  preferred_skills?: string[];
+  inferred_skills?: string[];
   degreeLevels: string[];
   branches: string[];
   graduationYears: number[];
@@ -77,8 +83,14 @@ export interface EnrichedStudentOpportunityItem {
   lastVerifiedAt: string | null;
   applicationUrl: string | null;
   sourceUrl: string;
-  description: string;
-  skills: string[];
+  description: string; // Original description always preserved
+  rawDescription?: string; // Explicit alias
+  summary?: string | null; // Description summary from enrichment
+  descriptionSummary?: string | null;
+  skills: string[]; // Base backward-compatible skills
+  required_skills: string[]; // Strictly separated required skills
+  preferred_skills: string[]; // Strictly separated preferred skills
+  inferred_skills: string[]; // Clearly labeled inferred skills
   deadline?: string | null;
   stipendSalary?: string | null;
   isFresh: boolean;
@@ -99,7 +111,10 @@ export interface EnrichedStudentFeedResult {
  * Handles both Prisma relation shapes (`opportunity_enrichments` array or `opportunityEnrichment`)
  * and direct memory payload shapes (`enrichment`).
  */
-export function extractEnrichmentData(opp: any): EnrichedDetails | null {
+export function extractEnrichmentData(
+  opp: any,
+  options: { allowReviewState?: boolean } = {}
+): EnrichedDetails | null {
   if (!opp) return null;
 
   // Direct attached enrichment
@@ -115,19 +130,31 @@ export function extractEnrichmentData(opp: any): EnrichedDetails | null {
 
   if (!raw) return null;
 
+  // Enforce Chunk 6 rule: Only succeeded (non-review) enrichments are shown to students by default
+  const status = raw.status || "succeeded";
+  if (!options.allowReviewState && status !== "succeeded") {
+    return null;
+  }
+
   // Handle nested rawPayload if stored as contract payload
   const isContractPayload = raw.basic && raw.skills && raw.opportunity_type;
 
   if (isContractPayload) {
+    const req = (raw.skills?.required_skills || []).map((s: any) => s.name);
+    const pref = (raw.skills?.preferred_skills || []).map((s: any) => s.name);
+    const inf = (raw.skills?.inferred_skills || []).map((s: any) => s.name);
     return {
-      status: raw.status || "succeeded",
+      status,
       roleTitle: raw.basic?.role_title,
       descriptionSummary: raw.basic?.description_summary,
       opportunityType: raw.opportunity_type?.primary_type,
       workMode: raw.location?.work_mode,
-      requiredSkills: (raw.skills?.required_skills || []).map((s: any) => s.name),
-      preferredSkills: (raw.skills?.preferred_skills || []).map((s: any) => s.name),
-      inferredSkills: (raw.skills?.inferred_skills || []).map((s: any) => s.name),
+      requiredSkills: req,
+      preferredSkills: pref,
+      inferredSkills: inf,
+      required_skills: req,
+      preferred_skills: pref,
+      inferred_skills: inf,
       degreeLevels: raw.qualifications?.degree_levels || [],
       branches: raw.qualifications?.branches || [],
       graduationYears: raw.qualifications?.graduation_years || [],
@@ -152,15 +179,22 @@ export function extractEnrichmentData(opp: any): EnrichedDetails | null {
   }
 
   // Handle flat DB column structure (from OpportunityEnrichment record)
+  const reqSkills = Array.isArray(raw.requiredSkills) ? raw.requiredSkills : [];
+  const prefSkills = Array.isArray(raw.preferredSkills) ? raw.preferredSkills : [];
+  const infSkills = Array.isArray(raw.inferredSkills) ? raw.inferredSkills : [];
+
   return {
-    status: raw.status || "succeeded",
+    status,
     roleTitle: raw.roleTitle,
     descriptionSummary: raw.descriptionSummary,
     opportunityType: raw.opportunityType,
     workMode: raw.workMode,
-    requiredSkills: Array.isArray(raw.requiredSkills) ? raw.requiredSkills : [],
-    preferredSkills: Array.isArray(raw.preferredSkills) ? raw.preferredSkills : [],
-    inferredSkills: Array.isArray(raw.inferredSkills) ? raw.inferredSkills : [],
+    requiredSkills: reqSkills,
+    preferredSkills: prefSkills,
+    inferredSkills: infSkills,
+    required_skills: reqSkills,
+    preferred_skills: prefSkills,
+    inferred_skills: infSkills,
     degreeLevels: Array.isArray(raw.degreeLevels) ? raw.degreeLevels : [],
     branches: Array.isArray(raw.branches) ? raw.branches : [],
     graduationYears: Array.isArray(raw.graduationYears) ? raw.graduationYears : [],
@@ -245,8 +279,10 @@ export function filterEnrichedStudentFeed(
       }
     }
 
-    // Extract enrichment if available
-    const enrichment = extractEnrichmentData(opp);
+    // Extract enrichment if available (respects allowReviewState)
+    const enrichment = extractEnrichmentData(opp, {
+      allowReviewState: filters.allowReviewState ?? false,
+    });
 
     // Also check enrichment application deadline if present
     if (enrichment?.academicRequirements) {
@@ -333,6 +369,32 @@ export function filterEnrichedStudentFeed(
     if (filters.category && filters.category !== "All") {
       const cat = String(opp.category || "").toLowerCase();
       if (cat !== filters.category.toLowerCase()) {
+        return false;
+      }
+    }
+
+    // Location Filter
+    if (filters.location && filters.location !== "All") {
+      const targetLoc = filters.location.toLowerCase().trim();
+      const oppLocation = (
+        opp.location ||
+        opp.locationCity ||
+        opp.workMode ||
+        enrichment?.workMode ||
+        (enrichment?.cities || []).join(" ") ||
+        enrichment?.country ||
+        ""
+      ).toLowerCase();
+      if (!oppLocation.includes(targetLoc)) {
+        return false;
+      }
+    }
+
+    // Explicit Deadline Filter
+    if (filters.deadline && deadlineStr) {
+      const targetDeadline = new Date(filters.deadline).getTime();
+      const oppDeadline = new Date(deadlineStr).getTime();
+      if (!isNaN(targetDeadline) && !isNaN(oppDeadline) && oppDeadline > targetDeadline) {
         return false;
       }
     }
@@ -455,7 +517,9 @@ export function filterEnrichedStudentFeed(
       opp.sourceName ||
       (opp.sourceUrl?.includes("greenhouse") ? "Greenhouse" : "Direct Employer");
 
-    const enrichment = extractEnrichmentData(opp);
+    const enrichment = extractEnrichmentData(opp, {
+      allowReviewState: filters.allowReviewState ?? false,
+    });
 
     // Merge skills: prioritizing verified enriched skills
     let finalSkills: string[] = [];
@@ -488,10 +552,15 @@ export function filterEnrichedStudentFeed(
       }
     }
 
+    const rawDesc = opp.description || opp.originalText || "";
+    const reqSkills = enrichment?.requiredSkills || [];
+    const prefSkills = enrichment?.preferredSkills || [];
+    const infSkills = enrichment?.inferredSkills || [];
+
     return {
       id: opp.id,
       title: enrichment?.roleTitle || opp.title,
-      employer: enrichment?.compensation ? opp.organizationName || opp.org || "Employer" : opp.organizationName || opp.org || "Employer",
+      employer: opp.organizationName || opp.org || "Employer",
       org: opp.organizationName || opp.org || "Employer",
       location:
         opp.location ||
@@ -505,8 +574,14 @@ export function filterEnrichedStudentFeed(
       lastVerifiedAt: verifiedTimeStr ? new Date(verifiedTimeStr).toISOString() : null,
       applicationUrl: opp.applicationUrl || opp.sourceUrl || null,
       sourceUrl: opp.sourceUrl || "",
-      description: enrichment?.descriptionSummary || opp.description || "",
-      skills: finalSkills,
+      description: rawDesc, // Original description is always preserved
+      rawDescription: rawDesc,
+      summary: enrichment?.descriptionSummary || null,
+      descriptionSummary: enrichment?.descriptionSummary || null,
+      skills: Array.isArray(opp.skills) ? opp.skills : [],
+      required_skills: reqSkills,
+      preferred_skills: prefSkills,
+      inferred_skills: infSkills,
       deadline: opp.applicationDeadline || opp.deadline || null,
       stipendSalary,
       isFresh,

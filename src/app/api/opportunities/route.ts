@@ -23,6 +23,8 @@ export async function GET(req: NextRequest) {
     const skillsParam = url.searchParams.get("skills");
     const skills = skillsParam ? skillsParam.split(",").map((s) => s.trim()).filter(Boolean) : undefined;
     const opportunityType = url.searchParams.get("opportunityType") || url.searchParams.get("type") || undefined;
+    const location = url.searchParams.get("location") || undefined;
+    const deadline = url.searchParams.get("deadline") || undefined;
     const degreesParam = url.searchParams.get("degreeLevels") || url.searchParams.get("degrees");
     const degreeLevels = degreesParam ? degreesParam.split(",").map((d) => d.trim()).filter(Boolean) : undefined;
     const branchesParam = url.searchParams.get("branches");
@@ -43,7 +45,7 @@ export async function GET(req: NextRequest) {
       if (process.env.DATABASE_URL) {
         const { prisma } = await import("@/lib/prisma");
         rawOpps = await (prisma.opportunity as any).findMany({
-          include: { source: true },
+          include: { source: true, opportunityEnrichment: true },
         });
       }
     } catch {
@@ -66,6 +68,8 @@ export async function GET(req: NextRequest) {
       category,
       workMode,
       experienceLevel,
+      location,
+      deadline,
       urgencyDays,
       skills,
       opportunityType,

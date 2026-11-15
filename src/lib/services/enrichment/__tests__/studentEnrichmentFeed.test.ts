@@ -356,4 +356,107 @@ describe("Student Discovery Feed with AI Enrichment (Chunk 6)", () => {
       assert.deepEqual(extracted?.degreeLevels, ["PhD"]);
     });
   });
+
+  describe("Milestone 3.5: API Integration & Visibility Contract", () => {
+    it("preserves backward compatibility: original description is always still available", () => {
+      const result = filterEnrichedStudentFeed(sampleDataset, { now });
+      const enrichedItem = result.opportunities.find((o) => o.id === "opp_ai_1")!;
+      const unEnrichedItem = result.opportunities.find((o) => o.id === "opp_legacy_1")!;
+
+      // Original description is preserved
+      assert.equal(enrichedItem.description, "Original raw description text.");
+      assert.equal(enrichedItem.rawDescription, "Original raw description text.");
+      assert.equal(unEnrichedItem.description, "Researching multimodal foundation models.");
+
+      // Enriched summary is in separate field
+      assert.ok(enrichedItem.summary?.includes("Summer backend systems engineering"));
+      assert.equal(unEnrichedItem.summary, null);
+    });
+
+    it("keeps required_skills and preferred_skills strictly separated without merging", () => {
+      const result = filterEnrichedStudentFeed(sampleDataset, { now });
+      const item = result.opportunities.find((o) => o.id === "opp_ai_1")!;
+
+      assert.ok(Array.isArray(item.required_skills));
+      assert.ok(Array.isArray(item.preferred_skills));
+      assert.deepEqual(item.required_skills, ["Go", "Distributed Systems", "SQL"]);
+      assert.deepEqual(item.preferred_skills, ["Kubernetes", "Docker", "gRPC"]);
+
+      // Verify no intersection between required and preferred
+      const intersection = item.required_skills.filter((s) => item.preferred_skills.includes(s));
+      assert.equal(intersection.length, 0);
+    });
+
+    it("allows un-enriched opportunities to appear normally in the student feed", () => {
+      const result = filterEnrichedStudentFeed(sampleDataset, { now });
+      const unEnrichedItem = result.opportunities.find((o) => o.id === "opp_legacy_1")!;
+
+      assert.ok(unEnrichedItem);
+      assert.equal(unEnrichedItem.title, "Machine Learning Researcher");
+      assert.equal(unEnrichedItem.enrichment, null);
+      assert.deepEqual(unEnrichedItem.required_skills, []);
+      assert.deepEqual(unEnrichedItem.preferred_skills, []);
+      assert.deepEqual(unEnrichedItem.skills, ["Python", "PyTorch"]);
+    });
+
+    it("hides review-state enrichments from students by default", () => {
+      const oppWithReviewState = {
+        id: "opp_review_1",
+        title: "Platform Engineer",
+        organizationName: "HashiCorp",
+        description: "Core infrastructure engineering.",
+        status: "ACTIVE",
+        lastVerifiedAt: recentVerified,
+        applicationDeadline: futureDeadline,
+        workMode: "remote",
+        category: "Jobs",
+        skills: ["Terraform"],
+        enrichment: {
+          status: "needs_review", // Not yet approved by admin!
+          roleTitle: "Platform Engineer (Candidate)",
+          requiredSkills: ["Terraform", "Go"],
+          preferredSkills: ["Consul"],
+        },
+      };
+
+      // 1. Student query (default allowReviewState: false)
+      const studentResult = filterEnrichedStudentFeed([oppWithReviewState], { now });
+      assert.equal(studentResult.totalCount, 1);
+      const studentItem = studentResult.opportunities[0];
+      assert.equal(studentItem.id, "opp_review_1");
+      // Enrichment must be hidden from student!
+      assert.equal(studentItem.enrichment, null);
+      assert.deepEqual(studentItem.required_skills, []);
+
+      // 2. Admin query (allowReviewState: true)
+      const adminResult = filterEnrichedStudentFeed([oppWithReviewState], {
+        now,
+        allowReviewState: true,
+      });
+      assert.equal(adminResult.totalCount, 1);
+      const adminItem = adminResult.opportunities[0];
+      // Visible in admin context
+      assert.ok(adminItem.enrichment != null);
+      assert.equal(adminItem.enrichment?.status, "needs_review");
+      assert.deepEqual(adminItem.required_skills, ["Terraform", "Go"]);
+    });
+
+    it("filters accurately by location and deadline", () => {
+      // Filter by location
+      const locResult = filterEnrichedStudentFeed(sampleDataset, {
+        now,
+        location: "remote",
+      });
+      assert.ok(locResult.totalCount >= 1);
+      assert.ok(locResult.opportunities.every((o) => o.location.toLowerCase().includes("remote") || o.workMode === "remote"));
+
+      // Filter by deadline before 20 days in future
+      const targetDeadline = new Date(now.getTime() + 20 * 24 * 3600 * 1000);
+      const deadlineResult = filterEnrichedStudentFeed(sampleDataset, {
+        now,
+        deadline: targetDeadline,
+      });
+      assert.ok(deadlineResult.totalCount >= 1);
+    });
+  });
 });
