@@ -401,8 +401,12 @@ function OpportunitiesExplorerContent() {
             setSelectedMode("All");
             setSelectedExp("All");
             setUrgencyDays("All");
+            setSelectedOppType("All");
+            setSelectedDegree("All");
+            setSelectedGradYear("All");
+            setSelectedSkills([]);
           }}
-          className="text-primary hover:underline cursor-pointer"
+          className="text-primary hover:underline cursor-pointer font-medium"
         >
           Reset all filters
         </button>
@@ -414,12 +418,31 @@ function OpportunitiesExplorerContent() {
           Loading vetted opportunities...
         </div>
       ) : opportunities.length === 0 ? (
-        <div className="p-16 text-center bg-card rounded-3xl border border-border space-y-3">
+        <div className="p-16 text-center bg-card rounded-3xl border border-border space-y-4">
           <Briefcase className="size-10 text-muted-foreground mx-auto" />
           <h3 className="font-heading font-bold text-foreground text-base">No matching opportunities found</h3>
           <p className="text-xs text-muted-foreground max-w-sm mx-auto">
-            Try adjusting your search keywords, clearing work mode filters, or exploring other categories.
+            Your active combination of filters (e.g. Senior + Class of 2027 + Closing in 48h) is very specific. Try clearing or relaxing filters.
           </p>
+          <div>
+            <button
+              type="button"
+              onClick={() => {
+                setSearchQuery("");
+                setSelectedCategory("All");
+                setSelectedMode("All");
+                setSelectedExp("All");
+                setUrgencyDays("All");
+                setSelectedOppType("All");
+                setSelectedDegree("All");
+                setSelectedGradYear("All");
+                setSelectedSkills([]);
+              }}
+              className="px-4 py-2 rounded-xl bg-primary text-primary-foreground font-semibold text-xs hover:bg-primary/90 transition-all cursor-pointer shadow-xs inline-flex items-center gap-1.5"
+            >
+              Reset all filters
+            </button>
+          </div>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

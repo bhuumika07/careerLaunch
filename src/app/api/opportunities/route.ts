@@ -55,6 +55,11 @@ export async function GET(req: NextRequest) {
       rawOpps = db.opportunities || [];
     }
 
+    // In local development / offline file fallback mode without active DB verification worker,
+    // allow seed opportunities to remain visible to explore filters
+    const isLocalFallback = !process.env.DATABASE_URL;
+    const freshnessThresholdHours = isLocalFallback ? 24 * 365 : undefined;
+
     // Apply strict Chunk 10 active & fresh filtering + Phase 3 enrichment discovery
     const feedResult = filterEnrichedStudentFeed(rawOpps, {
       query,
@@ -68,6 +73,7 @@ export async function GET(req: NextRequest) {
       branches,
       graduationYears,
       minCgpa,
+      freshnessThresholdHours,
       page,
       limit,
     });
