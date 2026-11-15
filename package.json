@@ -9,6 +9,7 @@
     "start": "next start",
     "lint": "eslint",
     "test": "node --experimental-strip-types --test src/lib/services/**/__tests__/*.test.ts",
+    "ingest:real": "node --experimental-strip-types scripts/ingest_real_jobs.ts",
     "worker:verification": "node --experimental-strip-types src/workers/verificationWorker.ts",
     "scheduler:verification": "node --experimental-strip-types src/workers/verificationScheduler.ts",
     "sweeper:freshness": "node --experimental-strip-types src/workers/freshnessSweeper.ts",
