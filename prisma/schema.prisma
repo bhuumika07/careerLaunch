@@ -229,6 +229,9 @@ model Opportunity {
   quarantineReasons     String[]   @default([])
   dataQualityScore      Float?
 
+  careerRoleId          String?
+  careerRole            CareerRole? @relation(fields: [careerRoleId], references: [id], onDelete: SetNull)
+
   source                Source @relation(fields: [sourceId], references: [id])
   opportunitySources    OpportunitySource[]
   opportunityChanges    OpportunityChange[]
@@ -239,6 +242,7 @@ model Opportunity {
   @@index([applicationDeadline])
   @@index([lifecycleStatus])
   @@index([isQuarantined])
+  @@index([careerRoleId])
 }
 
 model OpportunitySource {
@@ -625,5 +629,28 @@ model StudentPreference {
 
   studentProfile     StudentProfile @relation(fields: [studentProfileId], references: [id], onDelete: Cascade)
 }
+
+// -------------------------------------------------
+// Phase 5: Career Role Discovery Models (Chunk 5.1)
+// -------------------------------------------------
+
+model CareerRole {
+  id               String        @id @default(uuid())
+  canonicalName    String        @unique
+  description      String?
+  aliases          String[]      @default([])
+  domain           String
+  requiredSkillIds String[]      @default([])
+  relatedSkillIds  String[]      @default([])
+  isActive         Boolean       @default(true)
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  opportunities    Opportunity[]
+
+  @@index([domain])
+  @@index([isActive])
+}
+
 
 
