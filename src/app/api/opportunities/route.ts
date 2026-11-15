@@ -48,6 +48,7 @@ export async function GET(req: NextRequest) {
       if (process.env.DATABASE_URL) {
         const { prisma } = await import("@/lib/prisma");
         rawOpps = await (prisma.opportunity as any).findMany({
+          where: { isQuarantined: false },
           include: { source: true, opportunityEnrichment: true },
         });
       }
@@ -57,7 +58,7 @@ export async function GET(req: NextRequest) {
 
     if (!rawOpps || rawOpps.length === 0) {
       const db = readDb();
-      rawOpps = db.opportunities || [];
+      rawOpps = (db.opportunities || []).filter((o: any) => !o.isQuarantined);
     }
 
     // In local development / offline file fallback mode without active DB verification worker,

@@ -1988,7 +1988,14 @@
         "compensation": {
           "textVerbatim": "$45 - $65 / hour"
         }
-      }
+      },
+      "isQuarantined": true,
+      "quarantineReasons": [
+        "SYNTHETIC_SALARY_FALLBACK",
+        "SYNTHETIC_CGPA_FALLBACK",
+        "SYNTHETIC_DEADLINE_FALLBACK"
+      ],
+      "dataQualityScore": 0.4
     },
     {
       "id": "real_cloudflare_8038898",
@@ -2062,7 +2069,13 @@
         "compensation": {
           "textVerbatim": "$230,000 - $288,000"
         }
-      }
+      },
+      "isQuarantined": true,
+      "quarantineReasons": [
+        "SYNTHETIC_CGPA_FALLBACK",
+        "SYNTHETIC_DEADLINE_FALLBACK"
+      ],
+      "dataQualityScore": 0.6
     },
     {
       "id": "real_cloudflare_8155495",
@@ -2147,7 +2160,14 @@
         "compensation": {
           "textVerbatim": "$230,000 - $317,000"
         }
-      }
+      },
+      "isQuarantined": true,
+      "quarantineReasons": [
+        "SYNTHETIC_GRAD_YEAR_FALLBACK",
+        "SYNTHETIC_CGPA_FALLBACK",
+        "SYNTHETIC_DEADLINE_FALLBACK"
+      ],
+      "dataQualityScore": 0.4
     },
     {
       "id": "real_cloudflare_8105716",
@@ -2232,7 +2252,15 @@
         "compensation": {
           "textVerbatim": "$120,000 - $185,000 / year"
         }
-      }
+      },
+      "isQuarantined": true,
+      "quarantineReasons": [
+        "SYNTHETIC_SALARY_FALLBACK",
+        "SYNTHETIC_GRAD_YEAR_FALLBACK",
+        "SYNTHETIC_CGPA_FALLBACK",
+        "SYNTHETIC_DEADLINE_FALLBACK"
+      ],
+      "dataQualityScore": 0.2
     },
     {
       "id": "real_cloudflare_8055320",
@@ -2319,7 +2347,14 @@
         "compensation": {
           "textVerbatim": "$194,000 - $266,000"
         }
-      }
+      },
+      "isQuarantined": true,
+      "quarantineReasons": [
+        "SYNTHETIC_GRAD_YEAR_FALLBACK",
+        "SYNTHETIC_CGPA_FALLBACK",
+        "SYNTHETIC_DEADLINE_FALLBACK"
+      ],
+      "dataQualityScore": 0.4
     },
     {
       "id": "real_figma_6233043004",
@@ -2397,7 +2432,14 @@
         "compensation": {
           "textVerbatim": "$153,000 - $296,000 USD"
         }
-      }
+      },
+      "isQuarantined": true,
+      "quarantineReasons": [
+        "SYNTHETIC_GRAD_YEAR_FALLBACK",
+        "SYNTHETIC_CGPA_FALLBACK",
+        "SYNTHETIC_DEADLINE_FALLBACK"
+      ],
+      "dataQualityScore": 0.4
     },
     {
       "id": "real_figma_6178851004",
@@ -2476,7 +2518,13 @@
         "compensation": {
           "textVerbatim": "$46 - $46 USD"
         }
-      }
+      },
+      "isQuarantined": true,
+      "quarantineReasons": [
+        "SYNTHETIC_CGPA_FALLBACK",
+        "SYNTHETIC_DEADLINE_FALLBACK"
+      ],
+      "dataQualityScore": 0.6
     },
     {
       "id": "real_figma_6207801004",
@@ -2555,7 +2603,13 @@
         "compensation": {
           "textVerbatim": "$74 - $74 USD"
         }
-      }
+      },
+      "isQuarantined": true,
+      "quarantineReasons": [
+        "SYNTHETIC_CGPA_FALLBACK",
+        "SYNTHETIC_DEADLINE_FALLBACK"
+      ],
+      "dataQualityScore": 0.6
     },
     {
       "id": "real_figma_6200626004",
@@ -2634,7 +2688,13 @@
         "compensation": {
           "textVerbatim": "$68 - $68 USD"
         }
-      }
+      },
+      "isQuarantined": true,
+      "quarantineReasons": [
+        "SYNTHETIC_CGPA_FALLBACK",
+        "SYNTHETIC_DEADLINE_FALLBACK"
+      ],
+      "dataQualityScore": 0.6
     },
     {
       "id": "real_figma_6238015004",
@@ -2715,7 +2775,13 @@
         "compensation": {
           "textVerbatim": "$74 - $74 USD"
         }
-      }
+      },
+      "isQuarantined": true,
+      "quarantineReasons": [
+        "SYNTHETIC_CGPA_FALLBACK",
+        "SYNTHETIC_DEADLINE_FALLBACK"
+      ],
+      "dataQualityScore": 0.6
     },
     {
       "id": "real_gitlab_8771512002",
@@ -2794,7 +2860,13 @@
         "compensation": {
           "textVerbatim": "$115,200 - $162,000 USD"
         }
-      }
+      },
+      "isQuarantined": true,
+      "quarantineReasons": [
+        "SYNTHETIC_CGPA_FALLBACK",
+        "SYNTHETIC_DEADLINE_FALLBACK"
+      ],
+      "dataQualityScore": 0.6
     },
     {
       "id": "real_gitlab_8704363002",
@@ -2875,7 +2947,14 @@
         "compensation": {
           "textVerbatim": "$120,000 - $185,000 / year"
         }
-      }
+      },
+      "isQuarantined": true,
+      "quarantineReasons": [
+        "SYNTHETIC_SALARY_FALLBACK",
+        "SYNTHETIC_CGPA_FALLBACK",
+        "SYNTHETIC_DEADLINE_FALLBACK"
+      ],
+      "dataQualityScore": 0.4
     },
     {
       "id": "real_gitlab_8749950002",
@@ -2956,7 +3035,14 @@
         "compensation": {
           "textVerbatim": "$120,000 - $185,000 / year"
         }
-      }
+      },
+      "isQuarantined": true,
+      "quarantineReasons": [
+        "SYNTHETIC_SALARY_FALLBACK",
+        "SYNTHETIC_CGPA_FALLBACK",
+        "SYNTHETIC_DEADLINE_FALLBACK"
+      ],
+      "dataQualityScore": 0.4
     },
     {
       "id": "real_gitlab_8912709002",
@@ -3032,7 +3118,13 @@
         "compensation": {
           "textVerbatim": "$115,200 - $194,400 USD"
         }
-      }
+      },
+      "isQuarantined": true,
+      "quarantineReasons": [
+        "SYNTHETIC_CGPA_FALLBACK",
+        "SYNTHETIC_DEADLINE_FALLBACK"
+      ],
+      "dataQualityScore": 0.6
     },
     {
       "id": "real_gitlab_8760233002",
@@ -3113,7 +3205,14 @@
         "compensation": {
           "textVerbatim": "$120,000 - $185,000 / year"
         }
-      }
+      },
+      "isQuarantined": true,
+      "quarantineReasons": [
+        "SYNTHETIC_SALARY_FALLBACK",
+        "SYNTHETIC_CGPA_FALLBACK",
+        "SYNTHETIC_DEADLINE_FALLBACK"
+      ],
+      "dataQualityScore": 0.4
     },
     {
       "id": "real_datadog_3851935",
@@ -3194,7 +3293,14 @@
         "compensation": {
           "textVerbatim": "$192,000 - $240,000 USD"
         }
-      }
+      },
+      "isQuarantined": true,
+      "quarantineReasons": [
+        "SYNTHETIC_GRAD_YEAR_FALLBACK",
+        "SYNTHETIC_CGPA_FALLBACK",
+        "SYNTHETIC_DEADLINE_FALLBACK"
+      ],
+      "dataQualityScore": 0.4
     },
     {
       "id": "real_datadog_8248968",
@@ -3270,7 +3376,15 @@
         "compensation": {
           "textVerbatim": "$120,000 - $185,000 / year"
         }
-      }
+      },
+      "isQuarantined": true,
+      "quarantineReasons": [
+        "SYNTHETIC_SALARY_FALLBACK",
+        "SYNTHETIC_GRAD_YEAR_FALLBACK",
+        "SYNTHETIC_CGPA_FALLBACK",
+        "SYNTHETIC_DEADLINE_FALLBACK"
+      ],
+      "dataQualityScore": 0.2
     },
     {
       "id": "real_datadog_3851927",
@@ -3351,7 +3465,14 @@
         "compensation": {
           "textVerbatim": "$192,000 - $240,000 USD"
         }
-      }
+      },
+      "isQuarantined": true,
+      "quarantineReasons": [
+        "SYNTHETIC_GRAD_YEAR_FALLBACK",
+        "SYNTHETIC_CGPA_FALLBACK",
+        "SYNTHETIC_DEADLINE_FALLBACK"
+      ],
+      "dataQualityScore": 0.4
     },
     {
       "id": "real_datadog_8114186",
@@ -3423,7 +3544,14 @@
         "compensation": {
           "textVerbatim": "$45 - $65 / hour"
         }
-      }
+      },
+      "isQuarantined": true,
+      "quarantineReasons": [
+        "SYNTHETIC_SALARY_FALLBACK",
+        "SYNTHETIC_CGPA_FALLBACK",
+        "SYNTHETIC_DEADLINE_FALLBACK"
+      ],
+      "dataQualityScore": 0.4
     },
     {
       "id": "real_datadog_8052118",
@@ -3495,7 +3623,13 @@
         "compensation": {
           "textVerbatim": "$100,000 - $110,000 USD"
         }
-      }
+      },
+      "isQuarantined": true,
+      "quarantineReasons": [
+        "SYNTHETIC_CGPA_FALLBACK",
+        "SYNTHETIC_DEADLINE_FALLBACK"
+      ],
+      "dataQualityScore": 0.6
     },
     {
       "id": "real_affirm_8011375003",
@@ -3574,7 +3708,13 @@
         "compensation": {
           "textVerbatim": "$50"
         }
-      }
+      },
+      "isQuarantined": true,
+      "quarantineReasons": [
+        "SYNTHETIC_CGPA_FALLBACK",
+        "SYNTHETIC_DEADLINE_FALLBACK"
+      ],
+      "dataQualityScore": 0.6
     },
     {
       "id": "real_affirm_8039805003",
@@ -3653,7 +3793,15 @@
         "compensation": {
           "textVerbatim": "$120,000 - $185,000 / year"
         }
-      }
+      },
+      "isQuarantined": true,
+      "quarantineReasons": [
+        "SYNTHETIC_SALARY_FALLBACK",
+        "SYNTHETIC_GRAD_YEAR_FALLBACK",
+        "SYNTHETIC_CGPA_FALLBACK",
+        "SYNTHETIC_DEADLINE_FALLBACK"
+      ],
+      "dataQualityScore": 0.2
     },
     {
       "id": "real_affirm_8200180003",
@@ -3736,7 +3884,14 @@
         "compensation": {
           "textVerbatim": "$32,000-$48,000"
         }
-      }
+      },
+      "isQuarantined": true,
+      "quarantineReasons": [
+        "SYNTHETIC_GRAD_YEAR_FALLBACK",
+        "SYNTHETIC_CGPA_FALLBACK",
+        "SYNTHETIC_DEADLINE_FALLBACK"
+      ],
+      "dataQualityScore": 0.4
     },
     {
       "id": "real_affirm_7854835003",
@@ -3812,7 +3967,15 @@
         "compensation": {
           "textVerbatim": "$120,000 - $185,000 / year"
         }
-      }
+      },
+      "isQuarantined": true,
+      "quarantineReasons": [
+        "SYNTHETIC_SALARY_FALLBACK",
+        "SYNTHETIC_GRAD_YEAR_FALLBACK",
+        "SYNTHETIC_CGPA_FALLBACK",
+        "SYNTHETIC_DEADLINE_FALLBACK"
+      ],
+      "dataQualityScore": 0.2
     },
     {
       "id": "real_elastic_8075239",
@@ -3891,7 +4054,14 @@
         "compensation": {
           "textVerbatim": "$2000"
         }
-      }
+      },
+      "isQuarantined": true,
+      "quarantineReasons": [
+        "SYNTHETIC_GRAD_YEAR_FALLBACK",
+        "SYNTHETIC_CGPA_FALLBACK",
+        "SYNTHETIC_DEADLINE_FALLBACK"
+      ],
+      "dataQualityScore": 0.4
     },
     {
       "id": "real_elastic_8267188",
@@ -3967,7 +4137,14 @@
         "compensation": {
           "textVerbatim": "$2000"
         }
-      }
+      },
+      "isQuarantined": true,
+      "quarantineReasons": [
+        "SYNTHETIC_GRAD_YEAR_FALLBACK",
+        "SYNTHETIC_CGPA_FALLBACK",
+        "SYNTHETIC_DEADLINE_FALLBACK"
+      ],
+      "dataQualityScore": 0.4
     },
     {
       "id": "real_elastic_8245815",
@@ -4046,7 +4223,14 @@
         "compensation": {
           "textVerbatim": "$159,800 - $252,800 USD"
         }
-      }
+      },
+      "isQuarantined": true,
+      "quarantineReasons": [
+        "SYNTHETIC_GRAD_YEAR_FALLBACK",
+        "SYNTHETIC_CGPA_FALLBACK",
+        "SYNTHETIC_DEADLINE_FALLBACK"
+      ],
+      "dataQualityScore": 0.4
     },
     {
       "id": "real_elastic_8130119",
@@ -4127,7 +4311,14 @@
         "compensation": {
           "textVerbatim": "$159,800 - $252,800 USD"
         }
-      }
+      },
+      "isQuarantined": true,
+      "quarantineReasons": [
+        "SYNTHETIC_GRAD_YEAR_FALLBACK",
+        "SYNTHETIC_CGPA_FALLBACK",
+        "SYNTHETIC_DEADLINE_FALLBACK"
+      ],
+      "dataQualityScore": 0.4
     },
     {
       "id": "real_airbnb_8257826",
@@ -4212,7 +4403,15 @@
         "compensation": {
           "textVerbatim": "$120,000 - $185,000 / year"
         }
-      }
+      },
+      "isQuarantined": true,
+      "quarantineReasons": [
+        "SYNTHETIC_SALARY_FALLBACK",
+        "SYNTHETIC_GRAD_YEAR_FALLBACK",
+        "SYNTHETIC_CGPA_FALLBACK",
+        "SYNTHETIC_DEADLINE_FALLBACK"
+      ],
+      "dataQualityScore": 0.2
     },
     {
       "id": "real_airbnb_7453190",
@@ -4286,7 +4485,15 @@
         "compensation": {
           "textVerbatim": "$120,000 - $185,000 / year"
         }
-      }
+      },
+      "isQuarantined": true,
+      "quarantineReasons": [
+        "SYNTHETIC_SALARY_FALLBACK",
+        "SYNTHETIC_GRAD_YEAR_FALLBACK",
+        "SYNTHETIC_CGPA_FALLBACK",
+        "SYNTHETIC_DEADLINE_FALLBACK"
+      ],
+      "dataQualityScore": 0.2
     },
     {
       "id": "real_airbnb_8263282",
@@ -4367,7 +4574,15 @@
         "compensation": {
           "textVerbatim": "$120,000 - $185,000 / year"
         }
-      }
+      },
+      "isQuarantined": true,
+      "quarantineReasons": [
+        "SYNTHETIC_SALARY_FALLBACK",
+        "SYNTHETIC_GRAD_YEAR_FALLBACK",
+        "SYNTHETIC_CGPA_FALLBACK",
+        "SYNTHETIC_DEADLINE_FALLBACK"
+      ],
+      "dataQualityScore": 0.2
     },
     {
       "id": "real_airbnb_8325603",
@@ -4448,7 +4663,15 @@
         "compensation": {
           "textVerbatim": "$120,000 - $185,000 / year"
         }
-      }
+      },
+      "isQuarantined": true,
+      "quarantineReasons": [
+        "SYNTHETIC_SALARY_FALLBACK",
+        "SYNTHETIC_GRAD_YEAR_FALLBACK",
+        "SYNTHETIC_CGPA_FALLBACK",
+        "SYNTHETIC_DEADLINE_FALLBACK"
+      ],
+      "dataQualityScore": 0.2
     },
     {
       "id": "real_pinterest_7685466",
@@ -4524,7 +4747,14 @@
         "compensation": {
           "textVerbatim": "$285,452 - $449,541 USD"
         }
-      }
+      },
+      "isQuarantined": true,
+      "quarantineReasons": [
+        "SYNTHETIC_GRAD_YEAR_FALLBACK",
+        "SYNTHETIC_CGPA_FALLBACK",
+        "SYNTHETIC_DEADLINE_FALLBACK"
+      ],
+      "dataQualityScore": 0.4
     },
     {
       "id": "real_pinterest_8213988",
@@ -4600,7 +4830,14 @@
         "compensation": {
           "textVerbatim": "$123,696 - $254,667 USD"
         }
-      }
+      },
+      "isQuarantined": true,
+      "quarantineReasons": [
+        "SYNTHETIC_GRAD_YEAR_FALLBACK",
+        "SYNTHETIC_CGPA_FALLBACK",
+        "SYNTHETIC_DEADLINE_FALLBACK"
+      ],
+      "dataQualityScore": 0.4
     },
     {
       "id": "real_pinterest_8227344",
@@ -4676,7 +4913,14 @@
         "compensation": {
           "textVerbatim": "$123,696 - $254,667 USD"
         }
-      }
+      },
+      "isQuarantined": true,
+      "quarantineReasons": [
+        "SYNTHETIC_GRAD_YEAR_FALLBACK",
+        "SYNTHETIC_CGPA_FALLBACK",
+        "SYNTHETIC_DEADLINE_FALLBACK"
+      ],
+      "dataQualityScore": 0.4
     },
     {
       "id": "real_pinterest_5459622",
@@ -4752,7 +4996,15 @@
         "compensation": {
           "textVerbatim": "$120,000 - $185,000 / year"
         }
-      }
+      },
+      "isQuarantined": true,
+      "quarantineReasons": [
+        "SYNTHETIC_SALARY_FALLBACK",
+        "SYNTHETIC_GRAD_YEAR_FALLBACK",
+        "SYNTHETIC_CGPA_FALLBACK",
+        "SYNTHETIC_DEADLINE_FALLBACK"
+      ],
+      "dataQualityScore": 0.2
     },
     {
       "id": "real_discord_8731320002",
@@ -4828,7 +5080,14 @@
         "compensation": {
           "textVerbatim": "$196,000 - $245,000 USD"
         }
-      }
+      },
+      "isQuarantined": true,
+      "quarantineReasons": [
+        "SYNTHETIC_GRAD_YEAR_FALLBACK",
+        "SYNTHETIC_CGPA_FALLBACK",
+        "SYNTHETIC_DEADLINE_FALLBACK"
+      ],
+      "dataQualityScore": 0.4
     },
     {
       "id": "real_discord_8675185002",
@@ -4907,7 +5166,14 @@
         "compensation": {
           "textVerbatim": "$248,000 - $310,000 USD"
         }
-      }
+      },
+      "isQuarantined": true,
+      "quarantineReasons": [
+        "SYNTHETIC_GRAD_YEAR_FALLBACK",
+        "SYNTHETIC_CGPA_FALLBACK",
+        "SYNTHETIC_DEADLINE_FALLBACK"
+      ],
+      "dataQualityScore": 0.4
     },
     {
       "id": "real_discord_8802354002",
@@ -4981,7 +5247,14 @@
         "compensation": {
           "textVerbatim": "$272,000"
         }
-      }
+      },
+      "isQuarantined": true,
+      "quarantineReasons": [
+        "SYNTHETIC_GRAD_YEAR_FALLBACK",
+        "SYNTHETIC_CGPA_FALLBACK",
+        "SYNTHETIC_DEADLINE_FALLBACK"
+      ],
+      "dataQualityScore": 0.4
     },
     {
       "id": "real_discord_8214127002",
@@ -5064,7 +5337,14 @@
         "compensation": {
           "textVerbatim": "$279,000 - $341,000 USD"
         }
-      }
+      },
+      "isQuarantined": true,
+      "quarantineReasons": [
+        "SYNTHETIC_GRAD_YEAR_FALLBACK",
+        "SYNTHETIC_CGPA_FALLBACK",
+        "SYNTHETIC_DEADLINE_FALLBACK"
+      ],
+      "dataQualityScore": 0.4
     }
   ],
   "quizzes": [

@@ -190,7 +190,7 @@ function determineExperienceLevel(title: string): {
   return { uiLevel: "Mid-level", phase3Level: "mid" };
 }
 
-function extractSalaryText(content: string): string | null {
+export function extractSalaryText(content: string): string | null {
   const match = content.match(/\$[\d,]+(?:\s*-\s*\$[\d,]+)?\s*(?:USD)?\s*(?:\/|\s+per\s+)?(?:hr|hour|yr|year|annum)?/i);
   if (match) {
     return match[0].trim();
@@ -282,10 +282,8 @@ export async function ingestAllRealJobs(): Promise<Opportunity[]> {
         const rawContent = j.content ? decodeHtmlEntities(j.content) : "";
         const normalizedDesc = normalizeDescription(rawContent);
 
-        // Fallback description snippet if content is brief
-        const description = normalizedDesc.length > 30
-          ? normalizedDesc
-          : `${j.title} at ${target.name}. Join our world-class engineering team to build scalable, mission-critical infrastructure and applications.`;
+        // Genuine description from normalized content; never invent corporate filler
+        const description = normalizedDesc.trim() || null;
 
         const locationName = j.location?.name?.replace(/•/g, ",").trim() || "Remote";
         const workMode = determineWorkMode(normalizedDesc, locationName);
@@ -293,7 +291,7 @@ export async function ingestAllRealJobs(): Promise<Opportunity[]> {
         const exp = determineExperienceLevel(j.title);
         const isIntern = oppType === "internship";
 
-        // Extract skills
+        // Extract genuine skills found in title or description text
         const foundSkills: string[] = [];
         const requiredSkillObjects: any[] = [];
         const preferredSkillObjects: any[] = [];
@@ -310,21 +308,53 @@ export async function ingestAllRealJobs(): Promise<Opportunity[]> {
           }
         }
 
-        // If no skills found, supply relevant defaults based on title
-        if (foundSkills.length === 0) {
-          foundSkills.push("TypeScript", "Python", "SQL");
-          requiredSkillObjects.push({ name: "TypeScript", category: "programming_language" });
-          requiredSkillObjects.push({ name: "Python", category: "programming_language" });
-          preferredSkillObjects.push({ name: "SQL", category: "database" });
+        // If no skills found in text, do NOT invent synthetic fallbacks; leave empty
+        // Extract degrees only if explicitly cited in listing text
+        const degreeLevels: string[] = [];
+        if (/\b(?:b\.?tech|b\.?e\.?|b\.?sc|bachelor(?:'s)?|undergraduate)\b/i.test(combinedSearch)) {
+          degreeLevels.push("Bachelors");
+        }
+        if (/\b(?:m\.?tech|m\.?s\.?|m\.?sc|master(?:'s)?|postgraduate)\b/i.test(combinedSearch)) {
+          degreeLevels.push("Masters");
+        }
+        if (/\b(?:ph\.?d|doctorate)\b/i.test(combinedSearch)) {
+          degreeLevels.push("PhD");
         }
 
-        const degreeLevels = isIntern ? ["Bachelors", "Masters"] : ["Bachelors", "Masters", "PhD"];
-        const graduationYears = isIntern ? [2025, 2026, 2027] : [2024, 2025, 2026];
+        // Extract graduation cohorts only if explicitly cited in text
+        const gradMatches = combinedSearch.match(/\b(202[4-9])\b/g);
+        const graduationYears: number[] = gradMatches
+          ? Array.from(new Set(gradMatches.map(Number))).sort()
+          : [];
 
-        const salary = extractSalaryText(normalizedDesc) || (isIntern ? "$45 - $65 / hour" : "$120,000 - $185,000 / year");
+        // Salary: strictly factual extraction. Stored as null if absent; NEVER fabricated!
+        const salary = extractSalaryText(normalizedDesc);
 
-        // Deadline: 20 to 45 days in future
-        const deadlineDate = new Date(now.getTime() + (20 + Math.floor(Math.random() * 25)) * 86400000);
+        // Deadline: extract genuine deadline if present in text; otherwise null (never invent random future dates)
+        let deadlineDate: string | null = null;
+        const deadlineMatch = normalizedDesc.match(/\bdeadline[:\s]+([A-Za-z]+ \d{1,2},? \d{4}|\d{4}-\d{2}-\d{2})\b/i);
+        if (deadlineMatch) {
+          const parsed = new Date(deadlineMatch[1]);
+          if (!isNaN(parsed.getTime())) {
+            deadlineDate = parsed.toISOString();
+          }
+        }
+
+        // Extract minimum CGPA only if explicitly required; otherwise null
+        let minCgpa: number | null = null;
+        const cgpaMatch = combinedSearch.match(/\b(?:cgpa|gpa)\s*(?:of|>=|:|\b)\s*(\d(?:\.\d+)?)\b/i);
+        if (cgpaMatch) {
+          const parsedCgpa = parseFloat(cgpaMatch[1]);
+          if (!isNaN(parsedCgpa) && parsedCgpa <= 10) {
+            minCgpa = parsedCgpa;
+          }
+        }
+
+        // Academic branches: extract only if explicitly mentioned
+        const branches: string[] = [];
+        if (/\bcomputer science\b/i.test(combinedSearch)) branches.push("Computer Science");
+        if (/\binformation technology\b/i.test(combinedSearch)) branches.push("Information Technology");
+        if (/\belectrical engineering\b/i.test(combinedSearch)) branches.push("Electrical Engineering");
 
         const oppId = `real_${target.token}_${j.id}`;
 
@@ -338,44 +368,48 @@ export async function ingestAllRealJobs(): Promise<Opportunity[]> {
           skills: foundSkills,
           eligibility: {
             degrees: degreeLevels,
-            minCgpa: 7.0,
+            minCgpa: minCgpa,
             graduationYears: graduationYears.map(String),
             experienceLevel: exp.uiLevel,
           },
           location: locationName,
           workMode: workMode,
-          deadline: deadlineDate.toISOString(),
+          deadline: deadlineDate,
           stipendSalary: salary,
           status: "active",
           sourceUrl: j.absolute_url,
           isExternal: true,
           publicationDate: j.updated_at || now.toISOString(),
           lastVerifiedDate: now.toISOString(),
-          applicantCount: Math.floor(Math.random() * 25) + 3,
-          shortlistedCount: Math.floor(Math.random() * 5),
+          applicantCount: 0,
+          shortlistedCount: 0,
           selectedCount: 0,
           createdAt: j.updated_at || now.toISOString(),
           updatedAt: now.toISOString(),
+          isQuarantined: false,
+          quarantineReasons: [],
 
           // Phase 3 Enriched Contract Payload
           enrichment: {
             status: "succeeded",
             roleTitle: j.title.trim(),
-            descriptionSummary: description.substring(0, 240) + "...",
+            descriptionSummary: description ? (description.substring(0, 240) + "...") : null,
             opportunityType: oppType,
             workMode: workMode,
             requiredSkills: requiredSkillObjects.map((s) => s.name),
             preferredSkills: preferredSkillObjects.map((s) => s.name),
             inferredSkills: [],
             degreeLevels: degreeLevels,
-            branches: ["Computer Science", "Information Technology", "Electrical Engineering"],
+            branches: branches,
             graduationYears: graduationYears,
-            minCgpa: null,
+            minCgpa: minCgpa,
             experienceLevel: exp.phase3Level,
-            isPaid: true,
-            compensation: {
-              textVerbatim: salary,
-            },
+            isPaid: salary ? true : null,
+            compensation: salary
+              ? {
+                  textVerbatim: salary,
+                }
+              : null,
           },
         };
 

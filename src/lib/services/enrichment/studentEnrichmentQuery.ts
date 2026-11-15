@@ -106,6 +106,7 @@ export interface EnrichedFeedFilters {
   minCgpa?: number;
   experienceLevel?: string;
   allowReviewState?: boolean; // Default false: hides needs_review from student feed
+  allowQuarantined?: boolean; // Default false: strictly excludes quarantined records from student feed
 }
 
 export interface EnrichedDetails {
@@ -169,6 +170,9 @@ export interface EnrichedStudentOpportunityItem {
   graduationYears?: number[];
   isFresh: boolean;
   status: string;
+  isQuarantined?: boolean;
+  quarantineReasons?: string[];
+  dataQualityScore?: number | null;
   enrichment?: EnrichedDetails | null;
 }
 
@@ -330,6 +334,11 @@ export function filterEnrichedStudentFeed(
   const freshnessCutoff = new Date(now.getTime() - thresholdHours * 3600 * 1000);
 
   const matched = rawOpportunities.filter((opp) => {
+    // 0. Strict Phase 1 Quality Gate: Quarantined records strictly excluded from student feed
+    if (opp.isQuarantined && !filters.allowQuarantined) {
+      return false;
+    }
+
     // 1. Strict Phase 2 Lifecycle Status: ACTIVE only
     const normalizedStatus = String(opp.status || "").toUpperCase();
     if (normalizedStatus !== "ACTIVE") {
@@ -733,6 +742,9 @@ export function filterEnrichedStudentFeed(
       stipendSalary,
       isFresh,
       status: "ACTIVE",
+      isQuarantined: opp.isQuarantined || false,
+      quarantineReasons: opp.quarantineReasons || [],
+      dataQualityScore: opp.dataQualityScore ?? null,
       enrichment,
     };
   });

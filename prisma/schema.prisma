@@ -225,6 +225,9 @@ model Opportunity {
   missingFields         String[]   // names of missing fields
   extractionConfidence  Float?
   canonicalOpportunityId String?
+  isQuarantined         Boolean    @default(false)
+  quarantineReasons     String[]   @default([])
+  dataQualityScore      Float?
 
   source                Source @relation(fields: [sourceId], references: [id])
   opportunitySources    OpportunitySource[]
@@ -235,6 +238,7 @@ model Opportunity {
   @@index([locationCountry, locationState, locationCity])
   @@index([applicationDeadline])
   @@index([lifecycleStatus])
+  @@index([isQuarantined])
 }
 
 model OpportunitySource {
@@ -455,6 +459,9 @@ model ConnectorOpportunity {
   lastVerifiedAt     DateTime?
   verificationStatus String                   @default("pending") // verified, pending, unverified, closed, rejected
   rawPayloadRef      String?                  // raw payload reference or storage key
+  isQuarantined      Boolean                  @default(false)
+  quarantineReasons  String[]                 @default([])
+  dataQualityScore   Float?
   createdAt          DateTime                 @default(now())
   updatedAt          DateTime                 @updatedAt
 
@@ -464,6 +471,7 @@ model ConnectorOpportunity {
   @@index([type])
   @@index([isRemote])
   @@index([verificationStatus])
+  @@index([isQuarantined])
 }
 
 model IngestionRunLog {

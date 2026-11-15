@@ -327,14 +327,14 @@ export interface Opportunity {
   skills: string[];
   eligibility: {
     degrees: string[];
-    minCgpa?: number;
+    minCgpa?: number | null;
     graduationYears: string[];
     experienceLevel: "Entry-level" | "Mid-level" | "Senior" | "Student / Intern";
   };
   location: string;
   workMode: WorkMode;
-  deadline: string; // ISO string
-  stipendSalary?: string;
+  deadline?: string | null; // ISO string or null
+  stipendSalary?: string | null;
   status: OpportunityStatus;
   sourceUrl?: string;
   isExternal?: boolean;
@@ -345,6 +345,10 @@ export interface Opportunity {
   selectedCount: number;
   createdAt: string;
   updatedAt: string;
+  isQuarantined?: boolean;
+  quarantineReasons?: string[];
+  dataQualityScore?: number | null;
+  enrichment?: any;
 }
 
 export type ApplicationStatus =
