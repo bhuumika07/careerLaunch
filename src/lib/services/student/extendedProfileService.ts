@@ -536,6 +536,26 @@ export class ExtendedProfileService {
     const skills = (db.studentSkills || []).filter(
       (s: any) => s.userId === userId || s.studentProfileId === profile.id
     );
+
+    if (skills.length === 0) {
+      const rawProfile = (db.studentProfiles || []).find(
+        (p: any) => p.userId === userId || p.id === profile.id
+      );
+      if (rawProfile && Array.isArray(rawProfile.skills) && rawProfile.skills.length > 0) {
+        return rawProfile.skills.map((s: any) => ({
+          id: s.id || randomUUID(),
+          skillId: s.id || null,
+          name: s.name,
+          source: "STUDENT" as ProfileFieldSource,
+          reviewStatus: (s.status === "verified" || s.verifiedAt ? "CONFIRMED" : "NEEDS_REVIEW") as SkillReviewStatus,
+          proficiency: s.level || "intermediate",
+          yearsExperience: null,
+          confirmed: s.status === "verified" || Boolean(s.verifiedAt),
+          createdAt: s.verifiedAt || new Date().toISOString(),
+        }));
+      }
+    }
+
     return skills;
   }
 

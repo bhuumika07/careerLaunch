@@ -37,6 +37,13 @@ import {
   normalizeTitleToRole,
   type CareerRoleEntity,
 } from "../career-roles/roleCatalogueService.ts";
+import {
+  opportunityAiAnalyzer,
+  type AiBagabilityAnalysis,
+  type StudentProfileContext,
+  type OpportunityContext,
+} from "../ai/opportunityAiAnalyzer.ts";
+import { DEGREE_ALIASES } from "../enrichment/studentEnrichmentQuery.ts";
 import * as fs from "node:fs";
 import * as path from "node:path";
 
@@ -81,6 +88,7 @@ export interface OpportunityMatchResult {
   };
   skillAnalysis: SkillMatchSummary;
   reasons: string[];
+  aiAnalysis?: AiBagabilityAnalysis;
 }
 
 export type MatchFeedbackType =
@@ -106,12 +114,18 @@ export interface RecommendedFeedOptions {
   limit?: number;
   offset?: number;
   includeDismissed?: boolean;
+  bagFilter?: "ALL" | "READY_TO_BAG" | "STRONG_CONTENDER" | "TARGET_ROLES";
 }
 
 export interface RecommendedFeedResponse {
   total: number;
   items: OpportunityMatchResult[];
   studentTargetRoles: string[];
+  summary?: {
+    readyToBagCount: number;
+    strongContenderCount: number;
+    competitiveReachCount: number;
+  };
 }
 
 function readDbStore(): any {
@@ -212,9 +226,20 @@ export class MatchingService {
     const helperMatchesSkill = (targetSkill: string): boolean => {
       const lower = targetSkill.toLowerCase().trim();
       const lowerBase = lower.replace(/\.js$/, "");
-      return Array.from(confirmedSkillNames).some(
-        (cs) => cs === lower || cs.replace(/\.js$/, "") === lowerBase
-      );
+      return Array.from(confirmedSkillNames).some((cs) => {
+        const csBase = cs.replace(/\.js$/, "");
+        if (cs === lower || csBase === lowerBase) return true;
+        if (lower.length > 2 && cs.includes(lower)) return true;
+        const parts = cs.split(/[\/,]/).map((p) => p.trim());
+        if (parts.some((p) => p === lower || p.replace(/\.js$/, "") === lowerBase)) {
+          return true;
+        }
+        const targetParts = lower.split(/[\/,]/).map((p) => p.trim());
+        if (targetParts.some((p) => p === cs || p.replace(/\.js$/, "") === csBase)) {
+          return true;
+        }
+        return false;
+      });
     };
 
     // -------------------------------------------------------------
@@ -293,12 +318,22 @@ export class MatchingService {
     const allowedDegrees: string[] = opportunity.eligibility?.degrees || [];
     let isDegreeMet = true;
     if (allowedDegrees.length > 0 && !allowedDegrees.some((d) => d.toLowerCase() === "all" || d.toLowerCase() === "any")) {
-      const studentDegree = profile?.degree?.toLowerCase() || "";
-      isDegreeMet = allowedDegrees.some(
-        (reqDeg) =>
-          studentDegree.includes(reqDeg.toLowerCase()) ||
-          reqDeg.toLowerCase().includes(studentDegree)
-      );
+      const studentDegree = profile?.degree?.toLowerCase().trim() || "";
+      isDegreeMet = allowedDegrees.some((reqDeg) => {
+        const rLow = reqDeg.toLowerCase().trim();
+        if (studentDegree.includes(rLow) || rLow.includes(studentDegree)) {
+          return true;
+        }
+        const reqKey = rLow.replace(/s$/, "");
+        for (const [level, aliases] of Object.entries(DEGREE_ALIASES)) {
+          if (rLow === level || level === reqKey || level.startsWith(reqKey)) {
+            if (studentDegree.includes(level) || aliases.some((a) => studentDegree.includes(a))) {
+              return true;
+            }
+          }
+        }
+        return false;
+      });
 
       checks.push({
         criterion: "Degree & Branch",
@@ -356,7 +391,7 @@ export class MatchingService {
     const reasons: string[] = [];
 
     // A. Skills Match (up to 40 pts)
-    const oppRequiredSkills: string[] = opportunity.requiredSkills || [];
+    const oppRequiredSkills: string[] = opportunity.requiredSkills || opportunity.skills || [];
     const oppPreferredSkills: string[] = opportunity.preferredSkills || [];
 
     const matchedRequired: string[] = [];
@@ -495,6 +530,34 @@ export class MatchingService {
       reasons.length = 0; // Clear positive reasons if ineligible
     }
 
+    let aiAnalysis: AiBagabilityAnalysis | undefined;
+    if (isFullyEligible) {
+      const studentContext: StudentProfileContext = {
+        userId,
+        college: profile?.college,
+        degree: profile?.degree,
+        branch: profile?.branch,
+        graduationYear: profile?.graduationYear,
+        cgpa: profile?.cgpa,
+        verifiedSkills: confirmedSkills.map((s) => s.name),
+        targetRoles: careerInterests.map((ci) => ci.targetRole),
+      };
+
+      const oppContext: OpportunityContext = {
+        id: opportunity.id,
+        title: opportunity.title,
+        employer: opportunity.employer || opportunity.org || "Employer",
+        description: opportunity.description,
+        location: opportunity.location,
+        workplaceType: opportunity.workplaceType,
+        requiredSkills: oppRequiredSkills,
+        preferredSkills: oppPreferredSkills,
+        category: opportunity.category,
+      };
+
+      aiAnalysis = opportunityAiAnalyzer.analyzeBagability(studentContext, oppContext);
+    }
+
     return {
       opportunityId: opportunity.id,
       title: opportunity.title,
@@ -526,6 +589,7 @@ export class MatchingService {
         skillsScore,
       },
       reasons,
+      aiAnalysis,
     };
   }
 
@@ -565,7 +629,7 @@ export class MatchingService {
     if (opportunities.length === 0) {
       const db = readDbStore();
       opportunities = (db.opportunities || []).filter(
-        (o: any) => !o.status || o.status === "ACTIVE"
+        (o: any) => !o.status || String(o.status).toUpperCase() === "ACTIVE"
       );
     }
 
@@ -598,8 +662,36 @@ export class MatchingService {
       );
     }
 
-    // Sort by overallScore desc, then deadline asc (urgent opportunities first)
+    // AI Bagability & Match Summary
+    let readyToBagCount = 0;
+    let strongContenderCount = 0;
+    let competitiveReachCount = 0;
+
+    for (const item of eligible) {
+      const tier = item.aiAnalysis?.bagabilityTier;
+      if (tier === "READY_TO_BAG") readyToBagCount++;
+      else if (tier === "STRONG_CONTENDER") strongContenderCount++;
+      else competitiveReachCount++;
+    }
+
+    // Filter by Bagability / Shortlist
+    if (options?.bagFilter === "READY_TO_BAG") {
+      eligible = eligible.filter((r) => r.aiAnalysis?.bagabilityTier === "READY_TO_BAG");
+    } else if (options?.bagFilter === "STRONG_CONTENDER") {
+      eligible = eligible.filter(
+        (r) =>
+          r.aiAnalysis?.bagabilityTier === "READY_TO_BAG" ||
+          r.aiAnalysis?.bagabilityTier === "STRONG_CONTENDER"
+      );
+    } else if (options?.bagFilter === "TARGET_ROLES") {
+      eligible = eligible.filter((r) => r.breakdown.roleInterestScore >= 20);
+    }
+
+    // Sort by AI Bagability & overallScore desc, then deadline asc
     eligible.sort((a, b) => {
+      const aBag = a.aiAnalysis?.bagabilityScore || a.overallScore;
+      const bBag = b.aiAnalysis?.bagabilityScore || b.overallScore;
+      if (bBag !== aBag) return bBag - aBag;
       if (b.overallScore !== a.overallScore) return b.overallScore - a.overallScore;
       if (a.deadline && b.deadline) {
         return new Date(a.deadline).getTime() - new Date(b.deadline).getTime();
@@ -616,6 +708,11 @@ export class MatchingService {
       total,
       items: paginated,
       studentTargetRoles,
+      summary: {
+        readyToBagCount,
+        strongContenderCount,
+        competitiveReachCount,
+      },
     };
   }
 

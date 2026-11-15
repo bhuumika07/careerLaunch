@@ -16,6 +16,7 @@ export async function GET(req: NextRequest) {
     const minScoreStr = searchParams.get("minScore");
     const minScore = minScoreStr ? parseInt(minScoreStr, 10) : undefined;
     const workplaceType = searchParams.get("workplaceType") || undefined;
+    const bagFilter = (searchParams.get("bagFilter") || searchParams.get("filter") || undefined) as any;
     const limitStr = searchParams.get("limit");
     const limit = limitStr ? parseInt(limitStr, 10) : 20;
     const offsetStr = searchParams.get("offset");
@@ -24,6 +25,7 @@ export async function GET(req: NextRequest) {
     const feed = await matchingService.getRecommendedFeed(user.id, {
       minScore: !isNaN(minScore as number) ? minScore : undefined,
       workplaceType,
+      bagFilter,
       limit,
       offset,
     });
