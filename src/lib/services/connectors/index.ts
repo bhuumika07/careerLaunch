@@ -14,3 +14,10 @@ export * from "./normalization/normalizationEngine.ts";
 export * from "./deduplication/deduplicationEngine.ts";
 export * from "./deduplication/dedupReporter.ts";
 export * from "./deduplication/testFixtures.ts";
+export * from "./enrichment/types.ts";
+export * from "./enrichment/aiEnricher.ts";
+export * from "./verification/types.ts";
+export * from "./verification/verifier.ts";
+export * from "./verification/staleListingReverifier.ts";
+export * from "./verification/testFixtures.ts";
+
