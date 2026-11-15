@@ -125,6 +125,12 @@ Deadline: 2026-07-15
       $transaction: async (cb: any) => cb(mockPrisma),
       opportunity: {
         findUnique: async ({ where }: any) => opportunities.find((o) => o.id === where.id),
+        findMany: async ({ where }: any) => {
+          return opportunities.filter((o) => {
+            if (where?.status && o.status !== where.status) return false;
+            return true;
+          });
+        },
       },
       opportunityEnrichment: {
         findFirst: async ({ where }: any) => {
@@ -333,6 +339,121 @@ Deadline: 2026-07-15
       // Verify Opportunity is completely unharmed
       const opp = mockPrisma._getOpportunities()[0];
       assert.equal(opp.status, "ACTIVE");
+    });
+  });
+
+  describe("EnrichmentWorker: Autonomous Worker Lifecycle & Concurrency (Module 3.4)", () => {
+    it("respects feature flag and exits immediately when disabled", async () => {
+      const mockPrisma = createMockPrisma([
+        {
+          id: "opp_flag_01",
+          title: "Frontend Intern",
+          description: sampleDescriptionV1,
+          status: "ACTIVE",
+        },
+      ]);
+      const mockClient = new MockLlmExtractionClient(mockExtractionJsonV1);
+      const worker = new (await import("../enrichmentWorker.ts")).EnrichmentWorker(
+        mockPrisma,
+        mockClient,
+        { enabled: false }
+      );
+
+      assert.equal(worker.isEnabled(), false);
+      const result = await worker.run();
+      assert.equal(result.enabled, false);
+      assert.equal(result.processedCount, 0);
+      assert.equal(mockPrisma._getEnrichments().length, 0);
+    });
+
+    it("filters eligibility strictly: selects active fresh, skips expired/closed and already current", async () => {
+      const { EnrichmentWorker } = await import("../enrichmentWorker.ts");
+      const mockPrisma = createMockPrisma([
+        {
+          id: "opp_eligible_1",
+          title: "Eligible Role",
+          description: sampleDescriptionV1,
+          status: "ACTIVE",
+        },
+        {
+          id: "opp_ineligible_expired",
+          title: "Expired Role",
+          description: sampleDescriptionV1,
+          status: "EXPIRED",
+        },
+        {
+          id: "opp_ineligible_closed",
+          title: "Closed Role",
+          description: sampleDescriptionV1,
+          status: "CLOSED",
+        },
+      ]);
+      const mockClient = new MockLlmExtractionClient(mockExtractionJsonV1);
+      const worker = new EnrichmentWorker(mockPrisma, mockClient, { enabled: true });
+
+      // First run: only opp_eligible_1 is selected
+      const eligible = await worker.selectEligibleOpportunities(10);
+      assert.equal(eligible.length, 1);
+      assert.equal(eligible[0].id, "opp_eligible_1");
+    });
+
+    it("ensures concurrency safety: two workers cannot claim the same opportunity simultaneously", async () => {
+      const { EnrichmentWorker } = await import("../enrichmentWorker.ts");
+      const mockPrisma = createMockPrisma([
+        {
+          id: "opp_concurrent_1",
+          title: "Concurrent Role",
+          description: sampleDescriptionV1,
+          status: "ACTIVE",
+        },
+      ]);
+      const mockClient = new MockLlmExtractionClient(mockExtractionJsonV1);
+      const workerA = new EnrichmentWorker(mockPrisma, mockClient, { enabled: true });
+      const workerB = new EnrichmentWorker(mockPrisma, mockClient, { enabled: true });
+
+      // Worker A claims lease
+      const claimA = workerA.claimLease("opp_concurrent_1");
+      assert.equal(claimA, true);
+
+      // Worker B attempts to claim lease on same opportunity -> rejected!
+      const claimB = workerB.claimLease("opp_concurrent_1");
+      assert.equal(claimB, false);
+
+      // Worker A finishes and releases lease
+      workerA.releaseLease("opp_concurrent_1");
+
+      // Worker B can now claim lease
+      const claimBAfter = workerB.claimLease("opp_concurrent_1");
+      assert.equal(claimBAfter, true);
+      workerB.releaseLease("opp_concurrent_1");
+    });
+
+    it("runs batch enrichment cleanly with error tracking", async () => {
+      const { EnrichmentWorker } = await import("../enrichmentWorker.ts");
+      const mockPrisma = createMockPrisma([
+        {
+          id: "opp_batch_1",
+          title: "Batch Role 1",
+          description: sampleDescriptionV1,
+          status: "ACTIVE",
+        },
+      ]);
+      const mockClient = new MockLlmExtractionClient(mockExtractionJsonV1);
+      const worker = new EnrichmentWorker(mockPrisma, mockClient, {
+        enabled: true,
+        batchSize: 5,
+        concurrency: 2,
+      });
+
+      const res = await worker.run();
+      assert.equal(res.enabled, true);
+      assert.equal(res.processedCount, 1);
+      assert.equal(res.succeededCount, 1);
+      assert.equal(res.failedCount, 0);
+
+      // Second run: opp_batch_1 is already current, so 0 eligible
+      const res2 = await worker.run();
+      assert.equal(res2.processedCount, 0);
     });
   });
 });
