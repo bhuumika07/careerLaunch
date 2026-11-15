@@ -8,6 +8,7 @@
  */
 
 import { DEFAULT_FRESHNESS_CONFIG } from "../verification/freshnessManager.ts";
+import { isRecommendable } from "../verification/lifecycleConsistency.ts";
 import type {
   OpportunityType,
   WorkMode,
@@ -334,34 +335,15 @@ export function filterEnrichedStudentFeed(
   const freshnessCutoff = new Date(now.getTime() - thresholdHours * 3600 * 1000);
 
   const matched = rawOpportunities.filter((opp) => {
-    // 0. Strict Phase 1 Quality Gate: Quarantined records strictly excluded from student feed
-    if (opp.isQuarantined && !filters.allowQuarantined) {
+    // Strict Phase 2 Invariant: Central isRecommendable check (ONLY ACTIVE counts)
+    if (
+      !isRecommendable(opp, {
+        now,
+        freshnessThresholdHours: thresholdHours,
+        allowQuarantined: filters.allowQuarantined,
+      })
+    ) {
       return false;
-    }
-
-    // 1. Strict Phase 2 Lifecycle Status: ACTIVE only
-    const normalizedStatus = String(opp.status || "").toUpperCase();
-    if (normalizedStatus !== "ACTIVE") {
-      return false;
-    }
-
-    // 2. Strict Phase 2 Freshness: lastVerifiedAt must be >= freshnessCutoff
-    const verifiedTimeStr = opp.lastVerifiedAt || opp.lastVerifiedDate;
-    if (!verifiedTimeStr) {
-      return false;
-    }
-    const verifiedTime = new Date(verifiedTimeStr).getTime();
-    if (isNaN(verifiedTime) || verifiedTime < freshnessCutoff.getTime()) {
-      return false;
-    }
-
-    // 3. Strict Phase 2 Deadline: null never expires; if specified, must be > now
-    const deadlineStr = opp.applicationDeadline || opp.deadline;
-    if (deadlineStr) {
-      const deadlineTime = new Date(deadlineStr).getTime();
-      if (!isNaN(deadlineTime) && deadlineTime <= now.getTime()) {
-        return false;
-      }
     }
 
     // Extract enrichment if available (respects allowReviewState)
@@ -565,6 +547,7 @@ export function filterEnrichedStudentFeed(
     }
 
     // Explicit Deadline Filter
+    const deadlineStr = opp.applicationDeadline || opp.deadline;
     if (filters.deadline && deadlineStr) {
       const targetDeadline = new Date(filters.deadline).getTime();
       const oppDeadline = new Date(deadlineStr).getTime();

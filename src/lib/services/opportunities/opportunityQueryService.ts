@@ -21,6 +21,12 @@ import {
   type EnrichedStudentFeedResult,
   type EnrichedStudentOpportunityItem,
 } from "../enrichment/studentEnrichmentQuery.ts";
+import {
+  isRecommendable,
+  normalizeLifecycleStatus,
+} from "../verification/lifecycleConsistency.ts";
+
+export { isRecommendable, normalizeLifecycleStatus };
 
 function readDbStore(): any {
   try {
@@ -203,6 +209,28 @@ export class OpportunityQueryService {
       freshnessThresholdHours,
       allowQuarantined: options.allowQuarantined ?? false,
     });
+  }
+
+  /**
+   * Retrieves recommended opportunities for a student profile.
+   * Central Invariant: ONLY ACTIVE recommendable opportunities are eligible.
+   * Expired, closed, stale, removed, or rejected opportunities are strictly excluded.
+   */
+  async getRecommendedOpportunities(
+    studentProfile?: any,
+    options: OpportunityFeedQueryOptions = {}
+  ): Promise<Opportunity[]> {
+    const rawOpps = await this.loadAllRawOpportunities();
+    const isLocalFallback = !process.env.DATABASE_URL;
+    const freshnessThresholdHours = options.freshnessThresholdHours ?? (isLocalFallback ? 24 * 365 : undefined);
+
+    return rawOpps.filter((opp) =>
+      isRecommendable(opp, {
+        now: options.now,
+        freshnessThresholdHours,
+        allowQuarantined: options.allowQuarantined ?? false,
+      })
+    );
   }
 
   /**
