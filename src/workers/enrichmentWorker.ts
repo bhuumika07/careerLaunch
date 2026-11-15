@@ -8,16 +8,29 @@ import { Worker, Job } from "bullmq";
 import { getRedisConnection } from "../lib/queue/redis.ts";
 import { ENRICHMENT_QUEUE_NAME, EnrichOpportunityJobData } from "../lib/queue/enrichmentQueue.ts";
 import { OpportunityEnrichmentService } from "../lib/services/enrichment/enrichmentService.ts";
-import { MockLlmExtractionClient } from "../lib/services/enrichment/llmClient.ts";
+import {
+  GroqExtractionClient,
+  MockLlmExtractionClient,
+  type LlmExtractionClient,
+} from "../lib/services/enrichment/llmClient.ts";
 import { prisma } from "../lib/prisma.ts";
 
 const CONCURRENCY = parseInt(process.env.ENRICHMENT_WORKER_CONCURRENCY || "5", 10);
 
 console.log(`[EnrichmentWorker] Initializing worker on queue "${ENRICHMENT_QUEUE_NAME}" (concurrency: ${CONCURRENCY})...`);
 
-// Initialize LLM client (using mock client if API key is not present)
-const llmClient = new MockLlmExtractionClient();
+// Initialize server-side Groq LLM client (with mock fallback if key absent in dev/test)
+function createExtractionClient(): LlmExtractionClient {
+  if (process.env.GROQ_API_KEY) {
+    return new GroqExtractionClient();
+  }
+  console.warn(
+    "[EnrichmentWorker] GROQ_API_KEY not configured. Falling back to MockLlmExtractionClient for testing/offline mode."
+  );
+  return new MockLlmExtractionClient();
+}
 
+const llmClient = createExtractionClient();
 const enrichmentService = new OpportunityEnrichmentService(prisma, llmClient);
 
 export function startEnrichmentWorker(): Worker<EnrichOpportunityJobData> {

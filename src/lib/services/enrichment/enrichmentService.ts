@@ -120,6 +120,9 @@ export class OpportunityEnrichmentService {
 
     const now = new Date();
     const enrichmentId = randomUUID();
+    const modelName = (this.llmClient as any).getModelName
+      ? (this.llmClient as any).getModelName()
+      : ((this.llmClient as any).modelName || "groq/llama-3.3-70b-versatile");
 
     // 5. Handle Extraction Failure
     if (!extractionResult.success || !extractionResult.payload) {
@@ -127,7 +130,7 @@ export class OpportunityEnrichmentService {
         id: enrichmentId,
         opportunityId,
         status: "failed",
-        extractionModel: "llm-enricher",
+        extractionModel: modelName,
         promptVersion: PROMPT_VERSION,
         schemaVersion: SCHEMA_VERSION,
         contentHash,
@@ -157,13 +160,13 @@ export class OpportunityEnrichmentService {
 
     // 6. Extraction Succeeded: Map to structured database record
     const payload: OpportunityEnrichmentPayload = extractionResult.payload;
-    const finalStatus = payload.quality.needs_manual_review ? "needs_review" : "succeeded";
+    const finalStatus = payload.quality?.needs_manual_review ? "needs_review" : "succeeded";
 
     const enrichmentData = {
       id: enrichmentId,
       opportunityId,
       status: finalStatus,
-      extractionModel: "llm-enricher",
+      extractionModel: modelName,
       promptVersion: PROMPT_VERSION,
       schemaVersion: SCHEMA_VERSION,
       contentHash,
@@ -184,50 +187,50 @@ export class OpportunityEnrichmentService {
       isWorldwide: payload.location.is_worldwide || false,
 
       // Qualifications
-      degreeLevels: payload.qualifications.degree_levels || [],
-      branches: payload.qualifications.branches || [],
-      graduationYears: payload.qualifications.graduation_years || [],
-      minCgpa: payload.qualifications.min_cgpa,
-      academicRequirements: payload.qualifications.academic_requirements,
-      workAuthorization: payload.eligibility.work_authorization,
-      explicitRestrictions: payload.eligibility.explicit_restrictions || [],
-      targetAudience: payload.eligibility.target_audience,
+      degreeLevels: payload.qualifications?.degree_levels || [],
+      branches: payload.qualifications?.branches || [],
+      graduationYears: payload.qualifications?.graduation_years || [],
+      minCgpa: payload.qualifications?.min_cgpa ?? null,
+      academicRequirements: payload.qualifications?.academic_requirements ?? null,
+      workAuthorization: payload.eligibility?.work_authorization ?? null,
+      explicitRestrictions: payload.eligibility?.explicit_restrictions || [],
+      targetAudience: payload.eligibility?.target_audience ?? null,
 
       // Experience
-      experienceLevel: payload.experience.experience_level,
-      minExperienceMonths: payload.experience.min_experience_months,
-      maxExperienceMonths: payload.experience.max_experience_months,
+      experienceLevel: payload.experience?.experience_level ?? "unknown",
+      minExperienceMonths: payload.experience?.min_experience_months ?? null,
+      maxExperienceMonths: payload.experience?.max_experience_months ?? null,
 
-      // Three-Tier Skills
-      requiredSkills: (payload.skills.required_skills || []).map((s) => s.name),
-      preferredSkills: (payload.skills.preferred_skills || []).map((s) => s.name),
-      inferredSkills: (payload.skills.inferred_skills || []).map((s) => s.name),
+      // Three-Tier Skills: Inferred skills are kept strictly separate and never become mandatory
+      requiredSkills: (payload.skills?.required_skills || []).map((s: any) => s.name || s),
+      preferredSkills: (payload.skills?.preferred_skills || []).map((s: any) => s.name || s),
+      inferredSkills: (payload.skills?.inferred_skills || []).map((s: any) => s.name || s),
 
-      // Compensation
-      isPaid: payload.compensation.is_paid,
-      currency: payload.compensation.currency,
-      minAmount: payload.compensation.min_amount,
-      maxAmount: payload.compensation.max_amount,
-      compensationInterval: payload.compensation.interval,
-      compensationVerbatim: payload.compensation.text_verbatim,
+      // Compensation - strictly null-coalescing
+      isPaid: payload.compensation?.is_paid ?? null,
+      currency: payload.compensation?.currency ?? null,
+      minAmount: payload.compensation?.min_amount ?? null,
+      maxAmount: payload.compensation?.max_amount ?? null,
+      compensationInterval: payload.compensation?.interval ?? null,
+      compensationVerbatim: payload.compensation?.text_verbatim ?? null,
 
-      // Timeline
-      applicationDeadline: payload.timeline.application_deadline
+      // Timeline - strictly null-coalescing
+      applicationDeadline: payload.timeline?.application_deadline
         ? new Date(payload.timeline.application_deadline)
         : null,
-      startDate: payload.timeline.start_date,
-      durationText: payload.timeline.duration_text,
+      startDate: payload.timeline?.start_date ?? null,
+      durationText: payload.timeline?.duration_text ?? null,
 
-      // Confidence & Review
-      overallConfidence: payload.confidence.overall_score,
-      fieldConfidences: payload.confidence.field_scores,
-      needsManualReview: payload.quality.needs_manual_review,
-      missingFields: payload.quality.missing_fields || [],
-      unsupportedClaims: payload.quality.unsupported_claims || [],
-      reviewReasons: payload.quality.review_reasons || [],
-      extractionErrors: payload.quality.extraction_errors || [],
+      // Confidence & Review - manual review reasons persisted
+      overallConfidence: payload.confidence?.overall_score ?? 0.8,
+      fieldConfidences: payload.confidence?.field_scores ?? {},
+      needsManualReview: payload.quality?.needs_manual_review ?? false,
+      missingFields: payload.quality?.missing_fields || [],
+      unsupportedClaims: payload.quality?.unsupported_claims || [],
+      reviewReasons: payload.quality?.review_reasons || [],
+      extractionErrors: payload.quality?.extraction_errors || [],
 
-      // Complete raw JSON payload
+      // Complete raw JSON payload preserving all verbatim provenance snippets and confidence
       rawPayload: payload,
     };
 
