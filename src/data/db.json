@@ -71,6 +71,18 @@
       "onboardingCompleted": true,
       "createdAt": "2026-11-14T15:33:59.285Z",
       "updatedAt": "2026-11-14T15:35:10.314Z"
+    },
+    {
+      "id": "usr_student_1794725271805",
+      "name": "Bhumika",
+      "email": "bhumik@gmail.com",
+      "passwordHash": "$2b$10$B51g9Mzxw/v3jV2yuuxxIuUeORfZm8sb5oBHMyN0Wl..plBC55YoK",
+      "role": "student",
+      "status": "active",
+      "emailVerified": false,
+      "onboardingCompleted": true,
+      "createdAt": "2026-11-15T06:47:51.805Z",
+      "updatedAt": "2026-11-15T06:48:03.881Z"
     }
   ],
   "sessions": [
@@ -94,6 +106,13 @@
       "role": "student",
       "expiresAt": 1795275239305,
       "createdAt": "2026-11-14T15:33:59.305Z"
+    },
+    {
+      "id": "sess_d2294b54b22761786ac67eb2b1e34c98e76f824e7babff8e56879fbfe65d0a69",
+      "userId": "usr_student_1794725271805",
+      "role": "student",
+      "expiresAt": 1795330071823,
+      "createdAt": "2026-11-15T06:47:51.823Z"
     }
   ],
   "verificationTokens": [
@@ -126,9 +145,25 @@
       "expiresAt": 1794756839287,
       "used": false,
       "createdAt": "2026-11-14T15:33:59.285Z"
+    },
+    {
+      "id": "tok_2d0cd134793d0214",
+      "token": "c7c18eefe9f865c0947bf91d0e280edade785a1b2e6ae4cb2f794276ce033d5d",
+      "userId": "usr_student_1794725271805",
+      "email": "bhumik@gmail.com",
+      "type": "email_verification",
+      "expiresAt": 1794811671807,
+      "used": false,
+      "createdAt": "2026-11-15T06:47:51.805Z"
     }
   ],
-  "rateLimits": [],
+  "rateLimits": [
+    {
+      "key": "login:bhumika@pp.com",
+      "attempts": 1,
+      "lastAttempt": 1794725238789
+    }
+  ],
   "studentProfiles": [
     {
       "userId": "usr_student_demo",
@@ -458,6 +493,24 @@
       ],
       "achievements": [],
       "updatedAt": "2026-11-09T09:51:19.707Z"
+    },
+    {
+      "userId": "usr_student_1794725271805",
+      "skills": [],
+      "projects": [],
+      "experience": [],
+      "certifications": [],
+      "achievements": [],
+      "updatedAt": "2026-11-15T06:48:03.881Z",
+      "phone": "54114656468",
+      "bio": "",
+      "location": "Ferozepur",
+      "avatarUrl": "",
+      "institution": "St. Jude Institute of Technology",
+      "department": "Computer Science & Engineering",
+      "degree": "B.Tech in Computer Science",
+      "graduationYear": 2026,
+      "cgpa": 8.8
     }
   ],
   "facultyProfiles": [],
@@ -1404,6 +1457,267 @@
         }
       ],
       "completedAt": "2026-11-14T15:49:22.821Z",
+      "isDraft": false
+    },
+    {
+      "id": "cd_1794725302860",
+      "userId": "usr_student_1794725271805",
+      "answers": {
+        "interests": [
+          "Web Development",
+          "Artificial Intelligence & ML"
+        ],
+        "workPreferences": [
+          "coding",
+          "analysis"
+        ],
+        "existingKnowledge": [
+          "JavaScript",
+          "Python",
+          "Git",
+          "React"
+        ],
+        "collegeProjects": [
+          "Academic Web App",
+          "Data Visualization Mini-Project"
+        ],
+        "preferredIndustries": [
+          "Technology & Software",
+          "Fintech"
+        ],
+        "careerGoals": "Aspiring to become a high-impact Software Engineer at an innovative technology firm.",
+        "updatedAt": "2026-11-15T06:48:22.853Z"
+      },
+      "recommendations": [
+        {
+          "roleId": "role_fullstack",
+          "title": "Fullstack Systems Engineer",
+          "interestCompatibility": 80,
+          "currentJobReadiness": 39,
+          "shortDescription": "Bridges client experiences with robust backend microservices, database schemas, and API contracts.",
+          "skillsToDevelop": [
+            "TypeScript",
+            "Node.js",
+            "PostgreSQL",
+            "REST APIs",
+            "Docker"
+          ],
+          "skillsAlreadyAcquired": [
+            "React",
+            "Git"
+          ],
+          "whyRecommended": [
+            "Your preferred working mode aligns with coding and analysis activities.",
+            "Direct alignment with your selected interest in Web Development.",
+            "You already have familiarity with React, Git, giving you a head-start."
+          ],
+          "typicalRoles": [
+            "Fullstack Engineer",
+            "Software Development Engineer (SDE-1)"
+          ],
+          "averageEntrySalary": "₹10 - 18 LPA",
+          "marketDemand": "Very High"
+        },
+        {
+          "roleId": "role_data_ai",
+          "title": "AI / Machine Learning Engineer",
+          "interestCompatibility": 67,
+          "currentJobReadiness": 30,
+          "shortDescription": "Develops machine learning models, fine-tunes transformers, and deploys high-throughput predictive inference pipelines.",
+          "skillsToDevelop": [
+            "PyTorch",
+            "TensorFlow",
+            "Pandas",
+            "Scikit-Learn",
+            "FastAPI",
+            "SQL"
+          ],
+          "skillsAlreadyAcquired": [
+            "Python"
+          ],
+          "whyRecommended": [
+            "Your preferred working mode aligns with analysis and research and coding activities.",
+            "Direct alignment with your selected interest in Artificial Intelligence & ML.",
+            "You already have familiarity with Python, giving you a head-start."
+          ],
+          "typicalRoles": [
+            "Junior ML Engineer",
+            "Applied AI Scientist",
+            "NLP Researcher"
+          ],
+          "averageEntrySalary": "₹12 - 20 LPA",
+          "marketDemand": "Very High"
+        },
+        {
+          "roleId": "role_frontend",
+          "title": "Frontend Engineer / UI Specialist",
+          "interestCompatibility": 60,
+          "currentJobReadiness": 39,
+          "shortDescription": "Specializes in building responsive web applications, design systems, and client-side performance architectures.",
+          "skillsToDevelop": [
+            "TypeScript",
+            "Next.js",
+            "Tailwind CSS",
+            "HTML5",
+            "CSS3"
+          ],
+          "skillsAlreadyAcquired": [
+            "React",
+            "Git"
+          ],
+          "whyRecommended": [
+            "Your preferred working mode aligns with coding and designing activities.",
+            "Direct alignment with your selected interest in Web Development.",
+            "You already have familiarity with React, Git, giving you a head-start."
+          ],
+          "typicalRoles": [
+            "Junior Frontend Developer",
+            "UI Engineer",
+            "Web Application Developer"
+          ],
+          "averageEntrySalary": "₹8 - 14 LPA",
+          "marketDemand": "Very High"
+        },
+        {
+          "roleId": "role_cloud_devops",
+          "title": "Cloud & DevOps Infrastructure Engineer",
+          "interestCompatibility": 57,
+          "currentJobReadiness": 30,
+          "shortDescription": "Automates CI/CD deployment pipelines, container orchestration, and multi-region cloud resilience.",
+          "skillsToDevelop": [
+            "Docker",
+            "Kubernetes",
+            "Linux",
+            "AWS / GCP",
+            "CI/CD",
+            "Terraform"
+          ],
+          "skillsAlreadyAcquired": [
+            "Bash / Python"
+          ],
+          "whyRecommended": [
+            "Your preferred working mode aligns with coding and management and analysis activities.",
+            "You already have familiarity with Bash / Python, giving you a head-start."
+          ],
+          "typicalRoles": [
+            "Junior Cloud Engineer",
+            "DevOps Engineer",
+            "Site Reliability Engineer (SRE)"
+          ],
+          "averageEntrySalary": "₹9 - 16 LPA",
+          "marketDemand": "Very High"
+        },
+        {
+          "roleId": "role_cybersecurity",
+          "title": "Cybersecurity & Application Security Analyst",
+          "interestCompatibility": 57,
+          "currentJobReadiness": 31,
+          "shortDescription": "Audits software attack surfaces, secures cryptographic protocols, and configures threat detection systems.",
+          "skillsToDevelop": [
+            "Linux",
+            "Network Protocols",
+            "Penetration Testing",
+            "OWASP Top 10",
+            "Cryptography"
+          ],
+          "skillsAlreadyAcquired": [
+            "Python"
+          ],
+          "whyRecommended": [
+            "Your preferred working mode aligns with research and analysis and coding activities.",
+            "You already have familiarity with Python, giving you a head-start."
+          ],
+          "typicalRoles": [
+            "SOC Analyst",
+            "Security Engineer",
+            "Vulnerability Analyst"
+          ],
+          "averageEntrySalary": "₹8 - 15 LPA",
+          "marketDemand": "High"
+        },
+        {
+          "roleId": "role_data_analyst",
+          "title": "Data Analyst & Business Intelligence Specialist",
+          "interestCompatibility": 50,
+          "currentJobReadiness": 31,
+          "shortDescription": "Transforms operational raw data into actionable dashboards, cohort analysis, and executive strategic roadmaps.",
+          "skillsToDevelop": [
+            "SQL",
+            "PowerBI / Tableau",
+            "Statistics",
+            "Excel",
+            "Data Modeling"
+          ],
+          "skillsAlreadyAcquired": [
+            "Python"
+          ],
+          "whyRecommended": [
+            "Your preferred working mode aligns with analysis and research activities.",
+            "You already have familiarity with Python, giving you a head-start."
+          ],
+          "typicalRoles": [
+            "Associate Data Analyst",
+            "Product Analyst",
+            "BI Developer"
+          ],
+          "averageEntrySalary": "₹7 - 12 LPA",
+          "marketDemand": "High"
+        },
+        {
+          "roleId": "role_tech_pm",
+          "title": "Associate Product Manager (Technical PM)",
+          "interestCompatibility": 43,
+          "currentJobReadiness": 22,
+          "shortDescription": "Defines product roadmaps, prioritizes sprint backlogs, and aligns engineering teams with customer needs.",
+          "skillsToDevelop": [
+            "Agile & Scrum",
+            "User Story Mapping",
+            "Data Analysis",
+            "Roadmapping",
+            "Cross-Functional Leadership"
+          ],
+          "skillsAlreadyAcquired": [],
+          "whyRecommended": [
+            "Your preferred working mode aligns with management and analysis and research activities.",
+            "High growth upside: learning Agile & Scrum & User Story Mapping will dramatically accelerate readiness."
+          ],
+          "typicalRoles": [
+            "Associate Product Manager (APM)",
+            "Product Owner",
+            "Tech Program Coordinator"
+          ],
+          "averageEntrySalary": "₹10 - 18 LPA",
+          "marketDemand": "High"
+        },
+        {
+          "roleId": "role_product_designer",
+          "title": "Product Designer (UI/UX)",
+          "interestCompatibility": 30,
+          "currentJobReadiness": 22,
+          "shortDescription": "Designs intuitive user journeys, wireframes, interaction systems, and conducts user research to solve product problems.",
+          "skillsToDevelop": [
+            "Figma",
+            "Design Systems",
+            "Prototyping",
+            "User Research",
+            "Wireframing",
+            "Usability Testing"
+          ],
+          "skillsAlreadyAcquired": [],
+          "whyRecommended": [
+            "Your preferred working mode aligns with designing and research activities.",
+            "High growth upside: learning Figma & Design Systems will dramatically accelerate readiness."
+          ],
+          "typicalRoles": [
+            "Junior Product Designer",
+            "UI/UX Designer",
+            "Interaction Designer"
+          ],
+          "averageEntrySalary": "₹7 - 13 LPA",
+          "marketDemand": "High"
+        }
+      ],
+      "completedAt": "2026-11-15T06:48:22.860Z",
       "isDraft": false
     }
   ],

@@ -1,5 +1,5 @@
 datasource db {
-  provider = env("PRISMA_PROVIDER")
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -315,7 +315,7 @@ model NotificationPreference {
   frequency          String   @default("instant") // instant|daily|weekly
   quietHoursStart    Int?     // 0‑23
   quietHoursEnd      Int?     // 0‑23
-  typeToggles        Json     @default({}) // {"new_opportunity": true, ...}
+  typeToggles        Json     @default("{}") // {"new_opportunity": true, ...}
 }
 
 model SavedSearch {
@@ -365,3 +365,18 @@ model PotentialDuplicate {
   createdAt    DateTime @default(now())
 }
 
+
+// -------------------------------------------------
+// Audit Log Model (Admin actions)
+// -------------------------------------------------
+model AuditLog {
+  id          String   @id @default(uuid())
+  adminId     String
+  action      String
+  target      String?   // e.g., "source", "user", "opportunity"
+  targetId    String?   // optional id of the target entity
+  details     Json?     // any additional info
+  createdAt   DateTime @default(now())
+
+  admin       User     @relation(fields: [adminId], references: [id])
+}
