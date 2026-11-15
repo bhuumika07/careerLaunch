@@ -48,6 +48,7 @@ model ResumeVersion {
   parsedAt         DateTime?
 
   resume           Resume        @relation(fields: [resumeId], references: [id])
+  parsedFieldReviews ParsedFieldReview[]
 }
 
 enum ReviewStatus {
@@ -175,6 +176,7 @@ model Source {
   rawListings        RawListing[]
   collectionRuns     CollectionRun[]
   opportunitySources OpportunitySource[]
+  opportunities      Opportunity[]
 }
 
 model RawListing {
@@ -366,6 +368,16 @@ model PotentialDuplicate {
 }
 
 
+model User {
+  id        String     @id @default(uuid())
+  email     String     @unique
+  name      String?
+  role      String     @default("STUDENT")
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  auditLogs AuditLog[]
+}
+
 // -------------------------------------------------
 // Audit Log Model (Admin actions)
 // -------------------------------------------------
@@ -379,4 +391,96 @@ model AuditLog {
   createdAt   DateTime @default(now())
 
   admin       User     @relation(fields: [adminId], references: [id])
+}
+
+// -------------------------------------------------
+// Chunk 2: Data Model and Source Registry
+// -------------------------------------------------
+
+enum SourceRegistryCategory {
+  job_board
+  ats
+  government
+  internship_portal
+}
+
+enum SourceRegistryStatus {
+  active
+  permission_pending
+  external_link_only
+  disabled
+}
+
+enum IngestionOpportunityType {
+  job
+  internship
+  fellowship
+  research
+}
+
+model SourceRegistry {
+  id              String                 @id // e.g. "naukri", "greenhouse", "lever", "ashby"
+  name            String
+  category        SourceRegistryCategory
+  geography       String                 // e.g. "India", "Global", "US"
+  accessMethod    String                 // e.g. "public_api", "licensed_api", "rss_feed", "external_search"
+  status          SourceRegistryStatus   @default(disabled)
+  termsUrl        String?
+  refreshInterval Int                    // in minutes
+  attributionText String?
+  createdAt       DateTime               @default(now())
+  updatedAt       DateTime               @updatedAt
+
+  ingestionRunLogs       IngestionRunLog[]
+  connectorOpportunities ConnectorOpportunity[]
+}
+
+model ConnectorOpportunity {
+  id                 String                   @id @default(uuid())
+  title              String
+  organization       String
+  description        String
+  type               IngestionOpportunityType
+  experienceLevel    String                   // fresher, entry, mid, senior
+  location           String?
+  isRemote           Boolean                  @default(false)
+  salary             String?
+  skills             String[]
+  postedDate         DateTime?
+  deadline           DateTime?
+  originalUrl        String
+  sourceId           String
+  sourceExternalId   String?
+  fetchedAt          DateTime                 @default(now())
+  lastVerifiedAt     DateTime?
+  verificationStatus String                   @default("pending") // verified, pending, unverified, closed, rejected
+  rawPayloadRef      String?                  // raw payload reference or storage key
+  createdAt          DateTime                 @default(now())
+  updatedAt          DateTime                 @updatedAt
+
+  source             SourceRegistry           @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+
+  @@index([sourceId])
+  @@index([type])
+  @@index([isRemote])
+  @@index([verificationStatus])
+}
+
+model IngestionRunLog {
+  id            String         @id @default(uuid())
+  sourceId      String
+  startTime     DateTime       @default(now())
+  endTime       DateTime?
+  status        String         @default("running") // running, completed, failed
+  fetchedCount  Int            @default(0)
+  newCount      Int            @default(0)
+  updatedCount  Int            @default(0)
+  rejectedCount Int            @default(0)
+  errors        Json?          @default("[]")
+  createdAt     DateTime       @default(now())
+
+  source        SourceRegistry @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+
+  @@index([sourceId])
+  @@index([status])
 }

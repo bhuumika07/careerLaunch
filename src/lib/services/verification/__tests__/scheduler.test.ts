@@ -17,9 +17,11 @@ describe("Verification Scheduler (Atomic Claiming & Deduplication)", () => {
               if (where.status?.in && !where.status.in.includes(o.status)) {
                 return false;
               }
-              const now = new Date();
+              const filterDate =
+                where.OR?.find((c: any) => c.nextVerificationAt?.lte)?.nextVerificationAt?.lte ||
+                new Date();
               const isDue =
-                !o.nextVerificationAt || o.nextVerificationAt <= now;
+                !o.nextVerificationAt || o.nextVerificationAt <= filterDate;
               return isDue;
             })
             .slice(0, take || 50);
