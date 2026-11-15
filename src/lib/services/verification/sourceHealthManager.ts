@@ -88,6 +88,33 @@ export class SourceHealthManager {
   }
 
   /**
+   * Records a transient failure (timeout, 5xx server error, rate limit).
+   * Increments per-source failure tracking.
+   * Core Invariant: Source failure NEVER marks opportunities CLOSED.
+   */
+  async recordTransientFailure(
+    sourceId: string,
+    reason: string,
+    httpStatus?: number
+  ): Promise<void> {
+    const now = new Date();
+    if ((this.prisma as any).source?.update) {
+      try {
+        await (this.prisma.source as any).update({
+          where: { id: sourceId },
+          data: {
+            healthStatus: "DEGRADED",
+            lastFailureAt: now,
+            lastErrorMessage: `Transient Source Error (HTTP ${httpStatus || "N/A"}): ${reason}`,
+          },
+        });
+      } catch {
+        // Safe catch for mock/in-memory environments
+      }
+    }
+  }
+
+  /**
    * Records a positive interaction with a source, maintaining or restoring HEALTHY status.
    */
   async recordSuccess(sourceId: string): Promise<void> {

@@ -1,6 +1,7 @@
 // src/lib/services/verification/connectorManager.ts
 import type { OpportunityAvailabilityChecker } from "./checker.ts";
 import { GreenhouseAvailabilityChecker } from "./greenhouseChecker.ts";
+import { DirectUrlAvailabilityChecker } from "./directUrlChecker.ts";
 import type { SourceConfig, SourceListingInfo, VerificationResult } from "./types.ts";
 
 export interface SourceValidationResult {
@@ -20,6 +21,8 @@ export class ConnectorManager {
   constructor() {
     // Register default built-in checkers
     this.registerChecker("greenhouse", new GreenhouseAvailabilityChecker());
+    this.registerChecker("direct_url", new DirectUrlAvailabilityChecker());
+    this.registerChecker("url", new DirectUrlAvailabilityChecker());
   }
 
   /**
@@ -55,6 +58,10 @@ export class ConnectorManager {
     }
     if (urlLower.includes("ashbyhq.com")) {
       return "ashby";
+    }
+
+    if (this.checkers.has("direct_url")) {
+      return "direct_url";
     }
 
     return "unknown";

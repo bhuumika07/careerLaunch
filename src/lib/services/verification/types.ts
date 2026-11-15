@@ -43,6 +43,8 @@ export interface SourceListingInfo {
   applicationUrl?: string | null;
   title?: string;
   organizationName?: string;
+  contentHash?: string | null;
+  description?: string | null;
 }
 
 export interface SourceConfig {

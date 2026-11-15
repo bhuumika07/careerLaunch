@@ -176,6 +176,8 @@ export async function processVerifyOpportunityJob(
       applicationUrl: oppSource.applicationUrl,
       title: opportunity.title,
       organizationName: opportunity.organizationName,
+      contentHash: (opportunity as any).contentHash || (opportunity as any).rawListing?.contentHash || null,
+      description: opportunity.description || null,
     };
 
     try {
@@ -196,15 +198,30 @@ export async function processVerifyOpportunityJob(
           pauseSeconds,
           `HTTP 429 Too Many Requests (Retry-After: ${pauseSeconds}s)`
         );
+        await healthManager.recordTransientFailure(
+          source.id,
+          verificationResult.reason,
+          429
+        );
       }
 
-      // 7. Handle 401/403 Permanent Authentication Failure
+      // 7. Handle 401/403 Permanent Authentication Failure & Transient Server Failures
       if (
         verificationResult.outcome === "UNKNOWN" &&
         (verificationResult.httpStatus === 401 ||
           verificationResult.httpStatus === 403)
       ) {
         await healthManager.recordPermanentFailure(
+          source.id,
+          verificationResult.reason,
+          verificationResult.httpStatus
+        );
+      } else if (
+        verificationResult.outcome === "UNKNOWN" &&
+        (!verificationResult.httpStatus || verificationResult.httpStatus >= 500)
+      ) {
+        // Track transient source-level failure (timeout, 5xx)
+        await healthManager.recordTransientFailure(
           source.id,
           verificationResult.reason,
           verificationResult.httpStatus
