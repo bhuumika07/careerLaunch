@@ -1152,12 +1152,37 @@ export function readDb(): DatabaseSchema {
 
 export function writeDb(data: DatabaseSchema): void {
   ensureDbFile();
+  const content = JSON.stringify(data, null, 2);
+  const tempFile = `${DB_FILE}.tmp`;
   try {
-    const tempFile = `${DB_FILE}.tmp`;
-    fs.writeFileSync(tempFile, JSON.stringify(data, null, 2), "utf-8");
-    fs.renameSync(tempFile, DB_FILE);
+    fs.writeFileSync(tempFile, content, "utf-8");
+    try {
+      fs.renameSync(tempFile, DB_FILE);
+    } catch (renameError: any) {
+      if (
+        renameError.code === "EPERM" ||
+        renameError.code === "EBUSY" ||
+        renameError.code === "EACCES" ||
+        renameError.code === "EEXIST"
+      ) {
+        // Windows / OneDrive file-lock fallback: write directly to DB_FILE and clean up temp
+        fs.writeFileSync(DB_FILE, content, "utf-8");
+        try {
+          fs.unlinkSync(tempFile);
+        } catch {
+          // ignore temp cleanup failure
+        }
+      } else {
+        throw renameError;
+      }
+    }
   } catch (error) {
-    console.error("Failed to write database file:", error);
-    throw error;
+    try {
+      // Final fallback: direct synchronous write
+      fs.writeFileSync(DB_FILE, content, "utf-8");
+    } catch (fallbackError) {
+      console.error("Failed to write database file:", fallbackError);
+      throw fallbackError;
+    }
   }
 }

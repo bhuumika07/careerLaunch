@@ -83,6 +83,54 @@
       "onboardingCompleted": true,
       "createdAt": "2026-11-15T06:47:51.805Z",
       "updatedAt": "2026-11-15T06:48:03.881Z"
+    },
+    {
+      "id": "usr_student_1794761229707",
+      "name": "nyasadh",
+      "email": "nyasa@lpu.com",
+      "passwordHash": "$2b$10$I65CkBKaled3GrxmKjlJmeAjnXcXTZfVcpqSfcBgK./9h2WiAHSdu",
+      "role": "student",
+      "status": "active",
+      "emailVerified": false,
+      "onboardingCompleted": false,
+      "createdAt": "2026-11-15T16:47:09.707Z",
+      "updatedAt": "2026-11-15T16:47:09.707Z"
+    },
+    {
+      "id": "usr_student_1794761250029",
+      "name": "nyasadh",
+      "email": "nyasa@lpuu.com",
+      "passwordHash": "$2b$10$P.jQyIyp2srNVJgeVO2dmuRqVu4DgvNv8gbv1dyxlPBhZwtVf0tYm",
+      "role": "student",
+      "status": "active",
+      "emailVerified": false,
+      "onboardingCompleted": false,
+      "createdAt": "2026-11-15T16:47:30.029Z",
+      "updatedAt": "2026-11-15T16:47:30.029Z"
+    },
+    {
+      "id": "usr_student_1794761500558",
+      "name": "Alex Student",
+      "email": "alex.student.test99@example.com",
+      "passwordHash": "$2b$10$i1BTzq/tdhuwcK4xWgHtZOFDYclqoCpc.mhXhmeldLCphsR7jDI16",
+      "role": "student",
+      "status": "active",
+      "emailVerified": false,
+      "onboardingCompleted": false,
+      "createdAt": "2026-11-15T16:51:40.557Z",
+      "updatedAt": "2026-11-15T16:51:40.557Z"
+    },
+    {
+      "id": "usr_student_1794761511965",
+      "name": "Second Student",
+      "email": "second.student.test99@example.com",
+      "passwordHash": "$2b$10$4LS50iT0eu34FBRmaaqirelDIq7AvsYLUJAHSYD4YVr/ASFOIHy4a",
+      "role": "student",
+      "status": "active",
+      "emailVerified": false,
+      "onboardingCompleted": false,
+      "createdAt": "2026-11-15T16:51:51.965Z",
+      "updatedAt": "2026-11-15T16:51:51.965Z"
     }
   ],
   "sessions": [
@@ -113,6 +161,20 @@
       "role": "student",
       "expiresAt": 1795330071823,
       "createdAt": "2026-11-15T06:47:51.823Z"
+    },
+    {
+      "id": "sess_2d916d606d1fdac2057ae3a0a7e219110ed5756659835566d8414f8d164104aa",
+      "userId": "usr_student_1794761500558",
+      "role": "student",
+      "expiresAt": 1795366300574,
+      "createdAt": "2026-11-15T16:51:40.574Z"
+    },
+    {
+      "id": "sess_ba22ab160a29296327c9331db814044de6e47597da62333c3c054a6437717769",
+      "userId": "usr_student_1794761511965",
+      "role": "student",
+      "expiresAt": 1795366311976,
+      "createdAt": "2026-11-15T16:51:51.976Z"
     }
   ],
   "verificationTokens": [
@@ -155,13 +217,53 @@
       "expiresAt": 1794811671807,
       "used": false,
       "createdAt": "2026-11-15T06:47:51.805Z"
+    },
+    {
+      "id": "tok_b140b6556eb30d8d",
+      "token": "f4a72cd72c2c646580faccc5e714f097b035bb106cb9b609417e3427fc87a06d",
+      "userId": "usr_student_1794761229707",
+      "email": "nyasa@lpu.com",
+      "type": "email_verification",
+      "expiresAt": 1794847629708,
+      "used": false,
+      "createdAt": "2026-11-15T16:47:09.707Z"
+    },
+    {
+      "id": "tok_0541e7ea5261dc5b",
+      "token": "d357df72df3e4fe73cb78a07b0697f50e8a5794342aa8c2d75e4178cd18c3760",
+      "userId": "usr_student_1794761250029",
+      "email": "nyasa@lpuu.com",
+      "type": "email_verification",
+      "expiresAt": 1794847650031,
+      "used": false,
+      "createdAt": "2026-11-15T16:47:30.029Z"
+    },
+    {
+      "id": "tok_ab7b9500397cf04c",
+      "token": "a2554bbeaeb1583cfdbcec3f3f4c1e63bb3b9079c26759ef46173b8480f80eb5",
+      "userId": "usr_student_1794761500558",
+      "email": "alex.student.test99@example.com",
+      "type": "email_verification",
+      "expiresAt": 1794847900563,
+      "used": false,
+      "createdAt": "2026-11-15T16:51:40.557Z"
+    },
+    {
+      "id": "tok_3ee9c0b44e292b3f",
+      "token": "482d9e6cbf46e69e397760be8878b0041c0f40932855e91f06e48d3cb94e9a0f",
+      "userId": "usr_student_1794761511965",
+      "email": "second.student.test99@example.com",
+      "type": "email_verification",
+      "expiresAt": 1794847911966,
+      "used": false,
+      "createdAt": "2026-11-15T16:51:51.965Z"
     }
   ],
   "rateLimits": [
     {
       "key": "login:bhumika@pp.com",
       "attempts": 1,
-      "lastAttempt": 1794725238789
+      "lastAttempt": 1794761184965
     }
   ],
   "studentProfiles": [
@@ -511,6 +613,42 @@
       "degree": "B.Tech in Computer Science",
       "graduationYear": 2026,
       "cgpa": 8.8
+    },
+    {
+      "userId": "usr_student_1794761229707",
+      "skills": [],
+      "projects": [],
+      "experience": [],
+      "certifications": [],
+      "achievements": [],
+      "updatedAt": "2026-11-15T16:47:09.707Z"
+    },
+    {
+      "userId": "usr_student_1794761250029",
+      "skills": [],
+      "projects": [],
+      "experience": [],
+      "certifications": [],
+      "achievements": [],
+      "updatedAt": "2026-11-15T16:47:30.029Z"
+    },
+    {
+      "userId": "usr_student_1794761500558",
+      "skills": [],
+      "projects": [],
+      "experience": [],
+      "certifications": [],
+      "achievements": [],
+      "updatedAt": "2026-11-15T16:51:40.557Z"
+    },
+    {
+      "userId": "usr_student_1794761511965",
+      "skills": [],
+      "projects": [],
+      "experience": [],
+      "certifications": [],
+      "achievements": [],
+      "updatedAt": "2026-11-15T16:51:51.965Z"
     }
   ],
   "facultyProfiles": [],
