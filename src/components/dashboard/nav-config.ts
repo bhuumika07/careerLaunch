@@ -13,6 +13,7 @@ const userNavItems: NavItem[] = [
   { label: 'Saved Opportunities', href: '/student/saved', icon: 'BookMarked' },
   { label: 'Application Tracker', href: '/student/applications', icon: 'Send' },
   { label: 'Career Intelligence', href: '/student/career-discovery', icon: 'Compass' },
+  { label: 'Skill Gap Analysis', href: '/student/skill-gap', icon: 'Target' },
   { label: 'Learning Roadmap', href: '/student/roadmap', icon: 'Map' },
   { label: 'My Profile', href: '/student/profile', icon: 'User' },
 ];
