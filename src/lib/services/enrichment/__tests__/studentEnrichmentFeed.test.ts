@@ -459,4 +459,102 @@ describe("Student Discovery Feed with AI Enrichment (Chunk 6)", () => {
       assert.ok(deadlineResult.totalCount >= 1);
     });
   });
+
+  describe("Streamlined 4 Dimensions: Domain, Position Type, Grad Year, Degree Level", () => {
+    it("filters accurately by Job Domain (software, data_ai_ml, design)", () => {
+      // 1. Filter by data_ai_ml
+      const aiResult = filterEnrichedStudentFeed(sampleDataset, {
+        now,
+        domain: "data_ai_ml",
+      });
+      assert.ok(aiResult.totalCount >= 1);
+      assert.ok(aiResult.opportunities.some((o) => o.title.includes("Machine Learning")));
+
+      // 2. Filter by software
+      const softResult = filterEnrichedStudentFeed(sampleDataset, {
+        now,
+        domain: "software",
+      });
+      assert.ok(softResult.totalCount >= 2);
+      assert.ok(softResult.opportunities.some((o) => o.title.includes("Software") || o.title.includes("Developer")));
+    });
+
+    it("filters accurately by Position Type (internship, full_time, research)", () => {
+      // Internship
+      const internResult = filterEnrichedStudentFeed(sampleDataset, {
+        now,
+        positionType: "internship",
+      });
+      assert.equal(internResult.totalCount, 1);
+      assert.equal(internResult.opportunities[0].id, "opp_ai_1");
+
+      // Full-time
+      const ftResult = filterEnrichedStudentFeed(sampleDataset, {
+        now,
+        positionType: "full_time",
+      });
+      assert.equal(ftResult.totalCount, 1);
+      assert.equal(ftResult.opportunities[0].id, "opp_ai_2");
+
+      // Research
+      const resResult = filterEnrichedStudentFeed(sampleDataset, {
+        now,
+        positionType: "research",
+      });
+      assert.equal(resResult.totalCount, 1);
+      assert.equal(resResult.opportunities[0].id, "opp_legacy_1");
+    });
+
+    it("filters accurately by Graduating Year with inclusion of unrestricted listings", () => {
+      // 2027 graduates: matches opp_ai_1 (2026, 2027) + opp_legacy_1 (open/2025, 2026)
+      const grad2027 = filterEnrichedStudentFeed(sampleDataset, {
+        now,
+        graduationYears: [2027],
+      });
+      assert.ok(grad2027.totalCount >= 1);
+      assert.ok(grad2027.opportunities.some((o) => o.id === "opp_ai_1"));
+
+      // 2024 graduates: matches opp_ai_2 (2024, 2025)
+      const grad2024 = filterEnrichedStudentFeed(sampleDataset, {
+        now,
+        graduationYears: [2024],
+      });
+      assert.ok(grad2024.totalCount >= 1);
+      assert.ok(grad2024.opportunities.some((o) => o.id === "opp_ai_2"));
+    });
+
+    it("filters accurately by Degree Level using aliases (bachelors, masters, phd)", () => {
+      // Bachelors: matches opp_ai_1, opp_ai_2
+      const bachResult = filterEnrichedStudentFeed(sampleDataset, {
+        now,
+        degreeLevels: ["bachelors"],
+      });
+      assert.ok(bachResult.totalCount >= 2);
+      assert.ok(bachResult.opportunities.some((o) => o.id === "opp_ai_1"));
+      assert.ok(bachResult.opportunities.some((o) => o.id === "opp_ai_2"));
+
+      // PhD: matches opp_legacy_1
+      const phdResult = filterEnrichedStudentFeed(sampleDataset, {
+        now,
+        degreeLevels: ["phd"],
+      });
+      assert.ok(phdResult.totalCount >= 1);
+      assert.ok(phdResult.opportunities.some((o) => o.id === "opp_legacy_1"));
+    });
+
+    it("combines the 4 dimensions into a high-precision student match", () => {
+      const match = filterEnrichedStudentFeed(sampleDataset, {
+        now,
+        domain: "software",
+        positionType: "internship",
+        graduationYears: [2027],
+        degreeLevels: ["bachelors"],
+      });
+
+      assert.equal(match.totalCount, 1);
+      assert.equal(match.opportunities[0].id, "opp_ai_1");
+      assert.equal(match.opportunities[0].domain, "software");
+      assert.equal(match.opportunities[0].positionType, "internship");
+    });
+  });
 });

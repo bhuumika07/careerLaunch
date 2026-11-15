@@ -19,23 +19,26 @@ export async function GET(req: NextRequest) {
     const page = url.searchParams.get("page") ? parseInt(url.searchParams.get("page")!, 10) : 1;
     const limit = url.searchParams.get("limit") ? parseInt(url.searchParams.get("limit")!, 10) : 20;
 
-    // Phase 3 Enriched Discovery Filters
-    const skillsParam = url.searchParams.get("skills");
-    const skills = skillsParam ? skillsParam.split(",").map((s) => s.trim()).filter(Boolean) : undefined;
-    const opportunityType = url.searchParams.get("opportunityType") || url.searchParams.get("type") || undefined;
-    const location = url.searchParams.get("location") || undefined;
-    const deadline = url.searchParams.get("deadline") || undefined;
-    const degreesParam = url.searchParams.get("degreeLevels") || url.searchParams.get("degrees");
-    const degreeLevels = degreesParam ? degreesParam.split(",").map((d) => d.trim()).filter(Boolean) : undefined;
-    const branchesParam = url.searchParams.get("branches");
-    const branches = branchesParam ? branchesParam.split(",").map((b) => b.trim()).filter(Boolean) : undefined;
-    const gradYearsParam = url.searchParams.get("graduationYears") || url.searchParams.get("gradYears");
+    // Streamlined 4 Core Dimensions: Domain, Position Type, Grad Year, Degree Level
+    const domain = url.searchParams.get("domain") || url.searchParams.get("jobDomain") || undefined;
+    const positionType = url.searchParams.get("positionType") || url.searchParams.get("opportunityType") || url.searchParams.get("type") || undefined;
+    const degreesParam = url.searchParams.get("degreeLevel") || url.searchParams.get("degreeLevels") || url.searchParams.get("degrees");
+    const degreeLevels = degreesParam ? degreesParam.split(",").map((d) => d.trim().toLowerCase()).filter(Boolean) : undefined;
+    const gradYearsParam = url.searchParams.get("graduatingYear") || url.searchParams.get("graduationYears") || url.searchParams.get("gradYear");
     const graduationYears = gradYearsParam
       ? gradYearsParam
           .split(",")
           .map((y) => parseInt(y.trim(), 10))
           .filter((y) => !isNaN(y))
       : undefined;
+
+    // Optional discovery filters & backward compatibility
+    const skillsParam = url.searchParams.get("skills");
+    const skills = skillsParam ? skillsParam.split(",").map((s) => s.trim()).filter(Boolean) : undefined;
+    const location = url.searchParams.get("location") || undefined;
+    const deadline = url.searchParams.get("deadline") || undefined;
+    const branchesParam = url.searchParams.get("branches");
+    const branches = branchesParam ? branchesParam.split(",").map((b) => b.trim()).filter(Boolean) : undefined;
     const minCgpaParam = url.searchParams.get("minCgpa");
     const minCgpa = minCgpaParam ? parseFloat(minCgpaParam) : undefined;
 
@@ -62,9 +65,13 @@ export async function GET(req: NextRequest) {
     const isLocalFallback = !process.env.DATABASE_URL;
     const freshnessThresholdHours = isLocalFallback ? 24 * 365 : undefined;
 
-    // Apply strict Chunk 10 active & fresh filtering + Phase 3 enrichment discovery
+    // Apply strict active & fresh filtering + Streamlined 4 Dimensions
     const feedResult = filterEnrichedStudentFeed(rawOpps, {
       query,
+      domain,
+      positionType,
+      graduationYears,
+      degreeLevels,
       category,
       workMode,
       experienceLevel,
@@ -72,10 +79,8 @@ export async function GET(req: NextRequest) {
       deadline,
       urgencyDays,
       skills,
-      opportunityType,
-      degreeLevels,
+      opportunityType: positionType,
       branches,
-      graduationYears,
       minCgpa,
       freshnessThresholdHours,
       page,

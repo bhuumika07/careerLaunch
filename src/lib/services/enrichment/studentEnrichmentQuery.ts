@@ -15,6 +15,71 @@ import type {
   DegreeLevel,
 } from "./types.ts";
 
+export const DOMAIN_PATTERNS: Record<string, RegExp[]> = {
+  data_ai_ml: [
+    /\b(machine learning|data scientist|data science|deep learning|nlp|computer vision|genai|llm|data analyst|data engineer|artificial intelligence)\b/i,
+    /\b(pytorch|tensorflow|scikit-learn|pandas|huggingface|spark|big data|analytics)\b/i,
+  ],
+  design: [
+    /\b(product design(?:er)?|ui[\s/]ux|user experience|graphic design|design system|figma|visual design|interaction design)\b/i,
+  ],
+  security: [
+    /\b(cyber[\s-]?security|infosec|secops|penetration test(?:ing)?|vulnerability|ethical hack(?:er|ing)|soc analyst|cryptography)\b/i,
+  ],
+  devops_cloud: [
+    /\b(devops|sre|site reliability|cloud engineer|platform engineer|infrastructure|kubernetes|docker|terraform|aws|azure|gcp)\b/i,
+  ],
+  product: [
+    /\b(product manager|technical product manager|associate product manager|apm|product management|group product manager)\b/i,
+  ],
+  business: [
+    /\b(business development|sales|marketing|account executive|human resources|recruiter|finance|operations|consulting)\b/i,
+  ],
+  software: [
+    /\b(software|developer|engineer|frontend|backend|fullstack|sde|swe|web developer|mobile developer|ios|android|java|python|react|node|typescript|golang)\b/i,
+  ],
+};
+
+export const DEGREE_ALIASES: Record<string, string[]> = {
+  bachelors: ["b.tech", "b.e", "b.sc", "bca", "bs", "bachelor", "undergraduate", "b.des", "dual degree"],
+  masters: ["m.tech", "m.s", "m.sc", "mca", "master", "postgraduate", "mba"],
+  phd: ["phd", "doctorate", "doctoral", "research scholar"],
+};
+
+export function inferOpportunityDomain(opp: any, enrichment?: EnrichedDetails | null): string {
+  if (enrichment?.domain && enrichment.domain !== "other" && enrichment.domain !== "unknown") {
+    return enrichment.domain;
+  }
+  const text = `${opp.title || ""} ${opp.description || ""} ${(opp.skills || []).join(" ")}`.toLowerCase();
+  for (const [dom, patterns] of Object.entries(DOMAIN_PATTERNS)) {
+    if (patterns.some((p) => p.test(text))) {
+      return dom;
+    }
+  }
+  return "software";
+}
+
+export function inferPositionType(opp: any, enrichment?: EnrichedDetails | null): string {
+  if (enrichment?.opportunityType && enrichment.opportunityType !== "unknown") {
+    if (enrichment.opportunityType === "fellowship") return "research";
+    return enrichment.opportunityType;
+  }
+  const title = (opp.title || "").toLowerCase();
+  const cat = String(opp.category || "").toLowerCase();
+  const type = String(opp.type || "").toLowerCase();
+
+  if (cat.includes("intern") || type.includes("intern") || /\bintern(?:ship)?\b/i.test(title)) {
+    return "internship";
+  }
+  if (cat.includes("research") || cat.includes("fellowship") || /\b(research|fellowship|lab)\b/i.test(title)) {
+    return "research";
+  }
+  if (type.includes("contract") || type.includes("part_time") || cat.includes("project") || /\b(contract|part[\s-]time|freelance)\b/i.test(title)) {
+    return "contract";
+  }
+  return "full_time";
+}
+
 export interface EnrichedFeedFilters {
   // Phase 2 base filters
   query?: string;
@@ -25,15 +90,19 @@ export interface EnrichedFeedFilters {
   page?: number;
   limit?: number;
 
-  // Phase 3 enriched discovery filters
+  // Streamlined 4 Core Dimensions
+  domain?: string; // Job Domain: software, data_ai_ml, design, devops_cloud, security, product, business
+  positionType?: string; // Position Type: internship, full_time, research, contract
+  graduationYears?: number[];
+  degreeLevels?: string[];
+
+  // Phase 3 enriched discovery filters & backward compatibility
   skills?: string[];
   workMode?: string;
   opportunityType?: string;
   location?: string;
   deadline?: string | Date;
-  degreeLevels?: string[];
   branches?: string[];
-  graduationYears?: number[];
   minCgpa?: number;
   experienceLevel?: string;
   allowReviewState?: boolean; // Default false: hides needs_review from student feed
@@ -41,6 +110,7 @@ export interface EnrichedFeedFilters {
 
 export interface EnrichedDetails {
   status: string;
+  domain?: string | null;
   roleTitle?: string;
   descriptionSummary?: string;
   opportunityType?: OpportunityType;
@@ -93,6 +163,10 @@ export interface EnrichedStudentOpportunityItem {
   inferred_skills: string[]; // Clearly labeled inferred skills
   deadline?: string | null;
   stipendSalary?: string | null;
+  domain?: string | null;
+  positionType?: string | null;
+  degreeLevels?: string[];
+  graduationYears?: number[];
   isFresh: boolean;
   status: string;
   enrichment?: EnrichedDetails | null;
@@ -145,6 +219,7 @@ export function extractEnrichmentData(
     const inf = (raw.skills?.inferred_skills || []).map((s: any) => s.name);
     return {
       status,
+      domain: raw.domain || raw.basic?.domain || null,
       roleTitle: raw.basic?.role_title,
       descriptionSummary: raw.basic?.description_summary,
       opportunityType: raw.opportunity_type?.primary_type,
@@ -185,6 +260,7 @@ export function extractEnrichmentData(
 
   return {
     status,
+    domain: raw.domain || null,
     roleTitle: raw.roleTitle,
     descriptionSummary: raw.descriptionSummary,
     opportunityType: raw.opportunityType,
@@ -327,7 +403,120 @@ export function filterEnrichedStudentFeed(
       }
     }
 
-    // 5. Work Mode Filter
+    // 5. Job Domain Filter ("what job domain u are looking for")
+    if (filters.domain && filters.domain !== "All" && filters.domain !== "all") {
+      const targetDomain = filters.domain.toLowerCase().trim();
+      const detectedDomain = inferOpportunityDomain(opp, enrichment);
+
+      if (detectedDomain !== targetDomain) {
+        const patterns = DOMAIN_PATTERNS[targetDomain];
+        const combinedText = `${opp.title || ""} ${opp.description || ""} ${(opp.skills || []).join(" ")}`.toLowerCase();
+        if (!patterns || !patterns.some((p) => p.test(combinedText))) {
+          return false;
+        }
+      }
+    }
+
+    // 6. Position Type Filter ("what kind of position u are looking for")
+    const posFilter = filters.positionType || filters.opportunityType;
+    if (posFilter && posFilter !== "All" && posFilter !== "all") {
+      const targetPos = posFilter.toLowerCase().trim();
+      const detectedPos = inferPositionType(opp, enrichment);
+
+      let matchesPos = detectedPos === targetPos;
+      if (!matchesPos) {
+        const catLower = String(opp.category || "").toLowerCase();
+        const titleLower = String(opp.title || "").toLowerCase();
+        const typeLower = String(opp.type || "").toLowerCase();
+
+        if (targetPos === "internship" || targetPos === "intern") {
+          matchesPos =
+            catLower.includes("intern") ||
+            typeLower.includes("intern") ||
+            /\bintern(?:ship)?\b/i.test(titleLower) ||
+            String(opp.eligibility?.experienceLevel || "").toLowerCase().includes("intern");
+        } else if (targetPos === "full_time" || targetPos === "jobs" || targetPos === "job") {
+          matchesPos =
+            catLower === "jobs" ||
+            typeLower.includes("full_time") ||
+            typeLower.includes("job") ||
+            (/\b(fresher|graduate|engineer|developer|analyst)\b/i.test(titleLower) && !/\bintern(?:ship)?\b/i.test(titleLower));
+        } else if (targetPos === "research" || targetPos === "fellowship") {
+          matchesPos =
+            catLower.includes("research") ||
+            catLower.includes("fellowship") ||
+            catLower.includes("collaboration") ||
+            /\b(research|fellowship|lab)\b/i.test(titleLower);
+        } else if (targetPos === "contract" || targetPos === "part_time") {
+          matchesPos =
+            catLower.includes("project") ||
+            catLower.includes("workshop") ||
+            typeLower.includes("contract") ||
+            typeLower.includes("part_time") ||
+            /\b(contract|part[\s-]time|freelance)\b/i.test(titleLower);
+        }
+      }
+
+      if (!matchesPos) {
+        return false;
+      }
+    }
+
+    // 7. Graduating Year Filter ("graduating year")
+    if (filters.graduationYears && filters.graduationYears.length > 0) {
+      const filterYears = filters.graduationYears;
+      const oppYears = [
+        ...(enrichment?.graduationYears || []),
+        ...(opp.eligibility?.graduationYears || []).map(Number).filter((n: any) => !isNaN(n)),
+      ];
+
+      if (oppYears.length > 0) {
+        const hasYearMatch = filterYears.some((fy) => {
+          if (fy >= 2028) {
+            return oppYears.some((oy) => oy >= 2028);
+          }
+          return oppYears.includes(fy);
+        });
+        if (!hasYearMatch) {
+          return false;
+        }
+      } else {
+        const text = `${opp.title || ""} ${opp.description || ""}`.toLowerCase();
+        const mentionedYears = text.match(/\b(202[3-9])\b/g);
+        if (mentionedYears && mentionedYears.length > 0) {
+          const numMentioned = mentionedYears.map(Number);
+          const hasMentionMatch = filterYears.some((fy) => numMentioned.includes(fy));
+          if (!hasMentionMatch) {
+            return false;
+          }
+        }
+      }
+    }
+
+    // 8. Degree Level Filter ("degree level")
+    if (filters.degreeLevels && filters.degreeLevels.length > 0) {
+      const filterDegrees = filters.degreeLevels.map((d) => d.toLowerCase());
+      if (!filterDegrees.includes("all") && !filterDegrees.includes("any")) {
+        const oppDegrees = [
+          ...(enrichment?.degreeLevels || []),
+          ...(opp.eligibility?.degrees || []),
+        ].map((d) => String(d).toLowerCase());
+
+        if (oppDegrees.length > 0 && !oppDegrees.some((d) => d.includes("any") || d.includes("open"))) {
+          const hasDegreeMatch = filterDegrees.some((candDeg) => {
+            const aliases = DEGREE_ALIASES[candDeg] || [candDeg];
+            return oppDegrees.some((od) =>
+              aliases.some((alias) => od.includes(alias) || alias.includes(od))
+            );
+          });
+          if (!hasDegreeMatch) {
+            return false;
+          }
+        }
+      }
+    }
+
+    // 9. Work Mode Filter (Backward compatibility)
     if (filters.workMode && filters.workMode !== "All") {
       const targetMode = filters.workMode.toLowerCase();
       const effectiveMode = (
@@ -341,31 +530,7 @@ export function filterEnrichedStudentFeed(
       }
     }
 
-    // 6. Opportunity Type Filter
-    if (filters.opportunityType && filters.opportunityType !== "All") {
-      const targetType = filters.opportunityType.toLowerCase();
-
-      // Normalize base category to standard opportunity type if needed
-      let baseType = (opp.type || "").toLowerCase();
-      if (!baseType && opp.category) {
-        const cat = opp.category.toLowerCase();
-        if (cat.includes("intern")) baseType = "internship";
-        else if (cat.includes("job")) baseType = "full_time";
-        else baseType = cat;
-      }
-
-      const effectiveType = (
-        enrichment?.opportunityType && enrichment.opportunityType !== "unknown"
-          ? enrichment.opportunityType
-          : baseType
-      ).toLowerCase();
-
-      if (effectiveType !== targetType) {
-        return false;
-      }
-    }
-
-    // 7. Legacy Category Filter (for backward compatibility)
+    // 10. Legacy Category Filter (for backward compatibility)
     if (filters.category && filters.category !== "All") {
       const cat = String(opp.category || "").toLowerCase();
       if (cat !== filters.category.toLowerCase()) {
@@ -399,7 +564,7 @@ export function filterEnrichedStudentFeed(
       }
     }
 
-    // 8. Skills Filter
+    // Skills Filter
     if (filters.skills && filters.skills.length > 0) {
       const filterSkillsLower = filters.skills.map((s) => s.toLowerCase().trim());
       const oppSkills = [
@@ -414,40 +579,6 @@ export function filterEnrichedStudentFeed(
 
       if (!hasMatch) {
         return false;
-      }
-    }
-
-    // 9. Degree Levels Filter
-    if (filters.degreeLevels && filters.degreeLevels.length > 0) {
-      const filterDegrees = filters.degreeLevels.map((d) => d.toLowerCase());
-      const oppDegrees = [
-        ...(enrichment?.degreeLevels || []),
-        ...(opp.eligibility?.degrees || []),
-      ].map((d) => String(d).toLowerCase());
-
-      if (oppDegrees.length > 0 && !oppDegrees.includes("any")) {
-        const degreeMatches = filterDegrees.some((fd) =>
-          oppDegrees.some((od) => od.includes(fd) || fd.includes(od))
-        );
-        if (!degreeMatches) {
-          return false;
-        }
-      }
-    }
-
-    // 10. Graduation Years Filter
-    if (filters.graduationYears && filters.graduationYears.length > 0) {
-      const filterYears = filters.graduationYears;
-      const oppYears = [
-        ...(enrichment?.graduationYears || []),
-        ...(opp.eligibility?.graduationYears || []).map(Number).filter((n: any) => !isNaN(n)),
-      ];
-
-      if (oppYears.length > 0) {
-        const yearMatches = filterYears.some((fy) => oppYears.includes(fy));
-        if (!yearMatches) {
-          return false;
-        }
       }
     }
 
@@ -557,6 +688,18 @@ export function filterEnrichedStudentFeed(
     const prefSkills = enrichment?.preferredSkills || [];
     const infSkills = enrichment?.inferredSkills || [];
 
+    const itemDomain = inferOpportunityDomain(opp, enrichment);
+    const itemPositionType = inferPositionType(opp, enrichment);
+    const itemDegreeLevels = Array.from(
+      new Set([...(enrichment?.degreeLevels || []), ...(opp.eligibility?.degrees || [])])
+    );
+    const itemGraduationYears = Array.from(
+      new Set([
+        ...(enrichment?.graduationYears || []),
+        ...(opp.eligibility?.graduationYears || []).map(Number).filter((n: any) => !isNaN(n)),
+      ])
+    );
+
     return {
       id: opp.id,
       title: enrichment?.roleTitle || opp.title,
@@ -570,6 +713,10 @@ export function filterEnrichedStudentFeed(
         "Remote",
       type: effectiveType,
       workMode: effectiveWorkMode,
+      domain: itemDomain,
+      positionType: itemPositionType,
+      degreeLevels: itemDegreeLevels,
+      graduationYears: itemGraduationYears,
       sourceName,
       lastVerifiedAt: verifiedTimeStr ? new Date(verifiedTimeStr).toISOString() : null,
       applicationUrl: opp.applicationUrl || opp.sourceUrl || null,
