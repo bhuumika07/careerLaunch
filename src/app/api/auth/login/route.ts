@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
+import { readDb } from "@/lib/db";
 import { comparePassword } from "@/lib/auth-utils";
 import { createSession, type Role } from "@/lib/session";
 import { checkRateLimit, recordFailedAttempt, resetRateLimit } from "@/lib/rate-limit";
@@ -47,18 +48,26 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 2. Lookup user in PostgreSQL via Prisma
+    // 2. Lookup user in PostgreSQL via Prisma, with local store fallback
     let user = null;
     try {
       user = await prisma.user.findUnique({
         where: { email: normalizedEmail },
       });
     } catch (err: unknown) {
-      console.error("[login] Database error querying user:", err);
-      return NextResponse.json(
-        { success: false, error: "Database service temporarily unavailable.", code: "DB_UNAVAILABLE" },
-        { status: 503 }
-      );
+      console.warn("[login] Prisma query failed, trying local file store fallback:", err);
+    }
+
+    if (!user) {
+      try {
+        const db = readDb();
+        const fileUser = (db.users || []).find((u) => u.email.toLowerCase() === normalizedEmail);
+        if (fileUser) {
+          user = fileUser;
+        }
+      } catch (fileErr) {
+        console.warn("[login] Local file store fallback failed:", fileErr);
+      }
     }
 
     if (!user || !user.passwordHash) {

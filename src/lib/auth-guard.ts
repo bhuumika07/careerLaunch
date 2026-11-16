@@ -6,6 +6,7 @@
 
 import type { NextRequest } from "next/server";
 import { prisma } from "./prisma";
+import { readDb } from "./db";
 import {
   SESSION_COOKIE_NAME,
   getSessionFromDb,
@@ -78,9 +79,7 @@ export async function requireAuth(req?: Request | NextRequest): Promise<AuthCont
   try {
     session = await getSessionFromDb(sessionId);
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    console.error("[auth-guard] Database failure during session validation:", msg);
-    throw new AuthError("Authentication service temporarily unavailable.", 503, "DB_UNAVAILABLE");
+    console.warn("[auth-guard] Session lookup error, trying fallback:", err);
   }
 
   if (!session) {
@@ -93,36 +92,51 @@ export async function requireAuth(req?: Request | NextRequest): Promise<AuthCont
       where: { id: session.userId },
     });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    console.error("[auth-guard] Database failure during user lookup:", msg);
-    throw new AuthError("User service temporarily unavailable.", 503, "DB_UNAVAILABLE");
+    console.warn("[auth-guard] Prisma user lookup failed, falling back to local file store:", err);
   }
 
-  if (!userRecord) {
+  let user: User | null = null;
+  if (userRecord) {
+    if (userRecord.status === "deactivated") {
+      throw new AuthError("This account has been deactivated.", 403, "ACCOUNT_DEACTIVATED");
+    }
+    if (userRecord.status === "suspended") {
+      throw new AuthError("This account has been suspended by an administrator.", 403, "ACCOUNT_SUSPENDED");
+    }
+    user = {
+      id: userRecord.id,
+      name: userRecord.name || "",
+      email: userRecord.email,
+      passwordHash: userRecord.passwordHash || undefined,
+      role: userRecord.role as Role,
+      status: (userRecord.status as UserStatus) || "active",
+      emailVerified: Boolean(userRecord.emailVerified),
+      avatarUrl: userRecord.avatarUrl || undefined,
+      onboardingCompleted: Boolean(userRecord.onboardingCompleted),
+      createdAt: userRecord.createdAt.toISOString(),
+      updatedAt: userRecord.updatedAt.toISOString(),
+    };
+  } else {
+    try {
+      const db = readDb();
+      const fileUser = (db.users || []).find((u) => u.id === session!.userId);
+      if (fileUser) {
+        if (fileUser.status === "deactivated") {
+          throw new AuthError("This account has been deactivated.", 403, "ACCOUNT_DEACTIVATED");
+        }
+        if (fileUser.status === "suspended") {
+          throw new AuthError("This account has been suspended by an administrator.", 403, "ACCOUNT_SUSPENDED");
+        }
+        user = fileUser;
+      }
+    } catch (fileErr) {
+      console.warn("[auth-guard] Local file user lookup failed:", fileErr);
+    }
+  }
+
+  if (!user) {
     throw new AuthError("User account not found.", 401, "USER_NOT_FOUND");
   }
-
-  if (userRecord.status === "deactivated") {
-    throw new AuthError("This account has been deactivated.", 403, "ACCOUNT_DEACTIVATED");
-  }
-
-  if (userRecord.status === "suspended") {
-    throw new AuthError("This account has been suspended by an administrator.", 403, "ACCOUNT_SUSPENDED");
-  }
-
-  const user: User = {
-    id: userRecord.id,
-    name: userRecord.name || "",
-    email: userRecord.email,
-    passwordHash: userRecord.passwordHash || undefined,
-    role: userRecord.role as Role,
-    status: (userRecord.status as UserStatus) || "active",
-    emailVerified: Boolean(userRecord.emailVerified),
-    avatarUrl: userRecord.avatarUrl || undefined,
-    onboardingCompleted: Boolean(userRecord.onboardingCompleted),
-    createdAt: userRecord.createdAt.toISOString(),
-    updatedAt: userRecord.updatedAt.toISOString(),
-  };
 
   return { user, session };
 }

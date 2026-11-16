@@ -1084,5 +1084,51 @@
       "studentProfileId": "prof_bob",
       "userId": "user_bob"
     }
+  ],
+  "users": [
+    {
+      "id": "usr_student_1794834810850",
+      "name": "Bhumika",
+      "email": "bhumikaa2005@gmail.com",
+      "passwordHash": "$2b$10$RK1gsokSVAdZWPUPvvt/XubJ3gfaE8GK3xTvmhKPndf9AyL3jjWpq",
+      "role": "student",
+      "status": "active",
+      "emailVerified": false,
+      "onboardingCompleted": false,
+      "createdAt": "2026-11-16T13:13:30.850Z",
+      "updatedAt": "2026-11-16T13:13:30.850Z"
+    }
+  ],
+  "studentProfiles": [
+    {
+      "userId": "usr_student_1794834810850",
+      "skills": [],
+      "projects": [],
+      "experience": [],
+      "certifications": [],
+      "achievements": [],
+      "updatedAt": "2026-11-16T13:13:30.850Z"
+    }
+  ],
+  "verificationTokens": [
+    {
+      "id": "vt_1794834812764",
+      "token": "08cfec8b04278b9dd5b757f8cf6fc1cdddf314ece21e5622258aca56a28416ea",
+      "userId": "usr_student_1794834810850",
+      "email": "bhumikaa2005@gmail.com",
+      "type": "email_verification",
+      "expiresAt": 1794921212764,
+      "used": false,
+      "createdAt": "2026-11-16T13:13:30.850Z"
+    }
+  ],
+  "sessions": [
+    {
+      "id": "sess_ce2a5945c074eb064fdff264804504260acdca23ce5a446a25544bf24b6b0d19",
+      "userId": "usr_student_1794834810850",
+      "role": "student",
+      "expiresAt": 1795439612770,
+      "createdAt": "2026-11-16T13:13:32.917Z"
+    }
   ]
 }

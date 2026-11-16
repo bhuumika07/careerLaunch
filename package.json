@@ -5,8 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "node -e \"if(process.env.DATABASE_URL){try{require('child_process').execSync('npx prisma db push --accept-data-loss --skip-generate',{stdio:'inherit'})}catch(e){console.warn('Prisma db push warning:',e.message)}}\" && next build",
     "start": "next start",
+    "postinstall": "prisma generate",
     "lint": "eslint",
     "test": "node --experimental-strip-types --test src/lib/services/**/__tests__/*.test.ts",
     "test:isolation": "node --experimental-strip-types --import ./scripts/resolve-aliases.js --test tests/isolation/crossAccountSecurity.test.ts",
