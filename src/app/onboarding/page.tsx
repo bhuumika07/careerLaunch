@@ -78,7 +78,9 @@ export default function OnboardingPage() {
             setLocation(data.profile.location || "");
             if (data.profile.avatarUrl) setAvatarUrl(data.profile.avatarUrl);
             if (data.profile.institution) setInstitution(data.profile.institution);
+            if (data.profile.college) setInstitution(data.profile.college);
             if (data.profile.department) setDepartment(data.profile.department);
+            if (data.profile.branch) setDepartment(data.profile.branch);
             if (data.profile.degree) setDegree(data.profile.degree);
             if (data.profile.graduationYear) setGradYear(String(data.profile.graduationYear));
             if (data.profile.cgpa) setCgpa(String(data.profile.cgpa));

@@ -6,6 +6,7 @@ import { requireAuth, handleAuthError } from "@/lib/auth/authorization";
 import { prisma } from "@/lib/prisma";
 import { profileService } from "@/lib/services/student/profileService";
 import { personalizedJsonResponse } from "@/lib/api/response";
+import { readDb, writeDb } from "@/lib/db";
 
 export async function GET(req: NextRequest) {
   try {
@@ -96,12 +97,30 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // Mark onboarding complete on User in PostgreSQL
+    // Mark onboarding complete on User in PostgreSQL or local file store
     if (completeOnboarding) {
-      await prisma.user.update({
-        where: { id: user.id },
-        data: { onboardingCompleted: true },
-      });
+      if (prisma?.user) {
+        try {
+          await prisma.user.update({
+            where: { id: user.id },
+            data: { onboardingCompleted: true },
+          });
+        } catch (prismaErr: any) {
+          console.warn("[onboarding] Failed to update user in Prisma, using local store:", prismaErr?.message);
+        }
+      }
+
+      try {
+        const db = readDb();
+        const localUser = db.users?.find((u) => u.id === user.id);
+        if (localUser) {
+          localUser.onboardingCompleted = true;
+          localUser.updatedAt = new Date().toISOString();
+          writeDb(db);
+        }
+      } catch (fileErr) {
+        console.warn("[onboarding] Failed to update user in local file store:", fileErr);
+      }
     }
 
     const redirectTo = user.role === "admin" ? "/admin/dashboard" : "/student/dashboard";

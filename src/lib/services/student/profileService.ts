@@ -16,6 +16,7 @@
 import { z } from "zod";
 import { PrismaClient, Prisma } from "@prisma/client";
 import { prisma as defaultPrisma } from "../../prisma.ts";
+import { readDb, writeDb } from "../../db.ts";
 
 export class DatabaseServiceError extends Error {
   statusCode: number;
@@ -112,7 +113,7 @@ export class ProfileService {
 
   /**
    * Retrieves or creates a default StudentProfile entity for a given student userId.
-   * Exclusively queries PostgreSQL via Prisma.
+   * Dual-storage: PostgreSQL via Prisma with graceful fallback to db.json.
    */
   async getProfile(userId: string): Promise<StudentProfileEntity> {
     if (!userId || typeof userId !== "string") {
@@ -120,70 +121,128 @@ export class ProfileService {
     }
 
     const prisma = this.getPrisma();
-    if (!prisma?.studentProfile) {
-      console.error("[profileService] Prisma client is unavailable.");
-      throw new DatabaseServiceError("Database service unavailable.", 503, "DB_UNAVAILABLE");
+    if (prisma?.studentProfile) {
+      try {
+        let profile = await prisma.studentProfile.findUnique({
+          where: { userId },
+        });
+
+        if (!profile) {
+          profile = await prisma.studentProfile.create({
+            data: {
+              userId,
+              college: null,
+              degree: null,
+              branch: null,
+              currentYear: null,
+              graduationYear: null,
+              cgpa: null,
+              cgpaScale: 10.0,
+              backlogs: 0,
+              fieldMetadata: {},
+              onboardingStatus: "NOT_STARTED",
+              onboardingStep: 1,
+              profileVersion: 1,
+            },
+          });
+        }
+
+        const meta = ((profile.fieldMetadata as unknown) as FieldMetadataMap) || {};
+        const professionalStatus =
+          (profile as any).professionalStatus || (meta as any).professionalStatus?.value || null;
+
+        return {
+          id: profile.id,
+          userId: profile.userId,
+          onboardingStatus: (profile as any).onboardingStatus || "NOT_STARTED",
+          onboardingStep: (profile as any).onboardingStep ?? 1,
+          profileVersion: (profile as any).profileVersion ?? 1,
+          lastCompletedAt: (profile as any).lastCompletedAt ?? null,
+          lastUpdatedBy: (profile as any).lastUpdatedBy ?? "STUDENT",
+          professionalStatus,
+          college: profile.college,
+          degree: profile.degree,
+          branch: profile.branch,
+          currentYear: profile.currentYear,
+          graduationYear: profile.graduationYear,
+          cgpa: profile.cgpa,
+          cgpaScale: profile.cgpaScale ?? 10.0,
+          backlogs: profile.backlogs ?? 0,
+          phone: profile.phone ?? null,
+          bio: profile.bio ?? null,
+          location: profile.location ?? null,
+          portfolioUrl: profile.portfolioUrl ?? null,
+          githubUrl: profile.githubUrl ?? null,
+          linkedinUrl: profile.linkedinUrl ?? null,
+          fieldMetadata: meta,
+          createdAt: profile.createdAt,
+          updatedAt: profile.updatedAt,
+        };
+      } catch (err: unknown) {
+        console.warn("[profileService] Prisma getProfile error, falling back to local store:", err);
+      }
     }
 
+    // Fallback to local store (db.json)
     try {
-      let profile = await prisma.studentProfile.findUnique({
-        where: { userId },
-      });
+      const db = readDb();
+      if (!db.studentProfiles) db.studentProfiles = [];
+      let fileProfile = db.studentProfiles.find((p) => p.userId === userId);
+      const nowIso = new Date().toISOString();
 
-      if (!profile) {
-        profile = await prisma.studentProfile.create({
-          data: {
-            userId,
-            college: null,
-            degree: null,
-            branch: null,
-            currentYear: null,
-            graduationYear: null,
-            cgpa: null,
-            cgpaScale: 10.0,
-            backlogs: 0,
-            fieldMetadata: {},
-            onboardingStatus: "NOT_STARTED",
-            onboardingStep: 1,
-            profileVersion: 1,
-          },
-        });
+      if (!fileProfile) {
+        fileProfile = {
+          userId,
+          institution: undefined,
+          department: undefined,
+          degree: undefined,
+          graduationYear: undefined,
+          cgpa: undefined,
+          skills: [],
+          projects: [],
+          experience: [],
+          certifications: [],
+          achievements: [],
+          updatedAt: nowIso,
+        };
+        db.studentProfiles.push(fileProfile);
+        writeDb(db);
       }
 
-      const meta = ((profile.fieldMetadata as unknown) as FieldMetadataMap) || {};
+      const meta = ((fileProfile as any).fieldMetadata as FieldMetadataMap) || {};
       const professionalStatus =
-        (profile as any).professionalStatus || (meta as any).professionalStatus?.value || null;
+        (fileProfile as any).professionalStatus || (meta as any).professionalStatus?.value || null;
 
       return {
-        id: profile.id,
-        userId: profile.userId,
-        onboardingStatus: (profile as any).onboardingStatus || "NOT_STARTED",
-        onboardingStep: (profile as any).onboardingStep ?? 1,
-        profileVersion: (profile as any).profileVersion ?? 1,
-        lastCompletedAt: (profile as any).lastCompletedAt ?? null,
-        lastUpdatedBy: (profile as any).lastUpdatedBy ?? "STUDENT",
+        id: (fileProfile as any).id || fileProfile.userId,
+        userId: fileProfile.userId,
+        onboardingStatus: (fileProfile as any).onboardingStatus || "NOT_STARTED",
+        onboardingStep: (fileProfile as any).onboardingStep ?? 1,
+        profileVersion: (fileProfile as any).profileVersion ?? 1,
+        lastCompletedAt: (fileProfile as any).lastCompletedAt ?? null,
+        lastUpdatedBy: (fileProfile as any).lastUpdatedBy ?? "STUDENT",
         professionalStatus,
-        college: profile.college,
-        degree: profile.degree,
-        branch: profile.branch,
-        currentYear: profile.currentYear,
-        graduationYear: profile.graduationYear,
-        cgpa: profile.cgpa,
-        cgpaScale: profile.cgpaScale ?? 10.0,
-        backlogs: profile.backlogs ?? 0,
-        phone: profile.phone ?? null,
-        bio: profile.bio ?? null,
-        location: profile.location ?? null,
-        portfolioUrl: profile.portfolioUrl ?? null,
-        githubUrl: profile.githubUrl ?? null,
-        linkedinUrl: profile.linkedinUrl ?? null,
+        college: (fileProfile as any).college || fileProfile.institution || null,
+        degree: fileProfile.degree || null,
+        branch: (fileProfile as any).branch || fileProfile.department || null,
+        currentYear: (fileProfile as any).currentYear ?? null,
+        graduationYear: fileProfile.graduationYear ?? null,
+        cgpa: fileProfile.cgpa ?? null,
+        cgpaScale: (fileProfile as any).cgpaScale ?? 10.0,
+        backlogs: (fileProfile as any).backlogs ?? 0,
+        phone: fileProfile.phone ?? null,
+        bio: fileProfile.bio ?? null,
+        location: fileProfile.location ?? null,
+        portfolioUrl: fileProfile.portfolioUrl ?? null,
+        githubUrl: fileProfile.githubUrl ?? null,
+        linkedinUrl: fileProfile.linkedinUrl ?? null,
         fieldMetadata: meta,
-        createdAt: profile.createdAt,
-        updatedAt: profile.updatedAt,
+        createdAt: (fileProfile as any).createdAt || nowIso,
+        updatedAt: fileProfile.updatedAt || nowIso,
       };
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : String(err);
-      console.error("[profileService] Prisma getProfile error:", err);
+    } catch (fallbackErr: unknown) {
+      const message = fallbackErr instanceof Error ? fallbackErr.message : String(fallbackErr);
+      console.error("[profileService] Local store getProfile error:", fallbackErr);
       throw new DatabaseServiceError(`Failed to retrieve profile: ${message}`, 500, "DB_ERROR");
     }
   }
@@ -285,10 +344,6 @@ export class ProfileService {
     }
 
     const prisma = this.getPrisma();
-    if (!prisma?.studentProfile) {
-      console.error("[profileService] Prisma client is unavailable for update.");
-      throw new DatabaseServiceError("Database service unavailable.", 503, "DB_UNAVAILABLE");
-    }
 
     // Determine onboarding status transition
     let targetOnboardingStatus = validated.onboardingStatus || existing.onboardingStatus;
@@ -316,16 +371,16 @@ export class ProfileService {
       let hasInterests = false;
       let hasSkills = false;
 
-      if (prisma.careerInterest) {
+      if (prisma?.careerInterest) {
         const ci = await prisma.careerInterest.findFirst({
           where: { studentProfileId: existing.id },
-        });
+        }).catch(() => null);
         hasInterests = !!ci;
       }
-      if (prisma.studentSkill) {
+      if (prisma?.studentSkill) {
         const sk = await prisma.studentSkill.findFirst({
           where: { studentProfileId: existing.id },
-        });
+        }).catch(() => null);
         hasSkills = !!sk;
       }
 
@@ -342,30 +397,33 @@ export class ProfileService {
         ? validated.onboardingStep
         : Math.max(existing.onboardingStep || 1, 1);
 
-    try {
-      const updated = await prisma.studentProfile.update({
-        where: { userId },
-        data: {
-          ...updates,
-          fieldMetadata: newFieldMetadata as unknown as Prisma.InputJsonValue,
-          profileVersion: { increment: 1 },
-          onboardingStatus: targetOnboardingStatus as any,
-          onboardingStep: nextStep,
-          lastCompletedAt,
-          lastUpdatedBy: "STUDENT",
-        },
-      });
+    let updatedInPrisma = false;
+    let resultProfile: StudentProfileEntity | null = null;
 
-      if (updatedFields.length > 0) {
-        await this.markDownstreamSnapshotsStale(userId, "profile_fields_updated");
-      }
+    if (prisma?.studentProfile) {
+      try {
+        const updated = await prisma.studentProfile.update({
+          where: { userId },
+          data: {
+            ...updates,
+            fieldMetadata: newFieldMetadata as unknown as Prisma.InputJsonValue,
+            profileVersion: { increment: 1 },
+            onboardingStatus: targetOnboardingStatus as any,
+            onboardingStep: nextStep,
+            lastCompletedAt,
+            lastUpdatedBy: "STUDENT",
+          },
+        });
 
-      const updatedMeta = ((updated.fieldMetadata as unknown) as FieldMetadataMap) || {};
-      const professionalStatus =
-        (updated as any).professionalStatus || (updatedMeta as any).professionalStatus?.value || null;
+        if (updatedFields.length > 0) {
+          await this.markDownstreamSnapshotsStale(userId, "profile_fields_updated");
+        }
 
-      return {
-        profile: {
+        const updatedMeta = ((updated.fieldMetadata as unknown) as FieldMetadataMap) || {};
+        const professionalStatus =
+          (updated as any).professionalStatus || (updatedMeta as any).professionalStatus?.value || null;
+
+        resultProfile = {
           id: updated.id,
           userId: updated.userId,
           onboardingStatus: (updated as any).onboardingStatus || "NOT_STARTED",
@@ -391,15 +449,162 @@ export class ProfileService {
           fieldMetadata: updatedMeta,
           createdAt: updated.createdAt,
           updatedAt: updated.updatedAt,
-        },
-        skippedFields,
-        updatedFields,
-      };
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : String(err);
-      console.error("[profileService] Prisma update failed:", err);
-      throw new DatabaseServiceError(`Failed to update profile: ${message}`, 500, "DB_ERROR");
+        };
+        updatedInPrisma = true;
+      } catch (err: unknown) {
+        console.warn("[profileService] Prisma update failed, falling back to local store:", err);
+      }
     }
+
+    if (!updatedInPrisma) {
+      try {
+        const db = readDb();
+        if (!db.studentProfiles) db.studentProfiles = [];
+        let fileProfile = db.studentProfiles.find((p) => p.userId === userId);
+        const nowIso = new Date().toISOString();
+
+        if (!fileProfile) {
+          fileProfile = {
+            userId,
+            skills: [],
+            projects: [],
+            experience: [],
+            certifications: [],
+            achievements: [],
+            updatedAt: nowIso,
+          };
+          db.studentProfiles.push(fileProfile);
+        }
+
+        if (updates.college !== undefined) {
+          fileProfile.institution = updates.college as string;
+          (fileProfile as any).college = updates.college;
+        }
+        if (updates.degree !== undefined) fileProfile.degree = updates.degree as string;
+        if (updates.branch !== undefined) {
+          fileProfile.department = updates.branch as string;
+          (fileProfile as any).branch = updates.branch;
+        }
+        if (updates.graduationYear !== undefined) fileProfile.graduationYear = updates.graduationYear as number;
+        if (updates.cgpa !== undefined) fileProfile.cgpa = updates.cgpa as number;
+        if (updates.phone !== undefined) fileProfile.phone = updates.phone as string;
+        if (updates.bio !== undefined) fileProfile.bio = updates.bio as string;
+        if (updates.location !== undefined) fileProfile.location = updates.location as string;
+        if (updates.portfolioUrl !== undefined) fileProfile.portfolioUrl = updates.portfolioUrl as string;
+        if (updates.githubUrl !== undefined) fileProfile.githubUrl = updates.githubUrl as string;
+        if (updates.linkedinUrl !== undefined) fileProfile.linkedinUrl = updates.linkedinUrl as string;
+        if (updates.currentYear !== undefined) (fileProfile as any).currentYear = updates.currentYear;
+        if (updates.cgpaScale !== undefined) (fileProfile as any).cgpaScale = updates.cgpaScale;
+        if (updates.backlogs !== undefined) (fileProfile as any).backlogs = updates.backlogs;
+        if (validated.professionalStatus !== undefined) (fileProfile as any).professionalStatus = validated.professionalStatus;
+
+        (fileProfile as any).fieldMetadata = newFieldMetadata;
+        (fileProfile as any).onboardingStatus = targetOnboardingStatus;
+        (fileProfile as any).onboardingStep = nextStep;
+        (fileProfile as any).profileVersion = ((fileProfile as any).profileVersion || existing.profileVersion || 1) + 1;
+        (fileProfile as any).lastCompletedAt = lastCompletedAt;
+        (fileProfile as any).lastUpdatedBy = "STUDENT";
+        fileProfile.updatedAt = nowIso;
+
+        writeDb(db);
+
+        resultProfile = {
+          id: (fileProfile as any).id || fileProfile.userId,
+          userId: fileProfile.userId,
+          onboardingStatus: (fileProfile as any).onboardingStatus || "NOT_STARTED",
+          onboardingStep: (fileProfile as any).onboardingStep ?? nextStep,
+          profileVersion: (fileProfile as any).profileVersion ?? (existing.profileVersion + 1),
+          lastCompletedAt: (fileProfile as any).lastCompletedAt ?? lastCompletedAt,
+          lastUpdatedBy: "STUDENT",
+          professionalStatus: (fileProfile as any).professionalStatus || (newFieldMetadata as any).professionalStatus?.value || null,
+          college: (fileProfile as any).college || fileProfile.institution || null,
+          degree: fileProfile.degree || null,
+          branch: (fileProfile as any).branch || fileProfile.department || null,
+          currentYear: (fileProfile as any).currentYear ?? null,
+          graduationYear: fileProfile.graduationYear ?? null,
+          cgpa: fileProfile.cgpa ?? null,
+          cgpaScale: (fileProfile as any).cgpaScale ?? 10.0,
+          backlogs: (fileProfile as any).backlogs ?? 0,
+          phone: fileProfile.phone ?? null,
+          bio: fileProfile.bio ?? null,
+          location: fileProfile.location ?? null,
+          portfolioUrl: fileProfile.portfolioUrl ?? null,
+          githubUrl: fileProfile.githubUrl ?? null,
+          linkedinUrl: fileProfile.linkedinUrl ?? null,
+          fieldMetadata: newFieldMetadata,
+          createdAt: (fileProfile as any).createdAt || nowIso,
+          updatedAt: fileProfile.updatedAt || nowIso,
+        };
+      } catch (fallbackErr: unknown) {
+        const message = fallbackErr instanceof Error ? fallbackErr.message : String(fallbackErr);
+        console.error("[profileService] Local store updateProfile error:", fallbackErr);
+        throw new DatabaseServiceError(`Failed to update profile: ${message}`, 500, "DB_ERROR");
+      }
+    }
+
+    return {
+      profile: resultProfile!,
+      skippedFields,
+      updatedFields,
+    };
+  }
+
+  /**
+   * Submits final profile for completion check.
+   * Requires academics, career interests, and skills to be present.
+   */
+  async submitFinal(userId: string): Promise<StudentProfileEntity> {
+    const profile = await this.getProfile(userId);
+    const prisma = this.getPrisma();
+    let hasInterests = false;
+    let hasSkills = false;
+
+    if (prisma?.careerInterest) {
+      const ci = await prisma.careerInterest.findFirst({
+        where: { studentProfileId: profile.id },
+      }).catch(() => null);
+      hasInterests = !!ci;
+    }
+    if (prisma?.studentSkill) {
+      const sk = await prisma.studentSkill.findFirst({
+        where: { studentProfileId: profile.id },
+      }).catch(() => null);
+      hasSkills = !!sk;
+    }
+
+    if (!hasSkills || !hasInterests) {
+      try {
+        const db = readDb();
+        const fileProf = db.studentProfiles?.find((p) => p.userId === userId);
+        if (fileProf?.skills && fileProf.skills.length > 0) {
+          hasSkills = true;
+        }
+        if ((fileProf as any)?.careerInterests && (fileProf as any).careerInterests.length > 0) {
+          hasInterests = true;
+        }
+      } catch {
+        // ignore
+      }
+    }
+
+    const hasAcademics = !!(
+      profile.college &&
+      profile.college.trim() &&
+      profile.degree &&
+      profile.degree.trim() &&
+      profile.graduationYear &&
+      profile.graduationYear >= 2000
+    );
+
+    if (!hasAcademics || !hasInterests || !hasSkills) {
+      throw new Error("Minimum profile incomplete: requires academics, career interests, and skills.");
+    }
+
+    const res = await this.updateProfile(userId, {
+      onboardingStatus: "COMPLETED",
+      submitFinal: true,
+    });
+    return res.profile;
   }
 
   /**
@@ -408,7 +613,7 @@ export class ProfileService {
    */
   async markDownstreamSnapshotsStale(userId: string, reason: string = "profile_updated"): Promise<void> {
     const prisma = this.prisma;
-    if (!prisma) return;
+    if (!prisma?.studentProfile) return;
     try {
       const existing = await prisma.studentProfile.findUnique({
         where: { userId },
@@ -435,7 +640,7 @@ export class ProfileService {
         data: { fieldMetadata: updatedMeta as unknown as Prisma.InputJsonValue },
       });
     } catch (err: unknown) {
-      console.warn("[profileService] Failed to mark downstream snapshots stale:", err);
+      console.warn("[profileService] Failed to mark downstream snapshots stale in Prisma:", err);
     }
   }
 }
