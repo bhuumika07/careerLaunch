@@ -51,7 +51,7 @@ export abstract class BaseConnector<TRawItem = any, TParsedItem = any>
     };
 
     this.rateLimiter = new RateLimiter(this.config.rateLimit);
-    this.circuitBreaker = new CircuitBreaker(this.sourceId || "connector", this.config.circuitBreaker);
+    this.circuitBreaker = new CircuitBreaker("connector", this.config.circuitBreaker);
     this.rawStore = RawPayloadStore.getInstance();
   }
 
@@ -221,7 +221,7 @@ export abstract class BaseConnector<TRawItem = any, TParsedItem = any>
           // Archive raw payload to guarantee provenance
           const payloadRecord = await this.rawStore.save({
             sourceId: this.sourceId,
-            payload: item,
+            payload: item as any,
             externalId,
           });
 

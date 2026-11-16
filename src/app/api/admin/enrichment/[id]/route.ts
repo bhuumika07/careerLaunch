@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireRole, handleAuthError } from "@/lib/auth-guard";
 import { readDb } from "@/lib/db";
 import { prisma } from "@/lib/prisma";
-import { getEnrichmentDiagnostics } from "@/lib/services/enrichment/adminEnrichmentService.ts";
+import { getEnrichmentDiagnostics } from "@/lib/services/enrichment/adminEnrichmentService";
 
 export async function GET(
   req: NextRequest,

@@ -82,8 +82,8 @@ export function inferOpportunityDomain(opp: any, enrichment?: EnrichedDetails | 
 }
 
 export function inferPositionType(opp: any, enrichment?: EnrichedDetails | null): string {
-  if (enrichment?.opportunityType && enrichment.opportunityType !== "unknown") {
-    if (enrichment.opportunityType === "fellowship") return "research";
+  if (enrichment?.opportunityType && (enrichment.opportunityType as string) !== "unknown") {
+    if ((enrichment.opportunityType as string) === "fellowship") return "research";
     return enrichment.opportunityType;
   }
   const title = (opp.title || "").toLowerCase();
@@ -556,8 +556,8 @@ export function filterEnrichedStudentFeed(
         opp.locationCity ||
         opp.workMode ||
         enrichment?.workMode ||
-        (enrichment?.cities || []).join(" ") ||
-        enrichment?.country ||
+        ((enrichment as any)?.cities || []).join(" ") ||
+        (enrichment as any)?.country ||
         ""
       ).toLowerCase();
       if (!oppLocation.includes(targetLoc)) {

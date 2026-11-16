@@ -145,17 +145,37 @@ export class MatchingService {
   private profService: ProfileService;
   private extProfService: ExtendedProfileService;
   private catalogueSvc: RoleCatalogueService;
+  private customStore?: any;
 
   constructor(
     prismaClient?: any,
     profileServiceInstance?: ProfileService,
     extProfileServiceInstance?: ExtendedProfileService,
-    catalogueServiceInstance?: RoleCatalogueService
+    catalogueServiceInstance?: RoleCatalogueService,
+    customStore?: any
   ) {
     this.prisma = prismaClient;
     this.profService = profileServiceInstance || profileService;
     this.extProfService = extProfileServiceInstance || extendedProfileService;
     this.catalogueSvc = catalogueServiceInstance || roleCatalogueService;
+    this.customStore = customStore;
+  }
+
+  private getStore(): any {
+    if (this.customStore) return this.customStore;
+    return readDbStore();
+  }
+
+  private saveStore(db: any): void {
+    if (this.customStore) {
+      return;
+    }
+    try {
+      const dbPath = path.resolve(process.cwd(), "src/data/db.json");
+      fs.writeFileSync(dbPath, JSON.stringify(db, null, 2), "utf-8");
+    } catch (err) {
+      console.error("[matchingService] Failed writing feedback to db.json", err);
+    }
   }
 
   private async getPrisma(): Promise<any> {
@@ -720,7 +740,7 @@ export class MatchingService {
    * Retrieves set of opportunity IDs dismissed by user via feedback (NOT_RELEVANT, ALREADY_APPLIED).
    */
   async getUserDismissedOpportunityIds(userId: string): Promise<Set<string>> {
-    const db = readDbStore();
+    const db = this.getStore();
     const feedbacks: MatchFeedbackEntity[] = db.matchFeedbacks || [];
 
     const dismissed = new Set<string>();
@@ -759,7 +779,7 @@ export class MatchingService {
       throw new Error(`Invalid feedbackType '${feedbackType}'. Must be one of: ${validTypes.join(", ")}`);
     }
 
-    const db = readDbStore();
+    const db = this.getStore();
     db.matchFeedbacks = db.matchFeedbacks || [];
 
     const newFeedback: MatchFeedbackEntity = {
@@ -782,12 +802,7 @@ export class MatchingService {
       db.matchFeedbacks.push(newFeedback);
     }
 
-    try {
-      const dbPath = path.resolve(process.cwd(), "src/data/db.json");
-      fs.writeFileSync(dbPath, JSON.stringify(db, null, 2), "utf-8");
-    } catch (err) {
-      console.error("[matchingService] Failed writing feedback to db.json", err);
-    }
+    this.saveStore(db);
 
     return newFeedback;
   }
@@ -802,7 +817,7 @@ export class MatchingService {
     acceptanceRate: number;
     breakdown: Record<MatchFeedbackType, number>;
   }> {
-    const db = readDbStore();
+    const db = this.getStore();
     const feedbacks: MatchFeedbackEntity[] = db.matchFeedbacks || [];
 
     const breakdown: Record<MatchFeedbackType, number> = {

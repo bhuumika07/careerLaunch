@@ -1,10 +1,13 @@
 // src/app/api/student/career-interests/route.ts
-import { NextRequest, NextResponse } from "next/server";
-import { requireRole, handleAuthError } from "@/lib/auth-guard";
+export const dynamic = "force-dynamic";
+
+import type { NextRequest } from "next/server";
+import { requireRole, handleAuthError } from "@/lib/auth/authorization";
 import {
   extendedProfileService,
   CareerInterestsPayloadSchema,
 } from "@/lib/services/student/extendedProfileService";
+import { personalizedJsonResponse } from "@/lib/api/response";
 
 /**
  * GET /api/student/career-interests
@@ -13,10 +16,9 @@ import {
 export async function GET(req: NextRequest) {
   try {
     const { user } = await requireRole(["student"], req);
-
     const interests = await extendedProfileService.getCareerInterests(user.id);
 
-    return NextResponse.json({
+    return personalizedJsonResponse({
       success: true,
       userId: user.id,
       interests,
@@ -38,7 +40,7 @@ export async function PUT(req: NextRequest) {
 
     const validation = CareerInterestsPayloadSchema.safeParse(body);
     if (!validation.success) {
-      return NextResponse.json(
+      return personalizedJsonResponse(
         {
           success: false,
           error: "Validation failed",
@@ -53,7 +55,7 @@ export async function PUT(req: NextRequest) {
       validation.data
     );
 
-    return NextResponse.json({
+    return personalizedJsonResponse({
       success: true,
       interests: updated,
     });

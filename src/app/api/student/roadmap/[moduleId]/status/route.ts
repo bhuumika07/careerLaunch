@@ -1,7 +1,10 @@
 // src/app/api/student/roadmap/[moduleId]/status/route.ts
-import { NextRequest, NextResponse } from "next/server";
-import { requireRole, handleAuthError } from "@/lib/auth-guard";
-import { roleRoadmapService } from "@/lib/services/career-roles/roleRoadmapService";
+export const dynamic = "force-dynamic";
+
+import type { NextRequest } from "next/server";
+import { requireRole, handleAuthError } from "@/lib/auth/authorization";
+import { updateStudentRoadmapModule } from "@/lib/dal/student-roadmap.dal";
+import { personalizedJsonResponse } from "@/lib/api/response";
 
 export async function POST(
   req: NextRequest,
@@ -14,16 +17,16 @@ export async function POST(
     const { status } = body;
 
     if (!["pending", "ongoing", "completed"].includes(status)) {
-      return NextResponse.json({ error: "Invalid status value" }, { status: 400 });
+      return personalizedJsonResponse({ error: "Invalid status value" }, { status: 400 });
     }
 
-    const { roadmap, completedProject } = await roleRoadmapService.updateModuleStatus(
+    const { roadmap, completedProject } = await updateStudentRoadmapModule(
       user.id,
       moduleId,
       status
     );
 
-    return NextResponse.json({
+    return personalizedJsonResponse({
       success: true,
       roadmap,
       completedProject: completedProject || null,

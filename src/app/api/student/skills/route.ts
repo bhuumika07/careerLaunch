@@ -1,10 +1,13 @@
 // src/app/api/student/skills/route.ts
-import { NextRequest, NextResponse } from "next/server";
-import { requireRole, handleAuthError } from "@/lib/auth-guard";
+export const dynamic = "force-dynamic";
+
+import type { NextRequest } from "next/server";
+import { requireRole, handleAuthError } from "@/lib/auth/authorization";
 import {
   extendedProfileService,
   StudentSkillInputSchema,
 } from "@/lib/services/student/extendedProfileService";
+import { personalizedJsonResponse } from "@/lib/api/response";
 
 /**
  * GET /api/student/skills
@@ -13,10 +16,9 @@ import {
 export async function GET(req: NextRequest) {
   try {
     const { user } = await requireRole(["student"], req);
-
     const skills = await extendedProfileService.getStudentSkills(user.id);
 
-    return NextResponse.json({
+    return personalizedJsonResponse({
       success: true,
       skills,
     });
@@ -36,7 +38,7 @@ export async function POST(req: NextRequest) {
 
     const validation = StudentSkillInputSchema.safeParse(body);
     if (!validation.success) {
-      return NextResponse.json(
+      return personalizedJsonResponse(
         {
           success: false,
           error: "Validation failed",
@@ -51,9 +53,51 @@ export async function POST(req: NextRequest) {
       validation.data
     );
 
-    return NextResponse.json({
+    return personalizedJsonResponse({
       success: true,
       skill: savedSkill,
+    });
+  } catch (error) {
+    return handleAuthError(error);
+  }
+}
+
+/**
+ * DELETE /api/student/skills
+ * Removes a skill from the authenticated student's profile.
+ * Identifiers taken exclusively from server-verified session + request body/query.
+ */
+export async function DELETE(req: NextRequest) {
+  try {
+    const { user } = await requireRole(["student"], req);
+
+    let idOrName = "";
+    const { searchParams } = new URL(req.url);
+    const queryId = searchParams.get("id") || searchParams.get("name");
+
+    if (queryId) {
+      idOrName = queryId;
+    } else {
+      try {
+        const body = await req.json();
+        idOrName = body.id || body.name || "";
+      } catch {
+        // body may be empty
+      }
+    }
+
+    if (!idOrName) {
+      return personalizedJsonResponse(
+        { success: false, error: "Skill id or name is required for deletion." },
+        { status: 400 }
+      );
+    }
+
+    await extendedProfileService.removeStudentSkill(user.id, idOrName);
+
+    return personalizedJsonResponse({
+      success: true,
+      message: `Skill ${idOrName} removed successfully.`,
     });
   } catch (error) {
     return handleAuthError(error);

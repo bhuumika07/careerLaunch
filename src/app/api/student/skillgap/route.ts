@@ -1,7 +1,10 @@
 // src/app/api/student/skillgap/route.ts
-import { NextRequest, NextResponse } from "next/server";
-import { requireRole, handleAuthError } from "@/lib/auth-guard";
+export const dynamic = "force-dynamic";
+
+import type { NextRequest } from "next/server";
+import { requireRole, handleAuthError } from "@/lib/auth/authorization";
 import { skillGapService } from "@/lib/services/career-roles/skillGapService";
+import { personalizedJsonResponse } from "@/lib/api/response";
 
 /**
  * GET /api/student/skillgap
@@ -18,7 +21,7 @@ export async function GET(req: NextRequest) {
       skillGapService.analyzeSkillGap(user.id, roleId),
     ]);
 
-    return NextResponse.json({
+    return personalizedJsonResponse({
       success: true,
       availableRoles,
       analysis,

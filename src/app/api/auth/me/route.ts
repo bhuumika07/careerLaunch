@@ -1,11 +1,15 @@
-import { NextRequest, NextResponse } from "next/server";
-import { requireAuth, handleAuthError } from "@/lib/auth-guard";
+// src/app/api/auth/me/route.ts
+export const dynamic = "force-dynamic";
+
+import type { NextRequest } from "next/server";
+import { requireAuth, handleAuthError } from "@/lib/auth/authorization";
+import { personalizedJsonResponse } from "@/lib/api/response";
 
 export async function GET(req: NextRequest) {
   try {
     const { user, session } = await requireAuth(req);
 
-    return NextResponse.json({
+    return personalizedJsonResponse({
       success: true,
       user: {
         id: user.id,

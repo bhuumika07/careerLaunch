@@ -1,51 +1,57 @@
-import { NextRequest, NextResponse } from "next/server";
-import { readDb, writeDb, NotificationRecord } from "@/lib/db";
-import { getCurrentUser } from "@/lib/session";
+// src/app/api/notifications/route.ts
+export const dynamic = "force-dynamic";
+
+import type { NextRequest } from "next/server";
+import { readDb, writeDb, type NotificationRecord } from "@/lib/db";
+import { requireAuth, handleAuthError } from "@/lib/auth/authorization";
+import { personalizedJsonResponse } from "@/lib/api/response";
 
 export async function GET(req: NextRequest) {
   try {
-    const current = await getCurrentUser();
-    const userId = current?.user.id || "usr_student_demo";
+    const { user } = await requireAuth(req);
+    const userId = user.id;
     const db = readDb();
 
+    // Invariant: strictly return notifications owned by the authenticated user
     const userNotifs = (db.notifications || [])
-      .filter((n) => n.userId === userId || !n.userId)
+      .filter((n) => n.userId === userId)
       .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
     const unreadCount = userNotifs.filter((n) => !n.read).length;
 
-    return NextResponse.json({
+    return personalizedJsonResponse({
       success: true,
       notifications: userNotifs,
       unreadCount,
     });
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message || "Failed to fetch notifications" }, { status: 500 });
+  } catch (error: unknown) {
+    return handleAuthError(error);
   }
 }
 
 export async function POST(req: NextRequest) {
   try {
-    const current = await getCurrentUser();
-    const userId = current?.user.id || "usr_student_demo";
+    const { user } = await requireAuth(req);
+    const userId = user.id;
     const body = await req.json();
     const db = readDb();
 
     if (body.action === "mark_all_read") {
       (db.notifications || []).forEach((n) => {
-        if (n.userId === userId || !n.userId) {
+        if (n.userId === userId) {
           n.read = true;
         }
       });
       writeDb(db);
-      return NextResponse.json({ success: true, message: "All notifications marked as read" });
+      return personalizedJsonResponse({ success: true, message: "All notifications marked as read" });
     }
 
     if (body.action === "create_notification") {
+      // Invariant: client cannot supply arbitrary userId for notification injection
       const newNotif: NotificationRecord = {
         id: `notif_${Date.now()}`,
-        userId: body.userId || userId,
-        role: body.role || "student",
+        userId,
+        role: user.role || "student",
         type: body.type || "application_update",
         title: body.title,
         message: body.message,
@@ -56,11 +62,11 @@ export async function POST(req: NextRequest) {
       if (!db.notifications) db.notifications = [];
       db.notifications.unshift(newNotif);
       writeDb(db);
-      return NextResponse.json({ success: true, notification: newNotif });
+      return personalizedJsonResponse({ success: true, notification: newNotif });
     }
 
-    return NextResponse.json({ error: "Invalid action" }, { status: 400 });
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message || "Failed to process request" }, { status: 500 });
+    return personalizedJsonResponse({ error: "Invalid action" }, { status: 400 });
+  } catch (error: unknown) {
+    return handleAuthError(error);
   }
 }

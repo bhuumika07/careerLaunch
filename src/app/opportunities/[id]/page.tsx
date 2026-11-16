@@ -216,7 +216,7 @@ function OpportunityDetailContent() {
               </span>
               <span className="flex items-center gap-1">
                 <Clock className="size-3.5 text-sky" />
-                Deadline: {new Date(opp.deadline).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                Deadline: {opp.deadline ? new Date(opp.deadline).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "Rolling"}
               </span>
               {opp.stipendSalary && (
                 <span className="font-medium text-emerald-400">

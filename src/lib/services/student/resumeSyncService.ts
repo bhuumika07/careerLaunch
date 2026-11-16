@@ -15,7 +15,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import { randomUUID } from "node:crypto";
 import { profileService, ProfileService } from "./profileService.ts";
-import { extendedProfileService } from "./extendedProfileService.ts";
+import { extendedProfileService, ExtendedProfileService } from "./extendedProfileService.ts";
 
 export type ReviewStatus = "pending" | "accepted" | "edited" | "rejected";
 
@@ -67,10 +67,12 @@ function writeDbStore(data: any): void {
 export class ResumeSyncService {
   private prisma: any;
   private profService: any;
+  private extProfileService: any;
 
-  constructor(prismaClient?: any, profService?: any) {
+  constructor(prismaClient?: any, profService?: any, extProfileService?: any) {
     this.prisma = prismaClient;
     this.profService = profService || (prismaClient ? new ProfileService(prismaClient) : profileService);
+    this.extProfileService = extProfileService || (prismaClient ? new ExtendedProfileService(prismaClient) : extendedProfileService);
   }
 
   private async getPrisma(): Promise<any> {
@@ -174,7 +176,7 @@ export class ResumeSyncService {
           }
         } else if (review.fieldPath.startsWith("skills.") || review.fieldPath === "skill") {
           const skillName = typeof effectiveValue === "object" ? effectiveValue.name : String(effectiveValue);
-          await extendedProfileService.addOrUpdateStudentSkill(studentId, {
+          await this.extProfileService.addOrUpdateStudentSkill(studentId, {
             name: skillName,
             proficiency: "intermediate",
             source: "RESUME",
@@ -183,7 +185,7 @@ export class ResumeSyncService {
           fieldsApplied.push({ fieldPath: review.fieldPath, value: skillName, status: review.status });
         } else if (review.fieldPath.startsWith("projects.") || review.fieldPath === "project") {
           const proj = typeof effectiveValue === "object" ? effectiveValue : { title: String(effectiveValue) };
-          await extendedProfileService.addOrUpdateProject(studentId, {
+          await this.extProfileService.addOrUpdateProject(studentId, {
             title: proj.title || "Project",
             description: proj.description || null,
             technologies: proj.technologies || [],

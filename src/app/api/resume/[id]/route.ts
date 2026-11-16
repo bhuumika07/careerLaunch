@@ -1,7 +1,12 @@
-import { NextRequest, NextResponse } from "next/server";
-import { readDb, writeDb } from "@/lib/db";
-import { requireRole, handleAuthError } from "@/lib/auth-guard";
+// src/app/api/resume/[id]/route.ts
+export const dynamic = "force-dynamic";
+
+import type { NextRequest } from "next/server";
+import { requireRole, handleAuthError } from "@/lib/auth/authorization";
+import { getStudentResumeById, deleteStudentResume } from "@/lib/dal/student-resume.dal";
+import { profileService } from "@/lib/services/student/profileService";
 import { generateProfileDiff } from "@/lib/services/resume-parser";
+import { personalizedJsonResponse } from "@/lib/api/response";
 
 // GET /api/resume/[id]
 export async function GET(
@@ -11,22 +16,26 @@ export async function GET(
   try {
     const { user } = await requireRole(["student"], req);
     const { id } = await params;
-    const db = readDb();
 
-    const resume = db.resumes.find((r) => r.id === id && r.userId === user.id);
+    // Authoritative DAL check: verifies resume belongs strictly to user.id
+    const resume = await getStudentResumeById(user.id, id);
     if (!resume) {
-      return NextResponse.json(
+      return personalizedJsonResponse(
         { success: false, error: "Resume not found." },
         { status: 404 }
       );
     }
 
-    const studentProfile = db.studentProfiles.find((p) => p.userId === user.id);
-    const profileDiff = studentProfile
-      ? generateProfileDiff(studentProfile, resume.extractedData)
-      : [];
+    const studentProfile = await profileService.getProfile(user.id);
+    const latestVersion = resume.versions?.[0];
+    const extractedData = latestVersion?.parsedData || null;
 
-    return NextResponse.json({
+    const profileDiff =
+      studentProfile && extractedData
+        ? generateProfileDiff(studentProfile as any, extractedData as any)
+        : [];
+
+    return personalizedJsonResponse({
       success: true,
       resume,
       profileDiff,
@@ -44,20 +53,17 @@ export async function DELETE(
   try {
     const { user } = await requireRole(["student"], req);
     const { id } = await params;
-    const db = readDb();
 
-    const index = db.resumes.findIndex((r) => r.id === id && r.userId === user.id);
-    if (index === -1) {
-      return NextResponse.json(
+    // Authoritative DAL check: verifies ownership before deleting
+    const deleted = await deleteStudentResume(user.id, id);
+    if (!deleted) {
+      return personalizedJsonResponse(
         { success: false, error: "Resume not found." },
         { status: 404 }
       );
     }
 
-    db.resumes.splice(index, 1);
-    writeDb(db);
-
-    return NextResponse.json({
+    return personalizedJsonResponse({
       success: true,
       message: "Resume removed successfully.",
     });

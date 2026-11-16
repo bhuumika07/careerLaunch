@@ -69,9 +69,9 @@ export class OpportunityLifecycleManager {
     OpportunityLifecycleManager.activeLocks.add(lockKey);
 
     try {
-      return await this.prisma.$transaction(async (tx) => {
+      return await (this.prisma as any).$transaction(async (tx: any) => {
         // 1. Fetch canonical Opportunity and specific OpportunitySource
-        const opp = await tx.opportunity.findUnique({
+        const opp: any = await tx.opportunity.findUnique({
           where: { id: opportunityId },
         });
 
@@ -171,7 +171,7 @@ export class OpportunityLifecycleManager {
           });
 
           if (updateResult.count === 0) {
-            const freshOpp = await tx.opportunity.findUnique({
+            const freshOpp: any = await tx.opportunity.findUnique({
               where: { id: opportunityId },
             });
 

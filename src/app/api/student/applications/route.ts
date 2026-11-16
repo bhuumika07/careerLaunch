@@ -1,7 +1,10 @@
 // src/app/api/student/applications/route.ts
-import { NextRequest, NextResponse } from "next/server";
-import { requireRole, handleAuthError } from "@/lib/auth-guard";
+export const dynamic = "force-dynamic";
+
+import type { NextRequest } from "next/server";
+import { requireRole, handleAuthError } from "@/lib/auth/authorization";
 import { applicationTrackingService } from "@/lib/services/applications/applicationTrackingService";
+import { personalizedJsonResponse } from "@/lib/api/response";
 import { z } from "zod";
 
 const SubmitApplicationSchema = z.object({
@@ -42,7 +45,7 @@ export async function GET(req: NextRequest) {
     const { user } = await requireRole(["student"], req);
     const applications = await applicationTrackingService.getStudentApplications(user.id);
 
-    return NextResponse.json({
+    return personalizedJsonResponse({
       success: true,
       applications,
     });
@@ -63,7 +66,7 @@ export async function POST(req: NextRequest) {
 
     const validation = SubmitApplicationSchema.safeParse(body);
     if (!validation.success) {
-      return NextResponse.json(
+      return personalizedJsonResponse(
         {
           success: false,
           error: "Validation failed",
@@ -80,13 +83,13 @@ export async function POST(req: NextRequest) {
       { resumeId, coverNote }
     );
 
-    return NextResponse.json({
+    return personalizedJsonResponse({
       success: true,
       application,
     });
   } catch (error: any) {
     if (error.message?.includes("already submitted")) {
-      return NextResponse.json(
+      return personalizedJsonResponse(
         { success: false, error: error.message },
         { status: 409 }
       );
@@ -107,7 +110,7 @@ export async function PATCH(req: NextRequest) {
     const normalizedStatus = normalizeStatusString(body.status);
     const validation = UpdateStatusSchema.safeParse({ ...body, status: normalizedStatus });
     if (!validation.success) {
-      return NextResponse.json(
+      return personalizedJsonResponse(
         {
           success: false,
           error: "Validation failed",
@@ -125,7 +128,7 @@ export async function PATCH(req: NextRequest) {
       note
     );
 
-    return NextResponse.json({
+    return personalizedJsonResponse({
       success: true,
       application,
     });
@@ -134,7 +137,7 @@ export async function PATCH(req: NextRequest) {
       error.message?.includes("Invalid status transition") ||
       error.message?.includes("not found")
     ) {
-      return NextResponse.json(
+      return personalizedJsonResponse(
         { success: false, error: error.message },
         { status: 400 }
       );

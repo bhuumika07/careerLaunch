@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
-import { requireAdmin } from '../../../../src/lib/auth-guard-admin';
-import { prisma } from '../../../../src/lib/prisma';
-import { logAdminAction } from '../../../../src/lib/audit-log';
+import { requireAdmin } from '@/lib/auth-guard-admin';
+import { prisma } from '@/lib/prisma';
+import { logAdminAction } from '@/lib/audit-log';
 
 /**
  * GET  – list all sources (admin only)

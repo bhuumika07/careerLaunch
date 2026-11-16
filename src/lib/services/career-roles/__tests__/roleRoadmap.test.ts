@@ -143,8 +143,19 @@ describe("Phase 5 Chunk 5.4: Role-Specific Learning Roadmap Service", () => {
       // student_with_be_basics has targetRole: "Backend Engineer"
       const { roadmap } = await service.getUserRoadmap("student_with_be_basics", null);
 
+      assert.ok(roadmap);
       assert.strictEqual(roadmap.careerRoleId, "role_backend_eng");
       assert.strictEqual(roadmap.careerRoleTitle, "Backend Engineer");
+    });
+
+    it("returns null roadmap when student has no target role and roleId is omitted (never invents default role)", async () => {
+      const { service } = createMockEnvironment();
+
+      // student_empty has no target role
+      const { roadmap, availableRoles } = await service.getUserRoadmap("student_empty", null);
+
+      assert.strictEqual(roadmap, null);
+      assert.ok(availableRoles.length > 0);
     });
   });
 

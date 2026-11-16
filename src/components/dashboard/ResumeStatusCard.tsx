@@ -39,13 +39,14 @@ export default function ResumeStatusCard() {
   }
 
   const status = version?.status ?? 'none';
-  const statusMap: Record<string, { label: string; color: string; cta?: string }> = {
+  const statusEntries: Record<string, { label: string; color: string; cta?: string }> = {
     uploaded: { label: 'Uploaded', color: 'bg-sky-500', cta: '/student/resume' },
     processing: { label: 'Processing', color: 'bg-amber-500' },
     needs_review: { label: 'Needs Review', color: 'bg-amber-500', cta: `/student/resume/${version?.id}/review` },
     ready: { label: 'Ready', color: 'bg-success-500', cta: `/student/resume/${version?.id}/review` },
     failed: { label: 'Failed', color: 'bg-danger-500' },
-  }[status] ?? { label: 'No Resume', color: 'bg-muted' };
+  };
+  const statusInfo = statusEntries[status] ?? { label: 'No Resume', color: 'bg-muted' };
 
   return (
     <div className="flex items-center justify-between p-4 rounded-xl border border-border bg-card">
@@ -55,10 +56,10 @@ export default function ResumeStatusCard() {
         ) : status === 'failed' ? (
           <AlertCircle className="size-5 text-danger" />
         ) : null}
-        <span className={cn('font-medium', statusMap.color)}>{statusMap.label}</span>
+        <span className={cn('font-medium', statusInfo.color)}>{statusInfo.label}</span>
       </div>
-      {statusMap.cta && (
-        <Link href={statusMap.cta} className={cn('text-sm font-medium text-primary hover:underline')}>Review</Link>
+      {statusInfo.cta && (
+        <Link href={statusInfo.cta} className={cn('text-sm font-medium text-primary hover:underline')}>Review</Link>
       )}
     </div>
   );

@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { readDb } from "@/lib/db";
+import { prisma } from "@/lib/prisma";
 import { comparePassword } from "@/lib/auth-utils";
-import { createSession } from "@/lib/session";
+import { createSession, type Role } from "@/lib/session";
 import { checkRateLimit, recordFailedAttempt, resetRateLimit } from "@/lib/rate-limit";
 
 const loginSchema = z.object({
@@ -47,11 +47,21 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 2. Lookup user in database
-    const db = readDb();
-    const user = db.users.find((u) => u.email.toLowerCase() === normalizedEmail);
+    // 2. Lookup user in PostgreSQL via Prisma
+    let user = null;
+    try {
+      user = await prisma.user.findUnique({
+        where: { email: normalizedEmail },
+      });
+    } catch (err: unknown) {
+      console.error("[login] Database error querying user:", err);
+      return NextResponse.json(
+        { success: false, error: "Database service temporarily unavailable.", code: "DB_UNAVAILABLE" },
+        { status: 503 }
+      );
+    }
 
-    if (!user) {
+    if (!user || !user.passwordHash) {
       const attempt = recordFailedAttempt(rateLimitKey);
       return NextResponse.json(
         {
@@ -102,8 +112,8 @@ export async function POST(req: NextRequest) {
     // 4. Success: Reset rate limit
     resetRateLimit(rateLimitKey);
 
-    // 5. Create secure session cookie
-    await createSession(user.id, user.role);
+    // 5. Create secure session in PostgreSQL
+    await createSession(user.id, user.role as Role);
 
     // Determine redirect destination
     const destination = user.onboardingCompleted

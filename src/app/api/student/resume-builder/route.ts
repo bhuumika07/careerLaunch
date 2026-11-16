@@ -1,6 +1,11 @@
-import { NextRequest, NextResponse } from "next/server";
-import { readDb, writeDb, ResumeBuilderRecord } from "@/lib/db";
-import { requireRole, handleAuthError } from "@/lib/auth-guard";
+// src/app/api/student/resume-builder/route.ts
+export const dynamic = "force-dynamic";
+
+import type { NextRequest } from "next/server";
+import { readDb, writeDb, type ResumeBuilderRecord } from "@/lib/db";
+import { requireRole, handleAuthError } from "@/lib/auth/authorization";
+import { profileService } from "@/lib/services/student/profileService";
+import { personalizedJsonResponse } from "@/lib/api/response";
 
 export async function GET(req: NextRequest) {
   try {
@@ -8,41 +13,43 @@ export async function GET(req: NextRequest) {
     const db = readDb();
     let resumes = (db.resumeDocuments || []).filter((r) => r.userId === user.id);
 
-    // If none exists, synthesize initial one from profile
+    // If none exists, initialize from student's own verified profile (no invented mock defaults)
     if (resumes.length === 0) {
-      const profile = (db.studentProfiles || []).find((p) => p.userId === user.id);
+      const profile = await profileService.getProfile(user.id);
+      const initialEducation = (profile?.college || profile?.degree)
+        ? [
+            {
+              institution: profile?.college || "",
+              degree: profile?.degree || "",
+              department: profile?.branch || "",
+              graduationYear: profile?.graduationYear ? Number(profile.graduationYear) : new Date().getFullYear(),
+              cgpa: profile?.cgpa ? Number(profile.cgpa) : undefined,
+            },
+          ]
+        : [];
+
       const initialResume: ResumeBuilderRecord = {
         id: `res_bld_${Date.now()}`,
         userId: user.id,
-        title: "Frontend Systems Engineer (Primary)",
-        targetRole: "Frontend Engineer",
+        title: "My Resume",
+        targetRole: "",
         template: "modern-minimal",
         personalInfo: {
-          fullName: user.name,
+          fullName: user.name || "",
           email: user.email,
-          phone: profile?.phone || "+1 (555) 382-9012",
-          location: profile?.location || "San Francisco, CA",
-          portfolioUrl: profile?.portfolioUrl || "https://alexmorgan.dev",
-          linkedinUrl: profile?.linkedinUrl || "https://linkedin.com/in/alexmorgan",
-          githubUrl: profile?.githubUrl || "https://github.com/alexmorgan",
-          summary:
-            profile?.bio ||
-            "Passionate software engineer experienced in building scalable web architectures, design systems, and resilient frontend telemetry.",
+          phone: profile?.phone || "",
+          location: profile?.location || "",
+          portfolioUrl: profile?.portfolioUrl || "",
+          linkedinUrl: profile?.linkedinUrl || "",
+          githubUrl: profile?.githubUrl || "",
+          summary: profile?.bio || "",
         },
-        education: [
-          {
-            institution: profile?.institution || "St. Jude Institute of Technology",
-            degree: profile?.degree || "B.Tech in Computer Science",
-            department: profile?.department || "Computer Science & Engineering",
-            graduationYear: profile?.graduationYear || 2026,
-            cgpa: profile?.cgpa || 8.92,
-          },
-        ],
-        experience: profile?.experience || [],
-        projects: profile?.projects || [],
-        skills: profile?.skills || [],
-        certifications: profile?.certifications || [],
-        achievements: profile?.achievements || [],
+        education: initialEducation,
+        experience: [],
+        projects: [],
+        skills: [],
+        certifications: [],
+        achievements: [],
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
@@ -53,7 +60,7 @@ export async function GET(req: NextRequest) {
       resumes = [initialResume];
     }
 
-    return NextResponse.json({
+    return personalizedJsonResponse({
       success: true,
       resumes,
     });
@@ -76,7 +83,7 @@ export async function POST(req: NextRequest) {
       // Update existing
       const index = db.resumeDocuments.findIndex((r) => r.id === body.id && r.userId === user.id);
       if (index === -1) {
-        return NextResponse.json({ error: "Resume version not found" }, { status: 404 });
+        return personalizedJsonResponse({ error: "Resume version not found" }, { status: 404 });
       }
       record = {
         ...db.resumeDocuments[index],
@@ -98,7 +105,7 @@ export async function POST(req: NextRequest) {
 
     writeDb(db);
 
-    return NextResponse.json({
+    return personalizedJsonResponse({
       success: true,
       resume: record,
     });

@@ -18,8 +18,18 @@ export interface MissingProfileItem {
   isOptional: boolean;
 }
 
+export type ProfileCompletionLevel =
+  | "NOT_STARTED"
+  | "BASIC_PROFILE"
+  | "CAREER_PREFERENCES"
+  | "SKILLS_INVENTORY"
+  | "ENRICHED"
+  | "COMPREHENSIVE";
+
 export interface ProfileCompletionResult {
   percentage: number;
+  level: ProfileCompletionLevel;
+  isMinimumProfileComplete: boolean;
   completedSteps: number[];
   currentStep: number;
   missingItems: MissingProfileItem[];
@@ -134,8 +144,31 @@ export class ProfileCompletionService {
       }
     }
 
+    // Determine Level
+    const hasAnySkill = Array.isArray(skills) && skills.length > 0;
+    const isMinComplete = isAcademicsComplete && isCareerInterestsComplete && hasAnySkill;
+
+    let level: ProfileCompletionLevel = "NOT_STARTED";
+    if (totalPercentage === 0) {
+      level = "NOT_STARTED";
+    } else if (isAcademicsComplete && !isCareerInterestsComplete) {
+      level = "BASIC_PROFILE";
+    } else if (isAcademicsComplete && isCareerInterestsComplete && !hasAnySkill) {
+      level = "CAREER_PREFERENCES";
+    } else if (isMinComplete && !isProjectsComplete && !isPrefsComplete) {
+      level = "SKILLS_INVENTORY";
+    } else if (isMinComplete && (isProjectsComplete || isPrefsComplete) && totalPercentage < 100) {
+      level = "ENRICHED";
+    } else if (totalPercentage >= 90) {
+      level = "COMPREHENSIVE";
+    } else {
+      level = "BASIC_PROFILE";
+    }
+
     return {
       percentage: totalPercentage,
+      level,
+      isMinimumProfileComplete: isMinComplete,
       completedSteps,
       currentStep,
       missingItems,
@@ -163,6 +196,17 @@ export class ProfileCompletionService {
         },
       },
     };
+  }
+
+  /**
+   * Helper to verify if minimum profile rule is met without full calculation overhead.
+   */
+  isMinimumCompleted(dimensions: {
+    academics: boolean;
+    careerInterests: boolean;
+    technicalSkills: boolean;
+  }): boolean {
+    return dimensions.academics && dimensions.careerInterests && dimensions.technicalSkills;
   }
 }
 

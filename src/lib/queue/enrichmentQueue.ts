@@ -4,7 +4,7 @@
  */
 
 import { Queue } from "bullmq";
-import { getRedisConnection } from "./redis.ts";
+import { getRedisConnection } from "./redis";
 
 export const ENRICHMENT_QUEUE_NAME = "opportunity-enrichment";
 
@@ -13,6 +13,7 @@ export interface EnrichOpportunityJobData {
   forceReprocess?: boolean;
   triggeredBy?: string;
   enqueuedAt?: string;
+  contentHash?: string;
 }
 
 export function createEnrichmentQueue(): Queue<EnrichOpportunityJobData> {

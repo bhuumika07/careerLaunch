@@ -180,10 +180,10 @@ export default function DesignSystemPage() {
           {/* Rose Crimson Swatches */}
           <div className="space-y-2">
             <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Rose Crimson 10-Step Ramp (Darkest to Lightest)
+              Summer Fun Palette Tokens
             </h3>
             <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3">
-              {roseRamp.map((swatch) => (
+              {summerFunPalette.map((swatch) => (
                 <div key={swatch.token} className="p-3.5 rounded-xl border border-border bg-card space-y-2 shadow-xs">
                   <div
                     className="h-14 rounded-lg border border-black/10 shadow-inner flex items-end p-1.5"

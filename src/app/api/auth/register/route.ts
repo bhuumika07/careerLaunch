@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import crypto from "crypto";
-import { readDb, writeDb, User, Role } from "@/lib/db";
+import { prisma } from "@/lib/prisma";
 import { hashPassword } from "@/lib/auth-utils";
-import { createSession } from "@/lib/session";
+import { createSession, type Role } from "@/lib/session";
 
 const registerSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -30,11 +30,22 @@ export async function POST(req: NextRequest) {
     }
 
     const { name, email, password, role } = result.data;
-    const db = readDb();
+    const normalizedEmail = email.toLowerCase().trim();
 
     // Check if user already exists
-    const normalizedEmail = email.toLowerCase().trim();
-    const existing = db.users.find((u) => u.email.toLowerCase() === normalizedEmail);
+    let existing = null;
+    try {
+      existing = await prisma.user.findUnique({
+        where: { email: normalizedEmail },
+      });
+    } catch (err: unknown) {
+      console.error("[register] Database error checking existing user:", err);
+      return NextResponse.json(
+        { success: false, error: "Database service temporarily unavailable.", code: "DB_UNAVAILABLE" },
+        { status: 503 }
+      );
+    }
+
     if (existing) {
       return NextResponse.json(
         {
@@ -46,55 +57,56 @@ export async function POST(req: NextRequest) {
     }
 
     const passwordHash = await hashPassword(password);
-    const now = new Date().toISOString();
     const userId = `usr_${role}_${Date.now()}`;
 
-    const newUser: User = {
-      id: userId,
-      name,
-      email: normalizedEmail,
-      passwordHash,
-      role: role as Role,
-      status: "active",
-      emailVerified: false,
-      onboardingCompleted: false,
-      createdAt: now,
-      updatedAt: now,
-    };
+    // Create user and initial empty studentProfile atomically
+    const newUser = await prisma.$transaction(async (tx) => {
+      const user = await tx.user.create({
+        data: {
+          id: userId,
+          name,
+          email: normalizedEmail,
+          passwordHash,
+          role,
+          status: "active",
+          emailVerified: false,
+          onboardingCompleted: false,
+        },
+      });
 
-    db.users.push(newUser);
+      // Create linked StudentProfile
+      await tx.studentProfile.create({
+        data: {
+          userId: user.id,
+          college: null,
+          degree: null,
+          branch: null,
+          currentYear: null,
+          graduationYear: null,
+          cgpa: null,
+          fieldMetadata: {},
+        },
+      });
 
-    // Create an initial empty profile record in unified studentProfiles (CareerProfile)
-    db.studentProfiles = db.studentProfiles || [];
-    db.studentProfiles.push({
-      userId,
-      skills: [],
-      projects: [],
-      experience: [],
-      certifications: [],
-      achievements: [],
-      updatedAt: now,
+      // Create email verification token
+      const verificationToken = crypto.randomBytes(32).toString("hex");
+      await tx.verificationToken.create({
+        data: {
+          id: `tok_${crypto.randomBytes(8).toString("hex")}`,
+          token: verificationToken,
+          userId: user.id,
+          email: normalizedEmail,
+          type: "email_verification",
+          expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
+          used: false,
+        },
+      });
+
+      return user;
     });
 
-    // Create email verification token
-    const verificationToken = crypto.randomBytes(32).toString("hex");
-    const tokenRecord = {
-      id: `tok_${crypto.randomBytes(8).toString("hex")}`,
-      token: verificationToken,
-      userId,
-      email: normalizedEmail,
-      type: "email_verification" as const,
-      expiresAt: Date.now() + 24 * 60 * 60 * 1000,
-      used: false,
-      createdAt: now,
-    };
-    db.verificationTokens = db.verificationTokens || [];
-    db.verificationTokens.push(tokenRecord);
-
-    writeDb(db);
-
-    // Auto-login newly registered user
-    const session = await createSession(userId, role as Role);
+    // Auto-login newly registered user in PostgreSQL
+    const session = await createSession(newUser.id, role as Role);
 
     return NextResponse.json(
       {
@@ -106,19 +118,24 @@ export async function POST(req: NextRequest) {
           email: newUser.email,
           role: newUser.role,
           status: newUser.status,
+          emailVerified: newUser.emailVerified,
           onboardingCompleted: newUser.onboardingCompleted,
         },
-        sessionId: session.id,
+        session: {
+          id: session.id,
+          expiresAt: session.expiresAt,
+        },
         redirectTo: "/onboarding",
       },
       { status: 201 }
     );
-  } catch (error) {
-    console.error("Registration failed:", error);
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "An unexpected error occurred during registration.";
+    console.error("Registration error:", error);
     return NextResponse.json(
       {
         success: false,
-        error: "Internal server error occurred during registration.",
+        error: message,
       },
       { status: 500 }
     );

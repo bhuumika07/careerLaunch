@@ -6,7 +6,7 @@ import { prisma } from "@/lib/prisma";
 import {
   computeEnrichmentMetrics,
   getEnrichmentReviewQueue,
-} from "@/lib/services/enrichment/adminEnrichmentService.ts";
+} from "@/lib/services/enrichment/adminEnrichmentService";
 
 export async function GET(req: NextRequest) {
   try {

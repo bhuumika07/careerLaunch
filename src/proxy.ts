@@ -7,7 +7,7 @@ const ROLE_ROUTE_PREFIXES: Record<string, string[]> = {
   "/admin": ["admin"],
 };
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // 1. Check if route requires role check
@@ -51,6 +51,9 @@ export function middleware(request: NextRequest) {
 
   return NextResponse.next();
 }
+
+export const middleware = proxy;
+export default proxy;
 
 export const config = {
   matcher: [

@@ -1,7 +1,10 @@
 // src/app/api/student/roadmap/route.ts
-import { NextRequest, NextResponse } from "next/server";
-import { requireRole, handleAuthError } from "@/lib/auth-guard";
-import { roleRoadmapService } from "@/lib/services/career-roles/roleRoadmapService";
+export const dynamic = "force-dynamic";
+
+import type { NextRequest } from "next/server";
+import { requireRole, handleAuthError } from "@/lib/auth/authorization";
+import { getStudentRoadmap } from "@/lib/dal/student-roadmap.dal";
+import { personalizedJsonResponse } from "@/lib/api/response";
 
 /**
  * GET /api/student/roadmap
@@ -13,9 +16,9 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const roleId = searchParams.get("roleId") || null;
 
-    const data = await roleRoadmapService.getUserRoadmap(user.id, roleId);
+    const data = await getStudentRoadmap(user.id, roleId);
 
-    return NextResponse.json({
+    return personalizedJsonResponse({
       success: true,
       ...data,
     });

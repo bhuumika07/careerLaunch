@@ -72,7 +72,28 @@ describe("Phase 4 Chunk 4.3: Profile Completion & Resume-After-Refresh", () => {
         fieldMetadata: {},
       });
 
-      const service = new ProfileCompletionService();
+      const mockProfService = {
+        getProfile: async (userId: string) =>
+          studentProfiles.find((p) => p.userId === userId) || {
+            id: "prof_fresh",
+            userId,
+            college: null,
+            degree: null,
+            branch: null,
+            graduationYear: null,
+            cgpa: null,
+            fieldMetadata: {},
+          },
+      };
+      const mockExtService = {
+        getStudentSkills: async () => [],
+        getCareerInterests: async () => [],
+        getProjects: async () => [],
+        getExperiences: async () => [],
+        getPreferences: async () => null,
+      };
+
+      const service = new ProfileCompletionService(mockProfService as any, mockExtService as any);
       // Test calculation with empty profile
       const result = await service.calculateCompletion("user_empty");
 
@@ -152,7 +173,29 @@ describe("Phase 4 Chunk 4.3: Profile Completion & Resume-After-Refresh", () => {
 
   describe("2. Resume-After-Refresh State", () => {
     it("suggests the first incomplete step deterministically when reloaded", async () => {
-      const service = new ProfileCompletionService();
+      const { mockPrisma, studentProfiles } = createMockEnvironment();
+      const mockProfService = {
+        getProfile: async (userId: string) =>
+          studentProfiles.find((p) => p.userId === userId) || {
+            id: "prof_fresh",
+            userId,
+            college: null,
+            degree: null,
+            branch: null,
+            graduationYear: null,
+            cgpa: null,
+            fieldMetadata: {},
+          },
+      };
+      const mockExtService = {
+        getStudentSkills: async () => [],
+        getCareerInterests: async () => [],
+        getProjects: async () => [],
+        getExperiences: async () => [],
+        getPreferences: async () => null,
+      };
+
+      const service = new ProfileCompletionService(mockProfService as any, mockExtService as any);
 
       // Test with fresh user -> Step 1
       const res1 = await service.calculateCompletion("usr_new_student");

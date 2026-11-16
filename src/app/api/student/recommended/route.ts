@@ -1,7 +1,10 @@
 // src/app/api/student/recommended/route.ts
-import { NextRequest, NextResponse } from "next/server";
-import { requireRole, handleAuthError } from "@/lib/auth-guard";
+export const dynamic = "force-dynamic";
+
+import type { NextRequest } from "next/server";
+import { requireRole, handleAuthError } from "@/lib/auth/authorization";
 import { matchingService } from "@/lib/services/matching/matchingService";
+import { personalizedJsonResponse } from "@/lib/api/response";
 
 /**
  * GET /api/student/recommended
@@ -30,7 +33,7 @@ export async function GET(req: NextRequest) {
       offset,
     });
 
-    return NextResponse.json({
+    return personalizedJsonResponse({
       success: true,
       userId: user.id,
       ...feed,

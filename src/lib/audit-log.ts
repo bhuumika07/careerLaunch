@@ -18,7 +18,7 @@ export async function logAdminAction(params: {
       action,
       target: target ?? null,
       targetId: targetId ?? null,
-      details: details ?? null,
+      details: (details as any) ?? undefined,
     },
   });
 }

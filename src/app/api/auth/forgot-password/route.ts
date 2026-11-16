@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import crypto from "crypto";
-import { readDb, writeDb } from "@/lib/db";
+import { prisma } from "@/lib/prisma";
 
 const forgotSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -20,8 +20,11 @@ export async function POST(req: NextRequest) {
     }
 
     const { email } = result.data;
-    const db = readDb();
-    const user = db.users.find((u) => u.email.toLowerCase() === email.toLowerCase().trim());
+    const normalizedEmail = email.toLowerCase().trim();
+
+    const user = await prisma.user.findUnique({
+      where: { email: normalizedEmail },
+    });
 
     // Even if user not found, respond with generic success to prevent email enumeration
     if (!user) {
@@ -32,25 +35,27 @@ export async function POST(req: NextRequest) {
     }
 
     const resetToken = crypto.randomBytes(32).toString("hex");
-    const expiresAt = Date.now() + 60 * 60 * 1000; // 1 hour
+    const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
 
     // Clean previous unused tokens for this user
-    db.verificationTokens = db.verificationTokens.filter(
-      (t) => !(t.userId === user.id && t.type === "password_reset")
-    );
-
-    db.verificationTokens.push({
-      id: `pr_${Date.now()}`,
-      token: resetToken,
-      userId: user.id,
-      email: user.email,
-      type: "password_reset",
-      expiresAt,
-      used: false,
-      createdAt: new Date().toISOString(),
+    await prisma.verificationToken.deleteMany({
+      where: {
+        userId: user.id,
+        type: "password_reset",
+      },
     });
 
-    writeDb(db);
+    await prisma.verificationToken.create({
+      data: {
+        id: `pr_${Date.now()}`,
+        token: resetToken,
+        userId: user.id,
+        email: user.email,
+        type: "password_reset",
+        expiresAt,
+        used: false,
+      },
+    });
 
     return NextResponse.json({
       success: true,

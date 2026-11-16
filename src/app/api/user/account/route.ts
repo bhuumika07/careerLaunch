@@ -58,7 +58,9 @@ export async function PUT(req: NextRequest) {
         );
       }
 
-      const isCurrentValid = await comparePassword(result.data.currentPassword, user.passwordHash);
+      const isCurrentValid = user.passwordHash
+        ? await comparePassword(result.data.currentPassword, user.passwordHash)
+        : false;
       if (!isCurrentValid) {
         return NextResponse.json(
           { success: false, error: "Incorrect current password." },
@@ -129,7 +131,9 @@ export async function DELETE(req: NextRequest) {
       );
     }
 
-    const isPasswordValid = await comparePassword(result.data.password, user.passwordHash);
+    const isPasswordValid = user.passwordHash
+      ? await comparePassword(result.data.password, user.passwordHash)
+      : false;
     if (!isPasswordValid) {
       return NextResponse.json(
         { success: false, error: "Incorrect password. Deactivation cancelled." },

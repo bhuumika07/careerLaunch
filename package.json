@@ -9,6 +9,7 @@
     "start": "next start",
     "lint": "eslint",
     "test": "node --experimental-strip-types --test src/lib/services/**/__tests__/*.test.ts",
+    "test:isolation": "node --experimental-strip-types --import ./scripts/resolve-aliases.js --test tests/isolation/crossAccountSecurity.test.ts",
     "ingest:real": "node --experimental-strip-types scripts/ingest_real_jobs.ts",
     "worker:verification": "node --experimental-strip-types src/workers/verificationWorker.ts",
     "scheduler:verification": "node --experimental-strip-types src/workers/verificationScheduler.ts",
@@ -29,6 +30,7 @@
     "radix-ui": "^1.8.1",
     "react": "19.3.0",
     "react-dom": "19.3.0",
+    "server-only": "^0.0.1",
     "tailwind-merge": "^3.7.0",
     "zod": "^4.6.7"
   },

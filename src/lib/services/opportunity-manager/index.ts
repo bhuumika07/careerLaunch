@@ -34,17 +34,20 @@ export function stringSimilarity(str1: string, str2: string): number {
  * Returns true if similarity exceeds 85%.
  */
 export function findDuplicateOpportunity(
-  newOpp: { title: string; org: string; deadline: string },
+  newOpp: { title: string; org?: string | null; deadline?: string | null },
   existingOpps: Opportunity[]
 ): { isDuplicate: boolean; matchedOpp?: Opportunity; similarityScore: number } {
   for (const existing of existingOpps) {
     const titleSim = stringSimilarity(newOpp.title, existing.title);
-    const orgSim = stringSimilarity(newOpp.org, existing.org);
+    const orgSim = stringSimilarity(newOpp.org || "", existing.org || "");
 
     // Date closeness check: within 7 days
-    const newDeadline = new Date(newOpp.deadline).getTime();
-    const existingDeadline = new Date(existing.deadline).getTime();
-    const dateDiffDays = Math.abs(newDeadline - existingDeadline) / (1000 * 60 * 60 * 24);
+    const newDeadline = newOpp.deadline ? new Date(newOpp.deadline).getTime() : 0;
+    const existingDeadline = existing.deadline ? new Date(existing.deadline).getTime() : 0;
+    const dateDiffDays =
+      newDeadline && existingDeadline
+        ? Math.abs(newDeadline - existingDeadline) / (1000 * 60 * 60 * 24)
+        : 30;
     const dateSim = dateDiffDays <= 7 ? 1.0 : Math.max(0, 1 - dateDiffDays / 30);
 
     const compositeScore = titleSim * 0.5 + orgSim * 0.35 + dateSim * 0.15;
@@ -65,10 +68,10 @@ export function findDuplicateOpportunity(
  * Automatically evaluates whether an opportunity is expired based on current timestamp
  */
 export function refreshOpportunityStatus(opp: Opportunity): Opportunity {
-  const deadlineTime = new Date(opp.deadline).getTime();
+  const deadlineTime = opp.deadline ? new Date(opp.deadline).getTime() : 0;
   const now = Date.now();
 
-  if (now > deadlineTime && opp.status === "active") {
+  if (deadlineTime && now > deadlineTime && opp.status === "active") {
     return { ...opp, status: "expired" };
   }
   return opp;
@@ -122,6 +125,7 @@ export function filterOpportunities(
 
     // 5. Urgency filter
     if (params.urgencyDays) {
+      if (!opp.deadline) return false;
       const deadline = new Date(opp.deadline).getTime();
       const diffDays = (deadline - now) / (1000 * 60 * 60 * 24);
       if (diffDays < 0 || diffDays > params.urgencyDays) return false;

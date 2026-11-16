@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { readDb, writeDb } from "@/lib/db";
+import { prisma } from "@/lib/prisma";
 import { hashPassword } from "@/lib/auth-utils";
 
 const resetSchema = z.object({
@@ -21,14 +21,13 @@ export async function POST(req: NextRequest) {
     }
 
     const { token, password } = result.data;
-    const db = readDb();
-    const now = Date.now();
+    const now = new Date();
 
-    const tokenRecord = db.verificationTokens.find(
-      (t) => t.token === token && t.type === "password_reset" && !t.used
-    );
+    const tokenRecord = await prisma.verificationToken.findUnique({
+      where: { token },
+    });
 
-    if (!tokenRecord) {
+    if (!tokenRecord || tokenRecord.type !== "password_reset" || tokenRecord.used) {
       return NextResponse.json(
         { success: false, error: "Invalid or previously used reset token." },
         { status: 400 }
@@ -42,25 +41,22 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const user = db.users.find((u) => u.id === tokenRecord.userId);
-    if (!user) {
-      return NextResponse.json(
-        { success: false, error: "Associated user account was not found." },
-        { status: 404 }
-      );
-    }
+    const newHash = await hashPassword(password);
 
-    // Update password
-    user.passwordHash = await hashPassword(password);
-    user.updatedAt = new Date().toISOString();
-
-    // Mark token as used
-    tokenRecord.used = true;
-
-    // Invalidate existing sessions for security on password change
-    db.sessions = db.sessions.filter((s) => s.userId !== user.id);
-
-    writeDb(db);
+    await prisma.$transaction([
+      prisma.user.update({
+        where: { id: tokenRecord.userId },
+        data: { passwordHash: newHash },
+      }),
+      prisma.verificationToken.update({
+        where: { id: tokenRecord.id },
+        data: { used: true },
+      }),
+      // Invalidate existing sessions on password change
+      prisma.session.deleteMany({
+        where: { userId: tokenRecord.userId },
+      }),
+    ]);
 
     return NextResponse.json({
       success: true,

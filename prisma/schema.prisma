@@ -16,6 +16,7 @@ model Resume {
   title      String
   createdAt  DateTime        @default(now())
   versions   ResumeVersion[]
+  user       User?           @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
   @@index([studentId])
 }
@@ -378,14 +379,60 @@ model PotentialDuplicate {
 
 
 model User {
-  id             String          @id @default(uuid())
-  email          String          @unique
-  name           String?
-  role           String          @default("STUDENT")
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
-  auditLogs      AuditLog[]
-  studentProfile StudentProfile?
+  id                  String              @id @default(uuid())
+  email               String              @unique
+  name                String?
+  role                String              @default("student")
+  passwordHash        String?
+  status              String              @default("active")
+  emailVerified       Boolean             @default(false)
+  avatarUrl           String?
+  onboardingCompleted Boolean             @default(false)
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+  auditLogs           AuditLog[]
+  studentProfile      StudentProfile?
+  sessions            Session[]
+  verificationTokens  VerificationToken[]
+  resumes             Resume[]
+  roadmaps            StudentRoadmap[]
+  intelligenceJobs    ProfileIntelligenceJob[]
+}
+
+model Session {
+  id        String   @id
+  userId    String
+  role      String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model VerificationToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  email     String
+  type      String
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([token])
+}
+
+model RateLimit {
+  key         String    @id
+  attempts    Int       @default(0)
+  lastAttempt DateTime  @default(now())
+  lockedUntil DateTime?
 }
 
 // -------------------------------------------------
@@ -503,32 +550,59 @@ model IngestionRunLog {
 // Phase 4: Student Profile Models (Chunk 4.1)
 // -------------------------------------------------
 
+enum OnboardingStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum SkillVerificationState {
+  SELF_REPORTED
+  CONFIRMED
+  VERIFIED
+}
+
 enum ProfileFieldSource {
   STUDENT
   RESUME
+  STUDENT_ENTERED
+  RESUME_EXTRACTED
+  ASSESSMENT_VERIFIED
+  SYSTEM_DERIVED
 }
 
 model StudentProfile {
-  id             String              @id @default(uuid())
-  userId         String              @unique
-  college        String?
-  degree         String?
-  branch         String?
-  currentYear    Int?
-  graduationYear Int?
-  cgpa           Float?
-  cgpaScale      Float?              @default(10.0)
-  backlogs       Int?                @default(0)
-  fieldMetadata  Json?               @default("{}")
-  createdAt      DateTime            @default(now())
-  updatedAt      DateTime            @updatedAt
+  id               String              @id @default(uuid())
+  userId           String              @unique
+  onboardingStatus OnboardingStatus    @default(NOT_STARTED)
+  onboardingStep   Int?                @default(1)
+  profileVersion   Int                 @default(1)
+  lastCompletedAt  DateTime?
+  lastUpdatedBy    String?             @default("STUDENT")
+  college          String?
+  degree           String?
+  branch           String?
+  currentYear      Int?
+  graduationYear   Int?
+  cgpa             Float?
+  cgpaScale        Float?              @default(10.0)
+  backlogs         Int?                @default(0)
+  fieldMetadata    Json?               @default("{}")
+  phone            String?
+  bio              String?
+  location         String?
+  portfolioUrl     String?
+  githubUrl        String?
+  linkedinUrl      String?
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
 
-  user           User                @relation(fields: [userId], references: [id], onDelete: Cascade)
-  skills         StudentSkill[]
-  interests      CareerInterest[]
-  projects       StudentProject[]
-  experiences    StudentExperience[]
-  preference     StudentPreference?
+  user             User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  skills           StudentSkill[]
+  interests        CareerInterest[]
+  projects         StudentProject[]
+  experiences      StudentExperience[]
+  preference       StudentPreference?
 }
 
 // -------------------------------------------------
@@ -542,20 +616,22 @@ enum SkillReviewStatus {
 }
 
 model StudentSkill {
-  id               String             @id @default(uuid())
-  studentProfileId String
-  skillId          String?
-  rawSkillName     String?
-  source           ProfileFieldSource @default(STUDENT)
-  reviewStatus     SkillReviewStatus  @default(CONFIRMED)
-  proficiency      String?
-  yearsExperience  Float?
-  confirmed        Boolean            @default(true)
-  createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @updatedAt
+  id                String                 @id @default(uuid())
+  studentProfileId  String
+  skillId           String?
+  rawSkillName      String?
+  source            ProfileFieldSource     @default(STUDENT)
+  reviewStatus      SkillReviewStatus      @default(CONFIRMED)
+  verificationState SkillVerificationState @default(SELF_REPORTED)
+  proficiency       String?
+  yearsExperience   Float?
+  experienceMonths  Int?
+  confirmed         Boolean                @default(true)
+  createdAt         DateTime               @default(now())
+  updatedAt         DateTime               @updatedAt
 
-  studentProfile   StudentProfile     @relation(fields: [studentProfileId], references: [id], onDelete: Cascade)
-  skill            Skill?             @relation(fields: [skillId], references: [id], onDelete: SetNull)
+  studentProfile    StudentProfile         @relation(fields: [studentProfileId], references: [id], onDelete: Cascade)
+  skill             Skill?                 @relation(fields: [skillId], references: [id], onDelete: SetNull)
 
   @@unique([studentProfileId, skillId])
   @@index([studentProfileId])
@@ -568,12 +644,62 @@ model CareerInterest {
   targetRole       String
   domain           String
   priority         Int            @default(1)
+  isPrimary        Boolean        @default(false)
+  confirmedAt      DateTime?
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt
 
   studentProfile   StudentProfile @relation(fields: [studentProfileId], references: [id], onDelete: Cascade)
 
+  @@unique([studentProfileId, priority])
   @@index([studentProfileId])
+}
+
+model StudentRoadmap {
+  id                  String    @id @default(uuid())
+  userId              String
+  careerRoleId        String
+  careerRoleTitle     String
+  domain              String
+  profileVersion      Int       @default(1)
+  generationVersion   Int       @default(1)
+  isActive            Boolean   @default(true)
+  currentModuleIndex  Int       @default(0)
+  progressPercentage  Int       @default(0)
+  milestonesCompleted Int       @default(0)
+  totalMilestones     Int       @default(0)
+  modules             Json      @default("[]")
+  archivedAt          DateTime?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  user                User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([careerRoleId])
+  @@index([isActive])
+}
+
+model ProfileIntelligenceJob {
+  id                  String    @id @default(uuid())
+  userId              String
+  profileId           String?
+  jobType             String
+  inputProfileVersion Int       @default(1)
+  targetRoleId        String?
+  status              String    @default("PENDING")
+  model               String?
+  promptVersion       String?
+  resultRef           String?
+  error               String?
+  createdAt           DateTime  @default(now())
+  completedAt         DateTime?
+
+  user                User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+  @@index([jobType])
 }
 
 model StudentProject {

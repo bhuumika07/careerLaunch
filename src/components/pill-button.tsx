@@ -16,6 +16,8 @@ export const pillButtonVariants = cva(
         secondary:
           "border border-secondary-border text-foreground bg-secondary hover:bg-secondary/80",
         ghost: "text-foreground hover:bg-secondary/60",
+        destructive:
+          "bg-red-600 text-white hover:bg-red-700 active:bg-red-800 shadow-sm",
       },
       size: {
         sm: "px-4 py-1.5 text-sm",

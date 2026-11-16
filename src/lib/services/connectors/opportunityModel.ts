@@ -146,7 +146,7 @@ export async function saveConnectorOpportunity(
           lastVerifiedAt: record.lastVerifiedAt ? new Date(record.lastVerifiedAt) : null,
           verificationStatus: record.verificationStatus,
           rawPayloadRef: record.rawPayloadRef,
-          createdAt: new Date(record.createdAt),
+          createdAt: record.createdAt ? new Date(record.createdAt) : new Date(now),
           updatedAt: new Date(now),
         },
       });

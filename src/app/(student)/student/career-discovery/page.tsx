@@ -70,11 +70,11 @@ function CareerDiscoveryQuestionnaireContent() {
   const totalSteps = 5;
 
   const [answers, setAnswers] = React.useState<CareerDiscoveryAnswers>({
-    interests: ["Web Development", "Artificial Intelligence & ML"],
-    workPreferences: ["coding"],
-    existingKnowledge: ["JavaScript", "React", "Git"],
-    collegeProjects: ["Academic Web Application"],
-    preferredIndustries: ["Technology & Software"],
+    interests: [],
+    workPreferences: [],
+    existingKnowledge: [],
+    collegeProjects: [],
+    preferredIndustries: [],
     careerGoals: "",
     updatedAt: "",
   });

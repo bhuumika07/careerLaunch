@@ -1,20 +1,22 @@
 // src/app/api/student/profile/route.ts
-import { NextRequest, NextResponse } from "next/server";
-import { requireRole, handleAuthError } from "@/lib/auth-guard";
+export const dynamic = "force-dynamic";
+
+import type { NextRequest } from "next/server";
+import { requireRole, handleAuthError } from "@/lib/auth/authorization";
 import { profileService, StudentProfileInputSchema } from "@/lib/services/student/profileService";
+import { personalizedJsonResponse } from "@/lib/api/response";
 
 /**
  * GET /api/student/profile
  * Retrieves the authenticated student's academic and foundational profile.
- * Strictly scoped to session user.
+ * Strictly scoped to session user via DAL / profileService.
  */
 export async function GET(req: NextRequest) {
   try {
     const { user } = await requireRole(["student"], req);
-
     const profile = await profileService.getProfile(user.id);
 
-    return NextResponse.json({
+    return personalizedJsonResponse({
       success: true,
       user: {
         id: user.id,
@@ -43,7 +45,7 @@ export async function PUT(req: NextRequest) {
     // Validate request body via Zod
     const validation = StudentProfileInputSchema.safeParse(body);
     if (!validation.success) {
-      return NextResponse.json(
+      return personalizedJsonResponse(
         {
           success: false,
           error: "Validation failed",
@@ -55,7 +57,7 @@ export async function PUT(req: NextRequest) {
 
     const result = await profileService.updateProfile(user.id, validation.data);
 
-    return NextResponse.json({
+    return personalizedJsonResponse({
       success: true,
       profile: result.profile,
       updatedFields: result.updatedFields,

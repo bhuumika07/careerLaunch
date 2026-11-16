@@ -94,9 +94,7 @@ export default function StudentDashboardPage() {
         let targetRoleJobs = 0;
 
         if (rolesData && rolesData.recommendations?.length > 0) {
-          const topRole =
-            rolesData.recommendations.find((r: any) => r.isTargetRole) ||
-            rolesData.recommendations[0];
+          const topRole = rolesData.recommendations.find((r: any) => r.isTargetRole);
           if (topRole) {
             targetRoleName = topRole.canonicalName;
             targetRoleScore = topRole.matchScore;
@@ -104,7 +102,7 @@ export default function StudentDashboardPage() {
           }
         }
 
-        const roadmapProgress = roadmapData?.roadmap?.completionPercentage || 0;
+        const roadmapProgress = roadmapData?.roadmap?.progressPercentage ?? roadmapData?.roadmap?.completionPercentage ?? 0;
         const nextModule =
           roadmapData?.roadmap?.modules?.find(
             (m: any) => m.status === "IN_PROGRESS" || m.status === "NOT_STARTED"

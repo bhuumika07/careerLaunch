@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireRole, handleAuthError } from "@/lib/auth-guard";
 import { readDb, writeDb } from "@/lib/db";
 import { prisma } from "@/lib/prisma";
-import { applyAdminReviewAction } from "@/lib/services/enrichment/adminEnrichmentService.ts";
+import { applyAdminReviewAction } from "@/lib/services/enrichment/adminEnrichmentService";
 
 export async function POST(
   req: NextRequest,
@@ -53,7 +53,7 @@ export async function POST(
     // Special handling for retry
     if (action === "retry") {
       try {
-        const { enrichmentQueue } = await import("@/lib/queue/enrichmentQueue.ts");
+        const { enrichmentQueue } = await import("@/lib/queue/enrichmentQueue");
         await enrichmentQueue.add("opportunity-enrichment", {
           opportunityId: existingRecord.opportunityId,
           contentHash: existingRecord.contentHash,

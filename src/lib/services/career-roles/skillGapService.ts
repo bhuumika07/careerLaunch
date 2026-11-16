@@ -141,7 +141,7 @@ export class SkillGapService {
   async analyzeSkillGap(
     userId: string,
     targetRoleIdOrTitle?: string | null
-  ): Promise<SkillGapAnalysisResult> {
+  ): Promise<SkillGapAnalysisResult | null> {
     if (!userId) {
       throw new Error("Student userId is required for skill gap analysis.");
     }
@@ -187,7 +187,8 @@ export class SkillGapService {
       }
     }
 
-    // Fallback: If no role provided, pick student's top target role, or the first active role in catalogue
+    // Fallback: If no role provided, pick student's top target role
+    // INVARIANT: Never invent arbitrary default roles when the student has not selected or targeted any.
     if (!targetRole && careerInterests.length > 0) {
       const topInterest = careerInterests[0];
       const norm = normalizeTitleToRole(topInterest.targetRole, catalogue);
@@ -201,15 +202,8 @@ export class SkillGapService {
     }
 
     if (!targetRole) {
-      // Pick first active role with opportunities if possible, or first active role
-      targetRole =
-        catalogue.find((r) => r.isActive && (activeCounts[r.id] || 0) > 0) ||
-        catalogue.find((r) => r.isActive) ||
-        catalogue[0];
-    }
-
-    if (!targetRole) {
-      throw new Error("No career roles available in catalogue for skill gap analysis.");
+      // Return null so the consumer/UI can prompt the student to select or target a role
+      return null;
     }
 
     const isStudentTargetRole = careerInterests.some((ci) => {

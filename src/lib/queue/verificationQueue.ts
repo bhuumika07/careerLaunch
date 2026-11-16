@@ -1,6 +1,6 @@
 // src/lib/queue/verificationQueue.ts
 import { Queue, type JobsOptions } from "bullmq";
-import { getRedisConnectionOptions } from "./redis.ts";
+import { getRedisConnectionOptions } from "./redis";
 
 export const VERIFICATION_QUEUE_NAME = "opportunity-verification";
 export const VERIFY_OPPORTUNITY_JOB_NAME = "verify-opportunity";
@@ -34,6 +34,17 @@ export function getVerificationQueue(): Queue<VerifyOpportunityJobData> {
   }
   return queueInstance;
 }
+
+export const verificationQueue: Queue<VerifyOpportunityJobData> = new Proxy({} as Queue<VerifyOpportunityJobData>, {
+  get(_target, prop) {
+    const q = getVerificationQueue();
+    const val = (q as any)[prop];
+    if (typeof val === 'function') {
+      return val.bind(q);
+    }
+    return val;
+  }
+});
 
 export async function enqueueOpportunityVerification(
   opportunityId: string,

@@ -174,6 +174,7 @@ describe("Phase 5 Chunk 5.3: Skill Gap Analysis Service", () => {
       // student_full has targetRole: "Backend Engineer"
       const result = await service.analyzeSkillGap("student_full", null);
 
+      assert.ok(result);
       assert.strictEqual(result.roleId, "role_backend_eng");
       assert.strictEqual(result.roleTitle, "Backend Engineer");
       assert.strictEqual(result.isStudentTargetRole, true);
@@ -184,8 +185,17 @@ describe("Phase 5 Chunk 5.3: Skill Gap Analysis Service", () => {
 
       const result = await service.analyzeSkillGap("student_full", "Fullstack Engineer");
 
-      assert.strictEqual(result.roleId, "role_fullstack_eng");
-      assert.strictEqual(result.roleTitle, "Fullstack Engineer");
+      assert.strictEqual(result?.roleId, "role_fullstack_eng");
+      assert.strictEqual(result?.roleTitle, "Fullstack Engineer");
+    });
+
+    it("returns null when student has no target role and roleId is omitted (never invents default role)", async () => {
+      const { service } = createMockEnvironment();
+
+      // student_empty has no target roles
+      const result = await service.analyzeSkillGap("student_empty", null);
+
+      assert.strictEqual(result, null);
     });
   });
 

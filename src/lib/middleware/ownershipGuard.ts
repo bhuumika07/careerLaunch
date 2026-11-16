@@ -4,10 +4,8 @@
  * Middleware to verify that a resource belongs to the authenticated student.
  * Usage: const { resume } = await ensureOwnership({ resumeId, studentId: auth.user.id });
  */
-import { PrismaClient } from "@prisma/client";
-import { AuthContext } from "../auth-guard"; // assume exported type
-
-const prisma = new PrismaClient();
+import { prisma } from "../prisma";
+import { AuthContext } from "../auth-guard";
 
 export async function ensureResumeOwnership(resumeId: string, auth: AuthContext) {
   const resume = await prisma.resume.findUnique({

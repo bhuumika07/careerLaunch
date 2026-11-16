@@ -1,6 +1,10 @@
 // src/app/api/student/saved/route.ts
-import { NextRequest, NextResponse } from "next/server";
-import { requireRole, handleAuthError } from "@/lib/auth-guard";
+export const dynamic = "force-dynamic";
+
+import type { NextRequest } from "next/server";
+import { requireRole, handleAuthError } from "@/lib/auth/authorization";
+import { prisma } from "@/lib/prisma";
+import { personalizedJsonResponse } from "@/lib/api/response";
 import * as fs from "node:fs";
 import * as path from "node:path";
 
@@ -18,19 +22,81 @@ function readDbStore(): any {
 
 /**
  * GET /api/student/saved
- * Retrieves genuine bookmarked opportunities for the authenticated student with deadline proximity telemetry.
- * Invariant: Never fabricates bookmarks or returns placeholder records.
+ * Retrieves genuine bookmarked/saved opportunities for the authenticated student.
+ * Scoped strictly to user.id.
  */
 export async function GET(req: NextRequest) {
   try {
     const { user } = await requireRole(["student"], req);
-    const db = readDbStore();
+    const now = Date.now();
 
+    // 1. Check Prisma applications with saved status (authoritative source)
+    let savedFromPrisma: any[] = [];
+    try {
+      savedFromPrisma = await prisma.application.findMany({
+        where: {
+          userId: user.id,
+          status: "saved",
+        },
+        include: {
+          opportunity: true,
+        },
+        orderBy: { createdAt: "desc" },
+      });
+    } catch {
+      savedFromPrisma = [];
+    }
+
+    if (savedFromPrisma.length > 0) {
+      const saved = savedFromPrisma.map((app) => {
+        const opp = app.opportunity;
+        let deadlineAlert: string | null = "Rolling application";
+        let isExpired = false;
+
+        if (opp?.deadline) {
+          const deadlineTime = new Date(opp.deadline).getTime();
+          const diffHours = Math.round((deadlineTime - now) / (1000 * 60 * 60));
+          if (diffHours < 0) {
+            isExpired = true;
+            deadlineAlert = "Deadline passed";
+          } else if (diffHours <= 24) {
+            deadlineAlert = "Closes today";
+          } else {
+            const days = Math.ceil(diffHours / 24);
+            deadlineAlert = `Closes in ${days} days`;
+          }
+        }
+
+        return {
+          bookmarkId: app.id,
+          savedAt: app.createdAt.toISOString(),
+          opportunity: {
+            id: opp.id,
+            title: opp.title,
+            employer: opp.organizationName,
+            location: opp.location,
+            workplaceType: opp.workMode,
+            status: opp.status,
+            applicationUrl: opp.applicationUrl,
+            deadline: opp.deadline ? opp.deadline.toISOString() : null,
+            deadlineAlert,
+            isExpired,
+          },
+        };
+      });
+
+      return personalizedJsonResponse({
+        success: true,
+        saved,
+      });
+    }
+
+    // 2. Legacy fallback to db.json bookmarks strictly filtered by user.id
+    const db = readDbStore();
     const userBookmarks = (db.bookmarks || []).filter(
       (b: any) => b.userId === user.id
     );
 
-    const now = Date.now();
     const hydrated = userBookmarks
       .map((bm: any) => {
         const opp = (db.opportunities || []).find((o: any) => o.id === bm.opportunityId);
@@ -78,7 +144,7 @@ export async function GET(req: NextRequest) {
       })
       .filter(Boolean);
 
-    return NextResponse.json({
+    return personalizedJsonResponse({
       success: true,
       saved: hydrated,
     });

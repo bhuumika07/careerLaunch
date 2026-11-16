@@ -1,7 +1,11 @@
-import { NextRequest, NextResponse } from "next/server";
-import { readDb, writeDb, CareerDiscoveryRecord, CareerDiscoveryAnswers } from "@/lib/db";
-import { requireRole, handleAuthError } from "@/lib/auth-guard";
+// src/app/api/career-discovery/route.ts
+export const dynamic = "force-dynamic";
+
+import type { NextRequest } from "next/server";
+import { readDb, writeDb, type CareerDiscoveryAnswers } from "@/lib/db";
+import { requireRole, handleAuthError } from "@/lib/auth/authorization";
 import { generateCareerRecommendations } from "@/lib/services/career-recommender";
+import { personalizedJsonResponse } from "@/lib/api/response";
 
 // GET /api/career-discovery - Get saved questionnaire and recommendations
 export async function GET(req: NextRequest) {
@@ -9,36 +13,16 @@ export async function GET(req: NextRequest) {
     const { user } = await requireRole(["student"], req);
     const db = readDb();
 
-    let record = db.careerDiscoveryResponses.find((r) => r.userId === user.id);
+    const record = db.careerDiscoveryResponses.find((r) => r.userId === user.id);
 
     if (!record) {
-      // Default initial state
-      const initialAnswers: CareerDiscoveryAnswers = {
-        interests: ["Web Development", "Artificial Intelligence & ML"],
-        workPreferences: ["coding", "analysis"],
-        existingKnowledge: ["JavaScript", "Python", "Git", "React"],
-        collegeProjects: ["Academic Web App", "Data Visualization Mini-Project"],
-        preferredIndustries: ["Technology & Software", "Fintech"],
-        careerGoals: "Aspiring to become a high-impact Software Engineer at an innovative technology firm.",
-        updatedAt: new Date().toISOString(),
-      };
-
-      const initialRecommendations = generateCareerRecommendations(initialAnswers);
-
-      record = {
-        id: `cd_${Date.now()}`,
-        userId: user.id,
-        answers: initialAnswers,
-        recommendations: initialRecommendations,
-        completedAt: new Date().toISOString(),
-        isDraft: false,
-      };
-
-      db.careerDiscoveryResponses.push(record);
-      writeDb(db);
+      return personalizedJsonResponse({
+        success: true,
+        discovery: null,
+      });
     }
 
-    return NextResponse.json({
+    return personalizedJsonResponse({
       success: true,
       discovery: record,
     });
@@ -59,7 +43,7 @@ export async function POST(req: NextRequest) {
     };
 
     if (!answers) {
-      return NextResponse.json(
+      return personalizedJsonResponse(
         { success: false, error: "Answers payload is required." },
         { status: 400 }
       );
@@ -100,7 +84,7 @@ export async function POST(req: NextRequest) {
 
     writeDb(db);
 
-    return NextResponse.json({
+    return personalizedJsonResponse({
       success: true,
       discovery: record,
       message: isDraft ? "Progress autosaved." : "Career paths generated successfully.",

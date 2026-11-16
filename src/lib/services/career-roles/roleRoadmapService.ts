@@ -87,7 +87,7 @@ export interface AvailableRoadmapRoleDto {
 }
 
 export interface UserRoadmapResponse {
-  roadmap: RoadmapRecord;
+  roadmap: RoadmapRecord | null;
   adjustments: RoadmapAdjustmentNotice[];
   availableRoles: AvailableRoadmapRoleDto[];
 }
@@ -549,7 +549,8 @@ export class RoleRoadmapService {
       }
     }
 
-    // Fallback: Use student's top target role, or Backend Engineer default
+    // Fallback: Use student's top target role
+    // INVARIANT: Never invent arbitrary default roles when the student has not selected or targeted any.
     if (!targetRole && interests.length > 0) {
       const topInterest = interests[0];
       const norm = normalizeTitleToRole(topInterest.targetRole, catalogue);
@@ -563,7 +564,23 @@ export class RoleRoadmapService {
     }
 
     if (!targetRole) {
-      targetRole = catalogue.find((r) => r.id === "role_backend_eng") || catalogue[0];
+      const availableRoles: AvailableRoadmapRoleDto[] = catalogue
+        .filter((r) => r.isActive && (ROLE_ROADMAP_TEMPLATES[r.id] || r.id === "role_backend_eng"))
+        .map((r) => ({
+          id: r.id,
+          title: r.canonicalName,
+          domain: r.domain,
+          isTargeted: interests.some((ci) => {
+            const norm = normalizeTitleToRole(ci.targetRole, catalogue);
+            return norm.roleId === r.id || ci.targetRole.toLowerCase() === r.canonicalName.toLowerCase();
+          }),
+        }));
+
+      return {
+        roadmap: null,
+        adjustments: [],
+        availableRoles,
+      };
     }
 
     const roleId = targetRole.id;

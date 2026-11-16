@@ -9,7 +9,7 @@ import {
   defaultQuizAttempts,
 } from "./default-data";
 
-export type Role = "student" | "job_seeker" | "admin";
+export type Role = "student" | "job_seeker" | "admin" | "faculty" | "recruiter" | "institution";
 export type UserStatus = "pending_verification" | "active" | "suspended" | "deactivated";
 
 export interface User {
@@ -502,6 +502,7 @@ export type NotificationType =
   | "application_update"
   | "deadline_reminder"
   | "matching_opportunity"
+  | "new_opportunity"
   | "learning_reminder"
   | "new_applicant"
   | "faculty_alert";

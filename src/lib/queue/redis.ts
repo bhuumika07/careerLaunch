@@ -25,3 +25,7 @@ export function createRedisConnection(): Redis {
   }
   return new Redis(options);
 }
+
+export function getRedisConnection(): Redis {
+  return createRedisConnection();
+}

@@ -495,7 +495,7 @@ function OpportunitiesExplorerContent() {
             const isBookmarked = bookmarkedIds.has(opp.id);
             const enriched = (opp as any).enrichment;
             const oppDomain = (opp as any).domain || enriched?.domain;
-            const oppPosition = (opp as any).positionType || opp.type || opp.category;
+            const oppPosition = (opp as any).positionType || (opp as any).type || opp.category;
             const oppDegrees = (opp as any).degreeLevels || enriched?.degreeLevels || opp.eligibility?.degrees || [];
             const oppYears = (opp as any).graduationYears || enriched?.graduationYears || opp.eligibility?.graduationYears || [];
 
