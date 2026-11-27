@@ -226,9 +226,17 @@ export default function StudentAssessmentsPage() {
         </div>
 
         {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-pulse">
             {[1, 2, 3, 4].map((n) => (
-              <div key={n} className="h-44 rounded-2xl bg-card border border-border animate-pulse" />
+              <div key={n} className="h-44 rounded-2xl bg-card border border-border p-5 space-y-3">
+                <div className="flex justify-between">
+                  <div className="h-5 w-24 bg-slate-200/80 rounded-full" />
+                  <div className="h-5 w-20 bg-slate-200/70 rounded-full" />
+                </div>
+                <div className="h-6 w-2/3 bg-slate-200/90 rounded-lg" />
+                <div className="h-4 w-full bg-slate-100 rounded-lg" />
+                <div className="h-8 w-32 bg-slate-200/70 rounded-xl mt-2" />
+              </div>
             ))}
           </div>
         ) : (

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import * as React from "react";
 import Link from "next/link";
@@ -259,13 +259,19 @@ export default function StudentApplicationsPage() {
 
   if (loading) {
     return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 space-y-6 animate-pulse">
-        <div className="h-8 w-64 bg-white/[0.06] rounded-xl" />
-        <div className="h-12 w-full bg-white/[0.04] rounded-2xl" />
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="h-64 bg-white/[0.04] rounded-3xl" />
-          ))}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 space-y-6">
+        <div className="flex items-center gap-2.5 text-sm text-muted-foreground">
+          <div className="size-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+          <span>Loading your applications...</span>
+        </div>
+        <div className="animate-pulse space-y-6">
+          <div className="h-8 w-64 bg-slate-200/80 dark:bg-white/[0.08] rounded-xl" />
+          <div className="h-12 w-full bg-slate-100 dark:bg-white/[0.05] border border-border rounded-2xl" />
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="h-64 bg-slate-100 dark:bg-white/[0.05] border border-border rounded-3xl" />
+            ))}
+          </div>
         </div>
       </div>
     );

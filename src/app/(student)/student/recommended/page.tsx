@@ -106,8 +106,6 @@ export default function RecommendedOpportunitiesPage() {
   >("ALL");
   const [filterWorkplace, setFilterWorkplace] = React.useState<string>("ALL");
   const [sortBy, setSortBy] = React.useState<"bagability" | "score" | "deadline">("bagability");
-  const [selectedDossier, setSelectedDossier] = React.useState<OpportunityMatchResult | null>(null);
-  const [copiedPitch, setCopiedPitch] = React.useState(false);
   const [feedbackNotice, setFeedbackNotice] = React.useState<string | null>(null);
 
   const fetchRecommendations = React.useCallback(async () => {
@@ -150,12 +148,6 @@ export default function RecommendedOpportunitiesPage() {
     } catch (err) {
       console.error("Failed recording feedback:", err);
     }
-  };
-
-  const handleCopyPitch = (text: string) => {
-    navigator.clipboard.writeText(text);
-    setCopiedPitch(true);
-    setTimeout(() => setCopiedPitch(false), 2500);
   };
 
   const filteredItems = React.useMemo(() => {
@@ -262,7 +254,7 @@ export default function RecommendedOpportunitiesPage() {
       </div>
 
       {/* AI Bagability Triage Stat Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {/* Ready to Bag */}
         <button
           type="button"
@@ -355,100 +347,6 @@ export default function RecommendedOpportunitiesPage() {
             Full eligibility passed (graduation cohort, degree, CGPA).
           </p>
         </button>
-
-        {/* Target Roles Filter */}
-        <button
-          type="button"
-          onClick={() => setSelectedBagFilter("TARGET_ROLES")}
-          className={cn(
-            "text-left p-4 rounded-2xl border transition-all duration-200 cursor-pointer shadow-xs",
-            selectedBagFilter === "TARGET_ROLES"
-              ? "bg-indigo-500/10 border-indigo-500 ring-2 ring-indigo-500/20"
-              : "bg-white hover:border-indigo-300 border-border"
-          )}
-        >
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-indigo-800 dark:text-indigo-300 uppercase tracking-wider flex items-center gap-1.5">
-              <Target className="size-4 text-indigo-600" />
-              Target Roles
-            </span>
-            <Badge variant="outline" className="text-indigo-800 border-indigo-300 text-[10px] font-semibold">
-              Goal Fit
-            </Badge>
-          </div>
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-3xl font-heading font-extrabold text-foreground">
-              {items.filter((i) => i.breakdown.roleInterestScore >= 20).length}
-            </span>
-            <span className="text-xs text-muted-foreground">matching interests</span>
-          </div>
-          <p className="mt-1 text-[11px] text-muted-foreground leading-tight">
-            Directly aligns with your career discovery goals.
-          </p>
-        </button>
-      </div>
-
-      {/* Filter and Sort Bar */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-2xl bg-white border border-border shadow-xs">
-        {/* Triage Tabs */}
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mr-1">
-            Shortlist:
-          </span>
-          {[
-            { id: "ALL", label: `All (${items.length})` },
-            { id: "READY_TO_BAG", label: `Ready to Bag (${summary.readyToBagCount})` },
-            { id: "STRONG_CONTENDER", label: `Strong (${summary.strongContenderCount})` },
-            {
-              id: "TARGET_ROLES",
-              label: `Target Roles (${items.filter((i) => i.breakdown.roleInterestScore >= 20).length})`,
-            },
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              onClick={() => setSelectedBagFilter(tab.id as any)}
-              className={cn(
-                "px-3 py-1 rounded-full text-xs font-medium transition-colors cursor-pointer",
-                selectedBagFilter === tab.id
-                  ? "bg-primary text-primary-foreground font-semibold shadow-xs"
-                  : "bg-muted text-muted-foreground hover:text-foreground"
-              )}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Workplace & Sort Controls */}
-        <div className="flex items-center gap-3 text-xs w-full sm:w-auto justify-between sm:justify-end">
-          <div className="flex items-center gap-1.5">
-            <span className="text-muted-foreground">Workplace:</span>
-            <select
-              value={filterWorkplace}
-              onChange={(e) => setFilterWorkplace(e.target.value)}
-              className="bg-muted border border-border text-foreground rounded-lg px-2.5 py-1 text-xs focus:outline-hidden cursor-pointer"
-            >
-              <option value="ALL">All Modes</option>
-              <option value="REMOTE">Remote</option>
-              <option value="HYBRID">Hybrid</option>
-              <option value="ONSITE">Onsite</option>
-            </select>
-          </div>
-
-          <div className="flex items-center gap-1.5">
-            <span className="text-muted-foreground">Sort:</span>
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as any)}
-              className="bg-muted border border-border text-foreground rounded-lg px-2.5 py-1 text-xs focus:outline-hidden cursor-pointer"
-            >
-              <option value="bagability">AI Win Probability</option>
-              <option value="score">Compatibility Score</option>
-              <option value="deadline">Closing Soonest</option>
-            </select>
-          </div>
-        </div>
       </div>
 
       {/* Opportunities Feed */}
@@ -461,7 +359,7 @@ export default function RecommendedOpportunitiesPage() {
         <div className="p-16 text-center text-muted-foreground bg-white rounded-3xl border border-border space-y-3">
           <p className="font-semibold text-foreground text-base">No opportunities matching this triage filter.</p>
           <p className="text-xs max-w-md mx-auto">
-            Try switching to &quot;All&quot; or update your target roles in Career Discovery to expand your matching pool.
+            Try switching to &quot;All&quot; or update your skills and profile details to expand your matching pool.
           </p>
           <div className="pt-2 flex justify-center gap-3">
             <Button
@@ -472,9 +370,9 @@ export default function RecommendedOpportunitiesPage() {
             >
               View All Recommendations
             </Button>
-            <Link href="/student/career-discovery/results">
+            <Link href="/student/profile">
               <PillButton variant="primary" size="sm">
-                Review Target Roles
+                Update Profile
               </PillButton>
             </Link>
           </div>
@@ -548,93 +446,27 @@ export default function RecommendedOpportunitiesPage() {
                       </h3>
                     </Link>
                   </div>
-
-                  {/* AI Win Probability Gauge */}
-                  <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center p-3 rounded-2xl bg-muted/30 border border-border/60 shrink-0 min-w-[140px]">
-                    <div className="text-left sm:text-right">
-                      <div className="flex items-baseline gap-1 sm:justify-end">
-                        <span
-                          className={cn(
-                            "font-heading text-2xl font-extrabold",
-                            isReadyToBag
-                              ? "text-emerald-600"
-                              : isStrongContender
-                              ? "text-amber-600"
-                              : "text-primary"
-                          )}
-                        >
-                          {bag?.bagabilityScore ?? item.overallScore}%
-                        </span>
-                      </div>
-                      <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider block">
-                        Win Probability
-                      </span>
-                    </div>
-
-                    {/* Progress mini-bar */}
-                    <div className="w-24 bg-border/60 rounded-full h-1.5 mt-1.5 overflow-hidden">
-                      <div
-                        className={cn(
-                          "h-full rounded-full transition-all duration-300",
-                          isReadyToBag
-                            ? "bg-emerald-500"
-                            : isStrongContender
-                            ? "bg-amber-500"
-                            : "bg-primary"
-                        )}
-                        style={{ width: `${bag?.bagabilityScore ?? item.overallScore}%` }}
-                      />
-                    </div>
-                  </div>
                 </div>
 
-                {/* AI Recruiter Callout: "Why You Can Bag This" */}
-                {bag?.whyYouCanBagThis && (
-                  <div className="p-3.5 rounded-2xl bg-emerald-500/5 border border-emerald-500/20 text-xs space-y-1.5">
-                    <div className="flex items-center gap-1.5 text-emerald-800 dark:text-emerald-300 font-bold uppercase tracking-wider text-[10px]">
-                      <Sparkles className="size-3.5 text-emerald-600" />
-                      <span>Why You Can Bag This</span>
+                {/* Superpower Skills */}
+                {bag?.superpowerSkills && bag.superpowerSkills.length > 0 && (
+                  <div className="space-y-1.5 pt-1">
+                    <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider block">
+                      Your Superpower Skills:
+                    </span>
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      {bag.superpowerSkills.map((s, idx) => (
+                        <span
+                          key={idx}
+                          className="px-2 py-0.5 rounded-md bg-emerald-50 border border-emerald-300 text-emerald-900 text-[11px] font-medium flex items-center gap-1"
+                        >
+                          <CheckCircle className="size-3 text-emerald-600" />
+                          {s}
+                        </span>
+                      ))}
                     </div>
-                    <p className="text-foreground/90 leading-relaxed italic">
-                      &quot;{bag.whyYouCanBagThis}&quot;
-                    </p>
                   </div>
                 )}
-
-                {/* Candidate Strengths & Fast-Track Actions */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
-                  {/* Superpower Skills */}
-                  {bag?.superpowerSkills && bag.superpowerSkills.length > 0 && (
-                    <div className="space-y-1">
-                      <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider block">
-                        Your Superpower Skills:
-                      </span>
-                      <div className="flex flex-wrap items-center gap-1.5">
-                        {bag.superpowerSkills.map((s, idx) => (
-                          <span
-                            key={idx}
-                            className="px-2 py-0.5 rounded-md bg-emerald-50 border border-emerald-300 text-emerald-900 text-[11px] font-medium flex items-center gap-1"
-                          >
-                            <CheckCircle className="size-3 text-emerald-600" />
-                            {s}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Fast-Track Action */}
-                  {bag?.fastTrackAction && (
-                    <div className="space-y-1">
-                      <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider block">
-                        Fast-Track Tip:
-                      </span>
-                      <p className="text-xs text-foreground/80 leading-relaxed">
-                        {bag.fastTrackAction}
-                      </p>
-                    </div>
-                  )}
-                </div>
 
                 {/* Missing Skills / Growth Focus (if any) */}
                 {bag?.missingSkillGaps && bag.missingSkillGaps.length > 0 && (
@@ -665,25 +497,12 @@ export default function RecommendedOpportunitiesPage() {
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={() => handleFeedback(item.opportunityId, "NOT_RELEVANT")}
-                      className="text-xs text-muted-foreground hover:text-foreground px-2.5 py-1 rounded-full hover:bg-muted transition-colors cursor-pointer"
-                      title="Hide this opportunity from your recommendations"
-                    >
-                      Not Relevant
-                    </button>
-
-                    {/* AI Application Dossier Modal Trigger */}
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setSelectedDossier(item)}
-                      className="text-xs rounded-full cursor-pointer flex items-center gap-1 border-primary/30 text-primary hover:bg-primary/5"
-                    >
-                      <FileText className="size-3.5" />
-                      <span>AI Application Pitch</span>
-                    </Button>
+                    <Link href={`/student/skill-gap?opportunityId=${encodeURIComponent(item.opportunityId)}`}>
+                      <Button variant="outline" size="sm" className="text-xs rounded-full cursor-pointer flex items-center gap-1 border-teal-600/30 text-teal-700 hover:bg-teal-50">
+                        <Target className="size-3.5" />
+                        <span>Skill Gap</span>
+                      </Button>
+                    </Link>
 
                     <Link href={`/opportunities/${item.opportunityId}`}>
                       <Button variant="outline" size="sm" className="text-xs rounded-full cursor-pointer">
@@ -710,146 +529,6 @@ export default function RecommendedOpportunitiesPage() {
               </div>
             );
           })}
-        </div>
-      )}
-
-      {/* AI Candidate Dossier & Quick Pitch Modal */}
-      {selectedDossier && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-150">
-          <div className="bg-white rounded-3xl border border-border shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 space-y-6">
-            {/* Modal Header */}
-            <div className="flex items-start justify-between gap-4 border-b border-border pb-4">
-              <div>
-                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-primary/10 text-primary text-[11px] font-semibold mb-1">
-                  <Sparkles className="size-3" />
-                  AI Application Dossier
-                </div>
-                <h2 className="font-heading text-xl sm:text-2xl font-bold text-foreground">
-                  {selectedDossier.title}
-                </h2>
-                <p className="text-xs text-muted-foreground flex items-center gap-2 mt-0.5">
-                  <span>{selectedDossier.employer}</span>
-                  <span>•</span>
-                  <span>{selectedDossier.location}</span>
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setSelectedDossier(null)}
-                className="p-1 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted cursor-pointer"
-              >
-                <X className="size-5" />
-              </button>
-            </div>
-
-            {/* AI Tailored Cover Pitch */}
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-foreground uppercase tracking-wider flex items-center gap-1.5">
-                  <FileText className="size-3.5 text-primary" />
-                  Tailored Elevator Pitch
-                </span>
-                {selectedDossier.aiAnalysis?.tailoredCoverPitch && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() =>
-                      handleCopyPitch(selectedDossier.aiAnalysis!.tailoredCoverPitch)
-                    }
-                    className="h-7 text-xs rounded-full cursor-pointer flex items-center gap-1"
-                  >
-                    {copiedPitch ? (
-                      <>
-                        <Check className="size-3 text-emerald-600" />
-                        <span className="text-emerald-600 font-semibold">Copied!</span>
-                      </>
-                    ) : (
-                      <>
-                        <Copy className="size-3" />
-                        <span>Copy Pitch</span>
-                      </>
-                    )}
-                  </Button>
-                )}
-              </div>
-              <div className="p-4 rounded-2xl bg-muted/40 border border-border text-xs sm:text-sm text-foreground/90 leading-relaxed font-sans select-all">
-                {selectedDossier.aiAnalysis?.tailoredCoverPitch ||
-                  "Tailored pitch generating..."}
-              </div>
-              <p className="text-[11px] text-muted-foreground">
-                Paste this elevator pitch directly into the employer&apos;s cover note or introduction field.
-              </p>
-            </div>
-
-            {/* Technical Interview Prep Focus */}
-            {selectedDossier.aiAnalysis?.interviewPrepFocus &&
-              selectedDossier.aiAnalysis.interviewPrepFocus.length > 0 && (
-                <div className="space-y-2">
-                  <span className="text-xs font-bold text-foreground uppercase tracking-wider flex items-center gap-1.5">
-                    <Target className="size-3.5 text-emerald-600" />
-                    Expected Interview Focus Topics
-                  </span>
-                  <div className="space-y-2">
-                    {selectedDossier.aiAnalysis.interviewPrepFocus.map((focus, idx) => (
-                      <div
-                        key={idx}
-                        className="p-3 rounded-xl bg-emerald-500/5 border border-emerald-500/15 text-xs text-foreground/90 flex items-start gap-2"
-                      >
-                        <CheckCircle2 className="size-3.5 text-emerald-600 shrink-0 mt-0.5" />
-                        <span>{focus}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-            {/* Hard Eligibility Audit */}
-            <div className="space-y-2">
-              <span className="text-xs font-bold text-foreground uppercase tracking-wider flex items-center gap-1.5">
-                <ShieldCheck className="size-3.5 text-primary" />
-                Hard Eligibility Verification
-              </span>
-              <div className="divide-y divide-border/60 border border-border rounded-xl bg-white overflow-hidden">
-                {selectedDossier.hardEligibility.checks.map((check, idx) => (
-                  <div key={idx} className="p-3 text-xs flex items-center justify-between gap-4">
-                    <div>
-                      <div className="font-semibold text-foreground">{check.criterion}</div>
-                      <div className="text-[11px] text-muted-foreground">{check.requirement}</div>
-                    </div>
-                    <Badge className="bg-emerald-600 text-white text-[10px] font-semibold shrink-0">
-                      Eligible
-                    </Badge>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Modal Footer */}
-            <div className="flex items-center justify-end gap-3 pt-4 border-t border-border">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setSelectedDossier(null)}
-                className="rounded-full text-xs cursor-pointer"
-              >
-                Close
-              </Button>
-              <a
-                href={selectedDossier.applicationUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <PillButton
-                  variant="primary"
-                  size="sm"
-                  className="text-xs"
-                  icon={<ExternalLink className="size-3.5" />}
-                >
-                  Apply on Employer Site
-                </PillButton>
-              </a>
-            </div>
-          </div>
         </div>
       )}
     </div>

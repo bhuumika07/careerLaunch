@@ -225,23 +225,52 @@ export async function destroySession(): Promise<void> {
   try {
     const cookieStore = await cookies();
     const sessionCookie = cookieStore.get(SESSION_COOKIE_NAME);
-    if (sessionCookie?.value) {
-      await prisma.session
-        .delete({ where: { id: sessionCookie.value } })
-        .catch(() => {});
+    const sessionId = sessionCookie?.value;
+
+    if (sessionId) {
+      // 1. Prisma session delete with isolated error boundary so failures don't abort cookie wipe
+      try {
+        await prisma.session.delete({ where: { id: sessionId } });
+      } catch {
+        // Ignore Prisma offline or missing record error
+      }
+
+      // 2. File-based local db session delete
       try {
         const db = readDb();
         if (db.sessions) {
-          db.sessions = db.sessions.filter((s) => s.id !== sessionCookie.value);
+          db.sessions = db.sessions.filter((s) => s.id !== sessionId);
           writeDb(db);
         }
       } catch {
-        // ignore file fallback failure on logout
+        // Ignore file fallback failure on logout
       }
     }
-    cookieStore.delete(SESSION_COOKIE_NAME);
-    cookieStore.delete("cl_role");
+
+    // 3. Unconditionally wipe both cookies with exact same parameters (HttpOnly, SameSite, Path)
+    try {
+      cookieStore.set(SESSION_COOKIE_NAME, "", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        path: "/",
+        maxAge: 0,
+        expires: new Date(0),
+      });
+      cookieStore.set("cl_role", "", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        path: "/",
+        maxAge: 0,
+        expires: new Date(0),
+      });
+      cookieStore.delete(SESSION_COOKIE_NAME);
+      cookieStore.delete("cl_role");
+    } catch {
+      // Ignore cookie clearance failure in non-request contexts
+    }
   } catch {
-    // Ignore cookie clearance failure in non-request contexts
+    // Ignore outer wrapper failure
   }
 }

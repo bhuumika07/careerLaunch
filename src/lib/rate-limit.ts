@@ -1,4 +1,4 @@
-import { readDb, writeDb, RateLimitRecord } from "./db";
+import { readDb, writeDb, type RateLimitRecord } from "./db";
 
 const MAX_ATTEMPTS = 5;
 const WINDOW_MS = 15 * 60 * 1000; // 15 minutes
@@ -13,6 +13,7 @@ export interface RateLimitResult {
 
 export function checkRateLimit(key: string): RateLimitResult {
   const db = readDb();
+  if (!db.rateLimits) db.rateLimits = [];
   const now = Date.now();
 
   const recordIndex = db.rateLimits.findIndex((r) => r.key === key);
@@ -56,6 +57,7 @@ export function checkRateLimit(key: string): RateLimitResult {
 
 export function recordFailedAttempt(key: string): RateLimitResult {
   const db = readDb();
+  if (!db.rateLimits) db.rateLimits = [];
   const now = Date.now();
 
   const recordIndex = db.rateLimits.findIndex((r) => r.key === key);
@@ -103,6 +105,7 @@ export function recordFailedAttempt(key: string): RateLimitResult {
 
 export function resetRateLimit(key: string): void {
   const db = readDb();
+  if (!db.rateLimits) db.rateLimits = [];
   db.rateLimits = db.rateLimits.filter((r) => r.key !== key);
   writeDb(db);
 }

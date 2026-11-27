@@ -22,6 +22,7 @@ import {
   X,
   SlidersHorizontal,
   Code2,
+  Target,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Opportunity } from "@/lib/db";
@@ -98,9 +99,14 @@ function OpportunitiesExplorerContent() {
 
   const [opportunities, setOpportunities] = React.useState<Opportunity[]>([]);
   const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState<string | null>(null);
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const [totalCount, setTotalCount] = React.useState(0);
+  const [totalPages, setTotalPages] = React.useState(1);
 
   // The 4 Core Student Filter States
   const [searchQuery, setSearchQuery] = React.useState(initialQuery);
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = React.useState(initialQuery);
   const [selectedDomain, setSelectedDomain] = React.useState(initialDomain);
   const [selectedPosition, setSelectedPosition] = React.useState(defaultPosition);
   const [selectedGradYear, setSelectedGradYear] = React.useState(initialGradYear);
@@ -108,39 +114,88 @@ function OpportunitiesExplorerContent() {
 
   const [bookmarkedIds, setBookmarkedIds] = React.useState<Set<string>>(new Set());
 
-  // Debounced/synced fetch across the 4 streamlined dimensions
-  const fetchOpportunities = React.useCallback(async () => {
+  const abortControllerRef = React.useRef<AbortController | null>(null);
+  const requestIdRef = React.useRef(0);
+
+  // Debounce search input so typing doesn't fire a request on every keystroke
+  React.useEffect(() => {
+    if (searchQuery === debouncedSearchQuery) return;
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+      setCurrentPage(1);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchQuery, debouncedSearchQuery]);
+
+  // Debounced/synced fetch across the 4 streamlined dimensions with AbortController
+  const fetchOpportunities = React.useCallback(async (pageToFetch: number = currentPage) => {
+    abortControllerRef.current?.abort();
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+    const reqId = ++requestIdRef.current;
+
     setLoading(true);
+    setError(null);
     try {
       const params = new URLSearchParams();
-      if (searchQuery.trim()) params.set("q", searchQuery.trim());
+      if (debouncedSearchQuery.trim()) params.set("q", debouncedSearchQuery.trim());
       if (selectedDomain !== "All") params.set("domain", selectedDomain);
       if (selectedPosition !== "All") params.set("positionType", selectedPosition);
       if (selectedGradYear !== "All") params.set("graduatingYear", selectedGradYear);
       if (selectedDegree !== "All") params.set("degreeLevel", selectedDegree);
+      params.set("page", pageToFetch.toString());
+      params.set("limit", "20");
 
-      const res = await fetch(`/api/opportunities?${params.toString()}`);
+      const res = await fetch(`/api/opportunities?${params.toString()}`, {
+        cache: "no-store",
+        signal: controller.signal,
+      });
+      if (reqId !== requestIdRef.current) return;
+
+      if (res.status === 401) {
+        router.push("/login?redirect=" + encodeURIComponent(window.location.pathname + window.location.search));
+        return;
+      }
       const data = await res.json();
+      if (reqId !== requestIdRef.current) return;
+
       if (res.ok && data.success) {
         setOpportunities(data.opportunities || []);
+        setTotalCount(data.totalCount || 0);
+        setTotalPages(data.totalPages || 1);
+      } else {
+        setError(data?.error || `Failed to load opportunities (HTTP ${res.status}).`);
       }
-    } catch {
-      // fallback on network error
+    } catch (err: any) {
+      if (err?.name === "AbortError" || reqId !== requestIdRef.current) return;
+      setError("Network error while loading opportunities. Please check your connection and try again.");
     } finally {
-      setLoading(false);
+      if (reqId === requestIdRef.current) {
+        setLoading(false);
+      }
     }
-  }, [searchQuery, selectedDomain, selectedPosition, selectedGradYear, selectedDegree]);
+  }, [debouncedSearchQuery, selectedDomain, selectedPosition, selectedGradYear, selectedDegree, currentPage, router]);
 
   React.useEffect(() => {
-    fetchOpportunities();
-  }, [fetchOpportunities]);
+    fetchOpportunities(currentPage);
+    return () => {
+      abortControllerRef.current?.abort();
+    };
+  }, [currentPage, fetchOpportunities]);
+
+  const handleFilterChange = (setter: React.Dispatch<React.SetStateAction<string>>, value: string) => {
+    setter(value);
+    setCurrentPage(1);
+  };
 
   const resetAllFilters = () => {
     setSearchQuery("");
+    setDebouncedSearchQuery("");
     setSelectedDomain("All");
     setSelectedPosition("All");
     setSelectedGradYear("All");
     setSelectedDegree("All");
+    setCurrentPage(1);
   };
 
   const hasActiveFilters =
@@ -282,7 +337,7 @@ function OpportunitiesExplorerContent() {
                 <button
                   key={domain.id}
                   type="button"
-                  onClick={() => setSelectedDomain(domain.id)}
+                  onClick={() => handleFilterChange(setSelectedDomain, domain.id)}
                   className={cn(
                     "px-3.5 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer border flex items-center gap-1.5",
                     isSelected
@@ -310,7 +365,7 @@ function OpportunitiesExplorerContent() {
             <div className="relative">
               <select
                 value={selectedPosition}
-                onChange={(e) => setSelectedPosition(e.target.value)}
+                onChange={(e) => handleFilterChange(setSelectedPosition, e.target.value)}
                 className="w-full p-2.5 rounded-xl border border-border bg-sky-50 text-xs text-foreground focus:outline-none focus:border-ring focus:ring-2 focus:ring-ring/40 cursor-pointer font-medium"
               >
                 {POSITION_TYPES.map((pt) => (
@@ -331,7 +386,7 @@ function OpportunitiesExplorerContent() {
             <div className="relative">
               <select
                 value={selectedGradYear}
-                onChange={(e) => setSelectedGradYear(e.target.value)}
+                onChange={(e) => handleFilterChange(setSelectedGradYear, e.target.value)}
                 className="w-full p-2.5 rounded-xl border border-border bg-sky-50 text-xs text-foreground focus:outline-none focus:border-ring focus:ring-2 focus:ring-ring/40 cursor-pointer font-medium"
               >
                 {GRADUATION_YEARS.map((gy) => (
@@ -352,7 +407,7 @@ function OpportunitiesExplorerContent() {
             <div className="relative">
               <select
                 value={selectedDegree}
-                onChange={(e) => setSelectedDegree(e.target.value)}
+                onChange={(e) => handleFilterChange(setSelectedDegree, e.target.value)}
                 className="w-full p-2.5 rounded-xl border border-border bg-sky-50 text-xs text-foreground focus:outline-none focus:border-ring focus:ring-2 focus:ring-ring/40 cursor-pointer font-medium"
               >
                 {DEGREE_LEVELS.map((dl) => (
@@ -453,7 +508,10 @@ function OpportunitiesExplorerContent() {
       {/* Results Header */}
       <div className="flex items-center justify-between text-xs text-muted-foreground px-1">
         <span>
-          Showing <strong>{opportunities.length}</strong> matching curated opportunities
+          Showing <strong>{opportunities.length}</strong> of <strong>{totalCount}</strong> verified opportunities
+          {totalPages > 1 && (
+            <span className="text-slate-400 ml-1.5">(Page {currentPage} of {totalPages})</span>
+          )}
         </span>
         {hasActiveFilters && (
           <button
@@ -468,9 +526,44 @@ function OpportunitiesExplorerContent() {
 
       {/* Opportunities Card Grid */}
       {loading ? (
-        <div className="p-16 text-center text-muted-foreground bg-card rounded-3xl border border-border">
-          <div className="inline-block animate-spin size-6 border-2 border-primary border-t-transparent rounded-full mb-3" />
-          <p className="text-sm">Matching opportunities across your selected criteria...</p>
+        <div className="space-y-6">
+          <div className="flex items-center gap-2.5 text-sm text-muted-foreground px-1">
+            <div className="size-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+            <span>Loading verified opportunities...</span>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-pulse">
+            {[1, 2, 3, 4].map((n) => (
+              <div key={n} className="p-6 sm:p-7 rounded-3xl bg-card border border-border space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="h-4 w-32 bg-slate-200/80 rounded-lg" />
+                  <div className="h-6 w-20 bg-slate-200/70 rounded-full" />
+                </div>
+                <div className="h-6 w-3/4 bg-slate-200/90 rounded-lg" />
+                <div className="h-4 w-full bg-slate-100 rounded-lg" />
+                <div className="h-4 w-2/3 bg-slate-100 rounded-lg" />
+                <div className="flex gap-2 pt-2">
+                  <div className="h-6 w-16 bg-slate-200/60 rounded-lg" />
+                  <div className="h-6 w-20 bg-slate-200/60 rounded-lg" />
+                  <div className="h-6 w-14 bg-slate-200/60 rounded-lg" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : error ? (
+        <div className="p-16 text-center bg-card rounded-3xl border border-danger/30 space-y-4">
+          <AlertCircle className="size-12 text-danger mx-auto" />
+          <h3 className="font-heading font-bold text-foreground text-lg">Unable to load opportunities</h3>
+          <p className="text-xs text-muted-foreground max-w-md mx-auto leading-relaxed">{error}</p>
+          <div>
+            <button
+              type="button"
+              onClick={() => fetchOpportunities(currentPage)}
+              className="px-5 py-2.5 rounded-xl bg-primary text-primary-foreground font-semibold text-xs hover:bg-primary/90 transition-all cursor-pointer shadow-xs inline-flex items-center gap-1.5"
+            >
+              Retry
+            </button>
+          </div>
         </div>
       ) : opportunities.length === 0 ? (
         <div className="p-16 text-center bg-card rounded-3xl border border-border space-y-4">
@@ -676,15 +769,75 @@ function OpportunitiesExplorerContent() {
                       </span>
                     </div>
 
-                    <span className="text-link font-semibold flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
-                      View Details
-                      <ArrowRight className="size-3.5" />
-                    </span>
+                    <div className="flex items-center gap-3">
+                      <span
+                        role="button"
+                        tabIndex={0}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          router.push(`/student/skill-gap?opportunityId=${encodeURIComponent(opp.id)}`);
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            router.push(`/student/skill-gap?opportunityId=${encodeURIComponent(opp.id)}`);
+                          }
+                        }}
+                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-teal-50 border border-teal-200 text-teal-800 hover:bg-teal-100 text-[11px] font-semibold cursor-pointer transition-colors"
+                      >
+                        <Target className="size-3" />
+                        Skill Gap
+                      </span>
+
+                      <span className="text-link font-semibold flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+                        View Details
+                        <ArrowRight className="size-3.5" />
+                      </span>
+                    </div>
                   </div>
                 </div>
               </Link>
             );
           })}
+        </div>
+      )}
+
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between pt-6 border-t border-border">
+          <button
+            type="button"
+            disabled={currentPage <= 1 || loading}
+            onClick={() => {
+              setCurrentPage((p) => Math.max(1, p - 1));
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
+            className="px-4 py-2 text-xs font-semibold rounded-xl border border-border bg-card hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors text-foreground cursor-pointer"
+          >
+            ← Previous Page
+          </button>
+
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-medium">
+            <span>Page</span>
+            <span className="font-bold text-foreground">{currentPage}</span>
+            <span>of</span>
+            <span className="font-bold text-foreground">{totalPages}</span>
+            <span className="text-slate-400">({totalCount} total)</span>
+          </div>
+
+          <button
+            type="button"
+            disabled={currentPage >= totalPages || loading}
+            onClick={() => {
+              setCurrentPage((p) => Math.min(totalPages, p + 1));
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
+            className="px-4 py-2 text-xs font-semibold rounded-xl border border-border bg-card hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors text-foreground cursor-pointer"
+          >
+            Next Page →
+          </button>
         </div>
       )}
     </div>
@@ -694,7 +847,23 @@ function OpportunitiesExplorerContent() {
 export default function OpportunitiesPage() {
   return (
     <div data-theme="light" className="min-h-screen bg-background text-foreground">
-      <React.Suspense fallback={<div className="p-16 text-center text-muted-foreground">Loading opportunity directory...</div>}>
+      <React.Suspense
+        fallback={
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8 animate-pulse">
+            <div className="space-y-3 max-w-3xl">
+              <div className="h-5 w-40 bg-slate-200/80 rounded-full" />
+              <div className="h-9 w-80 bg-slate-200/90 rounded-xl" />
+              <div className="h-4 w-96 bg-slate-200/60 rounded-lg" />
+            </div>
+            <div className="h-44 w-full bg-slate-100 border border-border rounded-3xl" />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {[1, 2, 3, 4].map((n) => (
+                <div key={n} className="h-52 bg-slate-100 border border-border rounded-3xl" />
+              ))}
+            </div>
+          </div>
+        }
+      >
         <OpportunitiesExplorerContent />
       </React.Suspense>
     </div>

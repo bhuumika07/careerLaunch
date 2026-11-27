@@ -53,6 +53,33 @@ export async function POST(req: NextRequest) {
       validation.data
     );
 
+    // Keep legacy studentProfiles.skills in sync so My Profile displays newly added skills immediately
+    try {
+      const { readDb, writeDb } = await import("@/lib/db");
+      const db = readDb();
+      const idx = (db.studentProfiles || []).findIndex((p) => p.userId === user.id);
+      if (idx >= 0) {
+        const currentSkills = db.studentProfiles[idx].skills || [];
+        const exists = currentSkills.some(
+          (s) => s.name.trim().toLowerCase() === savedSkill.name.trim().toLowerCase()
+        );
+        if (!exists) {
+          currentSkills.push({
+            id: savedSkill.id,
+            name: savedSkill.name,
+            category: body?.category === "non-technical" ? "non-technical" : "technical",
+            level: (savedSkill.proficiency as any) || "intermediate",
+            status: savedSkill.verificationState === "VERIFIED" ? "verified" : "self_declared",
+          });
+          db.studentProfiles[idx].skills = currentSkills;
+          db.studentProfiles[idx].updatedAt = new Date().toISOString();
+          writeDb(db);
+        }
+      }
+    } catch {
+      // Non-fatal sync
+    }
+
     return personalizedJsonResponse({
       success: true,
       skill: savedSkill,

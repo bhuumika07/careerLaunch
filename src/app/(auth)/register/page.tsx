@@ -45,6 +45,7 @@ function RegisterForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const initialRole = searchParams.get("role") || "student";
+  const redirectTarget = searchParams.get("redirect");
 
   const [step, setStep] = React.useState<1 | 2>(1);
   const [selectedRole, setSelectedRole] = React.useState<string>(initialRole);
@@ -110,8 +111,8 @@ function RegisterForm() {
         return;
       }
 
-      // Successful registration -> route directly to onboarding wizard
-      router.push("/onboarding");
+      // Successful registration -> route to redirect target or onboarding wizard
+      router.push(redirectTarget || "/onboarding");
     } catch {
       setError("An unexpected network error occurred. Please try again.");
       setLoading(false);
@@ -418,7 +419,10 @@ function RegisterForm() {
 
           <p className="text-center text-xs text-muted-foreground pt-2">
             Already have an account?{" "}
-            <Link href="/login" className="text-link hover:underline font-semibold">
+            <Link
+              href={redirectTarget ? `/login?redirect=${encodeURIComponent(redirectTarget)}` : "/login"}
+              className="text-link hover:underline font-semibold"
+            >
               Sign In
             </Link>
           </p>

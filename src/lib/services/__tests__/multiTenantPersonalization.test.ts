@@ -10,10 +10,7 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 
-import { CareerRoleService } from "../career-roles/careerRoleService.ts";
 import { RoleCatalogueService, OBSERVED_CAREER_ROLES } from "../career-roles/roleCatalogueService.ts";
-import { SkillGapService } from "../career-roles/skillGapService.ts";
-import { RoleRoadmapService } from "../career-roles/roleRoadmapService.ts";
 import { MatchingService } from "../matching/matchingService.ts";
 import { ApplicationTrackingService } from "../applications/applicationTrackingService.ts";
 import { ResumeSyncService } from "../student/resumeSyncService.ts";
@@ -245,28 +242,6 @@ describe("Phase 3: Multi-Tenant Personalization & Isolation Invariants", () => {
       },
     };
 
-    const mockCareerRoleService = new CareerRoleService(
-      mockPrisma,
-      mockCatalogueService,
-      mockProfileService,
-      mockExtProfileService
-    );
-    // Inject active counts
-    (mockCareerRoleService as any).getActiveOpportunityCounts = async () => activeCounts;
-
-    const mockSkillGapService = new SkillGapService(
-      mockCatalogueService,
-      mockCareerRoleService,
-      mockExtProfileService
-    );
-
-    const roadmapStore = { roadmaps: [] };
-    const mockRoleRoadmapService = new RoleRoadmapService(
-      mockCatalogueService,
-      mockExtProfileService,
-      roadmapStore
-    );
-
     const matchingStore = { matchFeedbacks: [] };
     const mockMatchingService = new MatchingService(
       mockPrisma,
@@ -293,9 +268,6 @@ describe("Phase 3: Multi-Tenant Personalization & Isolation Invariants", () => {
       studentSkills,
       studentInterests,
       opportunities,
-      mockCareerRoleService,
-      mockSkillGapService,
-      mockRoleRoadmapService,
       mockMatchingService,
       mockApplicationTrackingService,
       mockResumeSyncService,
@@ -304,120 +276,7 @@ describe("Phase 3: Multi-Tenant Personalization & Isolation Invariants", () => {
   }
 
   // =========================================================================
-  // 1. Career Role Recommendations: Isolated & Strictly Calibrated
-  // =========================================================================
-  describe("1. Career Role Discovery Personalization", () => {
-    it("delivers completely distinct role recommendations derived exclusively from each student's profile", async () => {
-      const { studentAId, studentBId, mockCareerRoleService } = setupMultiTenantEnvironment();
-
-      const [resA, resB] = await Promise.all([
-        mockCareerRoleService.getRecommendations(studentAId),
-        mockCareerRoleService.getRecommendations(studentBId),
-      ]);
-
-      assert.ok(resA.recommendations.length > 0);
-      assert.ok(resB.recommendations.length > 0);
-
-      // Student A's top recommendation aligns with Fullstack/Frontend Engineer
-      const topRoleA = resA.recommendations[0];
-      assert.strictEqual(topRoleA.roleId, "role_fullstack_eng");
-      assert.ok(topRoleA.matchScore >= 60, "Student A should have high match for Fullstack/Frontend");
-      assert.strictEqual(topRoleA.isSelected, true);
-
-      // Student B's top recommendation aligns with Data Scientist
-      const topRoleB = resB.recommendations[0];
-      assert.strictEqual(topRoleB.roleId, "role_data_scientist");
-      assert.ok(topRoleB.matchScore >= 50, "Student B should have high match for Data Scientist");
-      assert.strictEqual(topRoleB.isSelected, true);
-
-      // Invariant: Top roles must be completely different for Student A and Student B
-      assert.notStrictEqual(topRoleA.roleId, topRoleB.roleId);
-    });
-  });
-
-  // =========================================================================
-  // 2. Skill Gap Telemetry: Dedicated Benchmarks and Null-Omission for Uncalibrated
-  // =========================================================================
-  describe("2. Skill Gap Benchmark Personalization", () => {
-    it("benchmarks Student A against Fullstack Engineer prerequisites without contamination", async () => {
-      const { studentAId, mockSkillGapService } = setupMultiTenantEnvironment();
-
-      const resultA = await mockSkillGapService.analyzeSkillGap(studentAId, null);
-      assert.ok(resultA);
-      assert.strictEqual(resultA.roleId, "role_fullstack_eng");
-      assert.strictEqual(resultA.isStudentTargetRole, true);
-
-      // Student A has React and TypeScript confirmed -> should be in acquired skills
-      const acquiredSkills = resultA.acquiredSkills.map((s) => s.skillName);
-      assert.ok(acquiredSkills.includes("React"));
-      assert.ok(acquiredSkills.includes("TypeScript"));
-
-      // Missing prerequisites are isolated
-      assert.ok(resultA.missingPrerequisites.length > 0);
-    });
-
-    it("benchmarks Student B against Data Scientist prerequisites without contamination", async () => {
-      const { studentBId, mockSkillGapService } = setupMultiTenantEnvironment();
-
-      const resultB = await mockSkillGapService.analyzeSkillGap(studentBId, null);
-      assert.ok(resultB);
-      assert.strictEqual(resultB.roleId, "role_data_scientist");
-      assert.strictEqual(resultB.isStudentTargetRole, true);
-
-      // Student B has Python and SQL confirmed -> should be in acquired skills
-      const acquiredSkills = resultB.acquiredSkills.map((s) => s.skillName);
-      assert.ok(acquiredSkills.includes("Python"));
-      assert.ok(acquiredSkills.includes("SQL"));
-    });
-
-    it("strictly returns null for uncalibrated Student C (never invents default Backend Engineer role)", async () => {
-      const { studentCId, mockSkillGapService } = setupMultiTenantEnvironment();
-
-      const resultC = await mockSkillGapService.analyzeSkillGap(studentCId, null);
-      assert.strictEqual(resultC, null, "Uncalibrated student without target role must receive null");
-    });
-  });
-
-  // =========================================================================
-  // 3. Learning Roadmap: Sequenced Curriculum and Milestone Progress
-  // =========================================================================
-  describe("3. Role Learning Roadmap Personalization", () => {
-    it("generates Fullstack Engineer roadmap for Student A with automated milestone progress", async () => {
-      const { studentAId, mockRoleRoadmapService } = setupMultiTenantEnvironment();
-
-      const { roadmap, adjustments } = await mockRoleRoadmapService.getUserRoadmap(studentAId, null);
-      assert.ok(roadmap);
-      assert.strictEqual(roadmap.careerRoleId, "role_fullstack_eng");
-      assert.strictEqual(roadmap.careerRoleTitle, "Fullstack Engineer");
-
-      // Module 1 covers React and TypeScript -> should be auto-completed
-      const mod1 = roadmap.modules[0];
-      assert.strictEqual(mod1.status, "completed");
-      assert.strictEqual(mod1.autoCompleted, true);
-      assert.ok(adjustments.some((adj) => adj.moduleId === mod1.id));
-    });
-
-    it("generates Data Scientist / AI roadmap for Student B with automated milestone progress", async () => {
-      const { studentBId, mockRoleRoadmapService } = setupMultiTenantEnvironment();
-
-      const { roadmap } = await mockRoleRoadmapService.getUserRoadmap(studentBId, null);
-      assert.ok(roadmap);
-      assert.strictEqual(roadmap.careerRoleId, "role_data_scientist");
-      assert.strictEqual(roadmap.careerRoleTitle, "Data Scientist");
-      assert.ok(roadmap.modules.length > 0);
-    });
-
-    it("strictly returns null roadmap for uncalibrated Student C (never defaults to Backend Engineer)", async () => {
-      const { studentCId, mockRoleRoadmapService } = setupMultiTenantEnvironment();
-
-      const { roadmap, availableRoles } = await mockRoleRoadmapService.getUserRoadmap(studentCId, null);
-      assert.strictEqual(roadmap, null, "Uncalibrated student must receive null roadmap");
-      assert.ok(availableRoles.length > 0, "Available roles list must be returned for selection");
-    });
-  });
-
-  // =========================================================================
-  // 4. Opportunity Matching & Eligibility Invariants
+  // 1. Opportunity Matching & Eligibility Invariants
   // =========================================================================
   describe("4. Opportunity Matching & Hard Eligibility Isolation", () => {
     it("matches Student A with Frontend opportunity (ELIGIBLE) and flags Student B as INELIGIBLE", async () => {

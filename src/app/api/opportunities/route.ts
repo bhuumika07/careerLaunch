@@ -1,14 +1,18 @@
-import { NextRequest, NextResponse } from "next/server";
-import { readDb, writeDb, Opportunity } from "@/lib/db";
-import { requireRole, handleAuthError } from "@/lib/auth-guard";
+export const dynamic = "force-dynamic";
+
+import { NextRequest, NextResponse, after } from "next/server";
+import { readDb, writeDb, type Opportunity } from "@/lib/db";
+import { requireRole, requireAuth, handleAuthError, AuthError } from "@/lib/auth-guard";
 import {
   findDuplicateOpportunity,
 } from "@/lib/services/opportunity-manager";
 import { opportunityQueryService } from "@/lib/services/opportunities/opportunityQueryService";
+import { triggerBackgroundSyncIfNeeded } from "@/lib/services/opportunities/backgroundSyncService";
 
 // GET /api/opportunities - Search & Filter opportunities (Active & Fresh Student Feed with AI Enrichment)
 export async function GET(req: NextRequest) {
   try {
+    await requireAuth(req);
     const url = new URL(req.url);
     const query = url.searchParams.get("q") || undefined;
     const category = url.searchParams.get("category") || undefined;
@@ -63,6 +67,15 @@ export async function GET(req: NextRequest) {
       limit,
     });
 
+    // Check freshness and asynchronously sync India tech opportunities in background if >24h old
+    after(async () => {
+      try {
+        await triggerBackgroundSyncIfNeeded();
+      } catch (syncErr: any) {
+        console.warn("[Opportunities API] Background sync trigger caught:", syncErr?.message);
+      }
+    });
+
     return NextResponse.json({
       success: true,
       opportunities: feedResult.opportunities,
@@ -72,6 +85,9 @@ export async function GET(req: NextRequest) {
       totalPages: feedResult.totalPages,
     });
   } catch (error) {
+    if (error instanceof AuthError) {
+      return handleAuthError(error);
+    }
     console.error("Opportunity search API error:", error);
     return NextResponse.json(
       { success: false, error: "Failed to load opportunities." },

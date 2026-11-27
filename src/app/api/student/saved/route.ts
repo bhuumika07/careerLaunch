@@ -5,6 +5,7 @@ import type { NextRequest } from "next/server";
 import { requireRole, handleAuthError } from "@/lib/auth/authorization";
 import { prisma } from "@/lib/prisma";
 import { personalizedJsonResponse } from "@/lib/api/response";
+import { checkAndNotifyExpiredOpportunities } from "@/lib/services/notifications/deadlineNotificationService";
 import * as fs from "node:fs";
 import * as path from "node:path";
 
@@ -29,6 +30,9 @@ export async function GET(req: NextRequest) {
   try {
     const { user } = await requireRole(["student"], req);
     const now = Date.now();
+
+    // Automatically check for expired saved opportunities and notify student
+    await checkAndNotifyExpiredOpportunities(user.id).catch(() => {});
 
     // 1. Check Prisma applications with saved status (authoritative source)
     let savedFromPrisma: any[] = [];

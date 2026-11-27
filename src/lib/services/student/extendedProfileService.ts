@@ -180,11 +180,18 @@ export const KNOWN_CANONICAL_SKILLS: Array<{
     aliases: ["tailwind", "tailwindcss", "tailwind-css"],
   },
   {
-    id: "sk_html_css",
-    canonicalName: "HTML & CSS",
+    id: "sk_html",
+    canonicalName: "HTML",
     type: "technical",
     category: "frontend",
-    aliases: ["html", "css", "html5", "css3"],
+    aliases: ["html", "html5"],
+  },
+  {
+    id: "sk_css",
+    canonicalName: "CSS",
+    type: "technical",
+    category: "frontend",
+    aliases: ["css", "css3"],
   },
 
   // Backend
@@ -616,13 +623,24 @@ export class ExtendedProfileService {
     const prisma = await this.getPrisma();
     if (prisma?.studentSkill) {
       try {
+        // Ensure skillId actually exists in PostgreSQL Skill table to avoid FK violation
+        let effectiveSkillId: string | null = resolved.skillId;
+        if (effectiveSkillId && prisma.skill?.findUnique) {
+          const existsInDb = await prisma.skill
+            .findUnique({ where: { id: effectiveSkillId } })
+            .catch(() => null);
+          if (!existsInDb) {
+            effectiveSkillId = null;
+          }
+        }
+
         // Check for existing skill by skillId or rawSkillName
         let existing = null;
-        if (resolved.skillId) {
+        if (effectiveSkillId) {
           existing = await prisma.studentSkill.findFirst({
             where: {
               studentProfileId: profile.id,
-              skillId: resolved.skillId,
+              skillId: effectiveSkillId,
             },
           });
         }
@@ -640,7 +658,7 @@ export class ExtendedProfileService {
           const updated = await prisma.studentSkill.update({
             where: { id: existing.id },
             data: {
-              skillId: resolved.skillId ?? existing.skillId,
+              skillId: effectiveSkillId ?? existing.skillId,
               rawSkillName: resolved.canonicalName,
               proficiency: input.proficiency ?? existing.proficiency,
               yearsExperience: input.yearsExperience ?? existing.yearsExperience,
@@ -682,7 +700,7 @@ export class ExtendedProfileService {
         const created = await prisma.studentSkill.create({
           data: {
             studentProfileId: profile.id,
-            skillId: resolved.skillId,
+            skillId: effectiveSkillId,
             rawSkillName: resolved.canonicalName,
             proficiency: input.proficiency,
             yearsExperience: input.yearsExperience,

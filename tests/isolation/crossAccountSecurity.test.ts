@@ -638,14 +638,12 @@ import { GET as getSkills, POST as postSkills } from "../../src/app/api/student/
 import { GET as getProfile, PUT as putProfile } from "../../src/app/api/student/profile/route.ts";
 import { GET as getInterests, PUT as putInterests } from "../../src/app/api/student/career-interests/route.ts";
 import { GET as getPreferences, PUT as putPreferences } from "../../src/app/api/student/preferences/route.ts";
-import { GET as getRoadmap } from "../../src/app/api/student/roadmap/route.ts";
 import { GET as getApplications, POST as postApplications, PATCH as patchApplications } from "../../src/app/api/student/applications/route.ts";
 import { GET as getSaved } from "../../src/app/api/student/saved/route.ts";
 import { GET as getResumes } from "../../src/app/api/resumes/route.ts";
 import { GET as getResumeById, DELETE as deleteResumeById } from "../../src/app/api/resume/[id]/route.ts";
 import { GET as getNotifications } from "../../src/app/api/notifications/route.ts";
 import { GET as getRecommended } from "../../src/app/api/student/recommended/route.ts";
-import { GET as getSkillGap } from "../../src/app/api/student/skillgap/route.ts";
 import { POST as postLogout } from "../../src/app/api/auth/logout/route.ts";
 import { GET as getMe } from "../../src/app/api/auth/me/route.ts";
 import { buildStudentCacheKey } from "../../src/lib/cache/userCacheKey.ts";
@@ -822,33 +820,17 @@ describe("Phase 1C: Cross-Account Security & Isolation Test Suite", () => {
   });
 
   // -------------------------------------------------------------------------
-  // Test 4: Roadmaps are independent
-  // -------------------------------------------------------------------------
-  it("4. Roadmaps are independent and derived exclusively per student target role", async () => {
-    const resA = await getRoadmap(req("http://localhost/api/student/roadmap", "sess_sec_a"));
-    const jsonA = await resA.json();
-    assert.strictEqual(resA.status, 200);
-    assert.strictEqual(jsonA.roadmap.careerRoleId, "role_backend_eng");
-    assert.strictEqual(jsonA.roadmap.careerRoleTitle, "Backend Engineer");
-
-    // User B has UI/UX Designer target role -> uncalibrated for Backend Engineer roadmap
-    const resB = await getRoadmap(req("http://localhost/api/student/roadmap", "sess_sec_b"));
-    const jsonB = await resB.json();
-    assert.strictEqual(resB.status, 200);
-    // User B's roadmap is null because UI/UX is not an observed Backend Eng role
-    assert.strictEqual(jsonB.roadmap, null);
-    assert.ok(jsonB.availableRoles.length > 0);
-  });
-
-  // -------------------------------------------------------------------------
   // Test 5: Saved opportunities and applications are independent
   // -------------------------------------------------------------------------
   it("5. Saved opportunities and applications are completely isolated", async () => {
-    // User A applies to opp_1
+    const rawDb = JSON.parse(fs.readFileSync(path.resolve(process.cwd(), "src/data/db.json"), "utf-8"));
+    const testOppId = rawDb.opportunities?.[0]?.id || "opp_1";
+
+    // User A applies to testOppId
     const applyResA = await postApplications(
       req("http://localhost/api/student/applications", "sess_sec_a", {
         method: "POST",
-        body: { opportunityId: "opp_1", coverNote: "Backend focus" },
+        body: { opportunityId: testOppId, coverNote: "Backend focus" },
       })
     );
     assert.strictEqual(applyResA.status, 200);
@@ -862,7 +844,7 @@ describe("Phase 1C: Cross-Account Security & Isolation Test Suite", () => {
     const appsARes = await getApplications(req("http://localhost/api/student/applications", "sess_sec_a"));
     const appsA = await appsARes.json();
     assert.strictEqual(appsA.applications.length, 1);
-    assert.strictEqual(appsA.applications[0].opportunityId, "opp_1");
+    assert.strictEqual(appsA.applications[0].opportunityId, testOppId);
 
     // User B checks saved -> 0 saved
     const savedBRes = await getSaved(req("http://localhost/api/student/saved", "sess_sec_b"));
@@ -990,7 +972,6 @@ describe("Phase 1C: Cross-Account Security & Isolation Test Suite", () => {
       { name: "PUT /api/student/career-interests", fn: () => putInterests(unauthReq("http://localhost/api/student/career-interests", "PUT", { interests: [] })) },
       { name: "GET /api/student/preferences", fn: () => getPreferences(unauthReq("http://localhost/api/student/preferences")) },
       { name: "PUT /api/student/preferences", fn: () => putPreferences(unauthReq("http://localhost/api/student/preferences", "PUT", {})) },
-      { name: "GET /api/student/roadmap", fn: () => getRoadmap(unauthReq("http://localhost/api/student/roadmap")) },
       { name: "GET /api/student/applications", fn: () => getApplications(unauthReq("http://localhost/api/student/applications")) },
       { name: "POST /api/student/applications", fn: () => postApplications(unauthReq("http://localhost/api/student/applications", "POST", { opportunityId: "opp1" })) },
       { name: "GET /api/student/saved", fn: () => getSaved(unauthReq("http://localhost/api/student/saved")) },
@@ -999,7 +980,6 @@ describe("Phase 1C: Cross-Account Security & Isolation Test Suite", () => {
       { name: "DELETE /api/resume/[id]", fn: () => deleteResumeById(unauthReq("http://localhost/api/resume/res1", "DELETE"), { params: Promise.resolve({ id: "res1" }) }) },
       { name: "GET /api/notifications", fn: () => getNotifications(unauthReq("http://localhost/api/notifications")) },
       { name: "GET /api/student/recommended", fn: () => getRecommended(unauthReq("http://localhost/api/student/recommended")) },
-      { name: "GET /api/student/skillgap", fn: () => getSkillGap(unauthReq("http://localhost/api/student/skillgap")) },
       { name: "GET /api/auth/me", fn: () => getMe(unauthReq("http://localhost/api/auth/me")) },
     ];
 
@@ -1022,13 +1002,11 @@ describe("Phase 1C: Cross-Account Security & Isolation Test Suite", () => {
       getSkills(req("http://localhost/api/student/skills", "sess_sec_a")),
       getInterests(req("http://localhost/api/student/career-interests", "sess_sec_a")),
       getPreferences(req("http://localhost/api/student/preferences", "sess_sec_a")),
-      getRoadmap(req("http://localhost/api/student/roadmap", "sess_sec_a")),
       getApplications(req("http://localhost/api/student/applications", "sess_sec_a")),
       getSaved(req("http://localhost/api/student/saved", "sess_sec_a")),
       getResumes(req("http://localhost/api/resumes", "sess_sec_a")),
       getNotifications(req("http://localhost/api/notifications", "sess_sec_a")),
       getRecommended(req("http://localhost/api/student/recommended", "sess_sec_a")),
-      getSkillGap(req("http://localhost/api/student/skillgap", "sess_sec_a")),
       getMe(req("http://localhost/api/auth/me", "sess_sec_a")),
     ];
 

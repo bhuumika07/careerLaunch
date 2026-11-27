@@ -90,11 +90,14 @@ describe("Phase 6 Chunk 6.1: Opportunity Matching & Hard Eligibility Gates", () 
       getCatalogue: async () => OBSERVED_CAREER_ROLES,
     };
 
+    const mockStore: Record<string, any> = { matchFeedbacks: [] };
+
     const service = new MatchingService(
       null,
       mockProfileService,
       mockExtProfileService,
-      mockCatalogueService
+      mockCatalogueService,
+      mockStore
     );
 
     return { service, studentProfiles };

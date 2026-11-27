@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import * as React from "react";
 import {
@@ -152,10 +152,16 @@ export default function ResumeBuilderPage() {
   if (loading || !activeResume) {
     return (
       <div className="p-8 max-w-7xl mx-auto space-y-6">
-        <div className="h-12 w-1/3 bg-card border border-border rounded-xl animate-pulse" />
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div className="h-[600px] bg-card border border-border rounded-2xl animate-pulse" />
-          <div className="h-[600px] bg-card border border-border rounded-2xl animate-pulse" />
+        <div className="flex items-center gap-2.5 text-sm text-muted-foreground">
+          <div className="size-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+          <span>Loading resume builder...</span>
+        </div>
+        <div className="animate-pulse space-y-6">
+          <div className="h-12 w-1/3 bg-slate-200/80 rounded-xl" />
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="h-[600px] bg-slate-100 border border-border rounded-2xl" />
+            <div className="h-[600px] bg-slate-100 border border-border rounded-2xl" />
+          </div>
         </div>
       </div>
     );
@@ -246,7 +252,7 @@ export default function ResumeBuilderPage() {
             <div className="flex items-center gap-2">
               <Sparkles className="size-4 text-accent-text" />
               <h3 className="font-heading font-bold text-sm text-foreground">
-                Verified Profile & Roadmap Auto-Suggestions
+                Verified Profile Auto-Suggestions
               </h3>
             </div>
             <span className="text-[11px] text-muted-foreground">
@@ -254,7 +260,7 @@ export default function ResumeBuilderPage() {
             </span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Unadded Verified Skills */}
             <div className="p-3.5 rounded-xl border border-border bg-background/[0.01] space-y-2">
               <span className="text-xs font-semibold text-foreground flex items-center gap-1">
@@ -281,46 +287,6 @@ export default function ResumeBuilderPage() {
                 {suggestions.verifiedSkills.every((s: SkillItem) =>
                   activeResume.skills.some((sk) => sk.name === s.name)
                 ) && <span className="text-[11px] text-muted-foreground">All verified skills added.</span>}
-              </div>
-            </div>
-
-            {/* Completed Roadmap Projects */}
-            <div className="p-3.5 rounded-xl border border-border bg-background/[0.01] space-y-2">
-              <span className="text-xs font-semibold text-foreground flex items-center gap-1">
-                <BookOpen className="size-3.5 text-accent-text" />
-                Completed Roadmap Projects
-              </span>
-              <div className="space-y-1.5">
-                {suggestions.completedRoadmapProjects
-                  .filter((p: any) => !activeResume.projects.some((pr) => pr.title === p.title))
-                  .map((p: any) => (
-                    <div
-                      key={p.id}
-                      className="p-2 rounded-lg border border-border flex items-center justify-between text-xs"
-                    >
-                      <span className="font-medium text-foreground truncate max-w-[180px]">{p.title}</span>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const newProj: ProjectItem = {
-                            id: p.id,
-                            title: p.title,
-                            description: p.description,
-                            technologies: ["React", "TypeScript", "Tailwind CSS"],
-                          };
-                          setActiveResume((prev) =>
-                            prev ? { ...prev, projects: [...prev.projects, newProj] } : prev
-                          );
-                        }}
-                        className="text-[10px] text-accent-text font-bold hover:underline cursor-pointer"
-                      >
-                        + Add
-                      </button>
-                    </div>
-                  ))}
-                {suggestions.completedRoadmapProjects.every((p: any) =>
-                  activeResume.projects.some((pr) => pr.title === p.title)
-                ) && <span className="text-[11px] text-muted-foreground">All completed projects added.</span>}
               </div>
             </div>
 

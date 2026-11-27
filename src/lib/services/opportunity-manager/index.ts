@@ -1,4 +1,4 @@
-import { Opportunity } from "@/lib/db";
+import type { Opportunity } from "@/lib/db";
 
 /**
  * Calculates Jaccard / Levenshtein-based similarity index between two strings (0 to 1)

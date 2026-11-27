@@ -147,6 +147,32 @@ export class ProfileService {
           });
         }
 
+        if (!profile.graduationYear && !profile.college) {
+          try {
+            const db = readDb();
+            const fileProfile = (db.studentProfiles || []).find((p: any) => p.userId === userId) as any;
+            if (fileProfile && (fileProfile.graduationYear || fileProfile.college)) {
+              profile = await prisma.studentProfile.update({
+                where: { id: profile.id },
+                data: {
+                  college: fileProfile.college || fileProfile.institution || null,
+                  degree: fileProfile.degree || null,
+                  branch: fileProfile.branch || fileProfile.department || null,
+                  graduationYear: fileProfile.graduationYear || null,
+                  cgpa: fileProfile.cgpa || null,
+                  phone: fileProfile.phone || null,
+                  bio: fileProfile.bio || null,
+                  location: fileProfile.location || null,
+                  githubUrl: fileProfile.githubUrl || null,
+                  portfolioUrl: fileProfile.portfolioUrl || null,
+                },
+              });
+            }
+          } catch {
+            // Ignore backfill error
+          }
+        }
+
         const meta = ((profile.fieldMetadata as unknown) as FieldMetadataMap) || {};
         const professionalStatus =
           (profile as any).professionalStatus || (meta as any).professionalStatus?.value || null;

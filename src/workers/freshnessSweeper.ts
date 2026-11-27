@@ -1,6 +1,7 @@
 // src/workers/freshnessSweeper.ts
 import { PrismaClient } from "@prisma/client";
 import { FreshnessAndExpirySweeper } from "../lib/services/verification/freshnessManager.ts";
+import { checkAndNotifyExpiredOpportunities } from "../lib/services/notifications/deadlineNotificationService.ts";
 
 export interface SweeperProcessOptions {
   intervalMs?: number; // How often to run sweep, default 5m (300,000ms)
@@ -19,9 +20,10 @@ export function startFreshnessSweeper(options?: SweeperProcessOptions) {
   const runSweepPass = async () => {
     try {
       const results = await sweeper.runSweep();
-      if (results.staleCount > 0 || results.expiredCount > 0) {
+      const notifResults = await checkAndNotifyExpiredOpportunities();
+      if (results.staleCount > 0 || results.expiredCount > 0 || notifResults.notificationsCreated > 0) {
         console.log(
-          `[FreshnessSweeper] Sweep completed: staled=${results.staleCount}, expired=${results.expiredCount}`
+          `[FreshnessSweeper] Sweep completed: staled=${results.staleCount}, expired=${results.expiredCount}, notifiedStudents=${notifResults.notificationsCreated}`
         );
       }
     } catch (err) {
