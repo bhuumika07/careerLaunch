@@ -216,12 +216,15 @@ describe("Chunk 6: AI Enrichment and Verification", () => {
         mockFetch,
       });
 
+      const staleTimestamp = new Date(Date.now() - 72 * 60 * 60 * 1000).toISOString();
+      const freshTimestamp = new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString();
+
       const fixtures = [
-        { ...VERIFICATION_TEST_FIXTURES.staleJob },
-        { ...VERIFICATION_TEST_FIXTURES.legitimateAtsJob },
+        { ...VERIFICATION_TEST_FIXTURES.staleJob, lastVerifiedAt: staleTimestamp },
+        { ...VERIFICATION_TEST_FIXTURES.legitimateAtsJob, lastVerifiedAt: freshTimestamp },
       ];
 
-      // Stale job was verified 3 days ago, legitimate was verified today
+      // Stale job was verified 3 days ago, legitimate was verified 1 hour ago
       assert.equal(reverifier.isOpportunityStale(fixtures[0]), true);
       assert.equal(reverifier.isOpportunityStale(fixtures[1]), false);
 
@@ -232,7 +235,7 @@ describe("Chunk 6: AI Enrichment and Verification", () => {
       assert.equal(batchResult.errorsCount, 0);
 
       // Verify that timestamp was refreshed to now
-      assert.notEqual(fixtures[0].lastVerifiedAt, "2026-11-12T00:00:00.000Z");
+      assert.notEqual(fixtures[0].lastVerifiedAt, staleTimestamp);
     });
   });
 });

@@ -99,14 +99,19 @@ export function Topbar({ title, role, className }: TopbarProps) {
               </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator className="bg-sky/15 my-1" />
-            <DropdownMenuItem asChild>
-              <Link
-                href="/login"
-                className="flex items-center gap-2 px-2 py-1.5 text-sm rounded-md text-sky-50 hover:bg-danger hover:text-danger-foreground cursor-pointer transition-colors"
-              >
-                <LogOut className="size-4" />
-                Sign Out
-              </Link>
+            <DropdownMenuItem
+              onClick={async () => {
+                try {
+                  await fetch("/api/auth/logout", { method: "POST" });
+                } catch {}
+                document.cookie = "cl_session=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+                document.cookie = "cl_role=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+                window.location.href = "/login";
+              }}
+              className="flex items-center gap-2 px-2 py-1.5 text-sm rounded-md text-sky-50 hover:bg-danger hover:text-danger-foreground cursor-pointer transition-colors"
+            >
+              <LogOut className="size-4" />
+              Sign Out
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

@@ -5,6 +5,7 @@ const SESSION_COOKIE_NAME = "cl_session";
 const ROLE_ROUTE_PREFIXES: Record<string, string[]> = {
   "/student": ["student", "job_seeker", "admin"],
   "/admin": ["admin"],
+  "/resume": ["student", "job_seeker", "admin"],
 };
 
 export function proxy(request: NextRequest) {
@@ -21,7 +22,14 @@ export function proxy(request: NextRequest) {
 
   const isSettingsRoute = pathname.startsWith("/settings");
   const isOnboardingRoute = pathname.startsWith("/onboarding");
-  const isProtected = allowedRoles !== null || isSettingsRoute || isOnboardingRoute;
+  const isOpportunitiesRoute = pathname.startsWith("/opportunities");
+  const isNotificationsRoute = pathname.startsWith("/notifications");
+  const isProtected =
+    allowedRoles !== null ||
+    isSettingsRoute ||
+    isOnboardingRoute ||
+    isOpportunitiesRoute ||
+    isNotificationsRoute;
 
   if (!isProtected) {
     return NextResponse.next();
@@ -31,7 +39,8 @@ export function proxy(request: NextRequest) {
   const sessionCookie = request.cookies.get(SESSION_COOKIE_NAME);
   if (!sessionCookie?.value) {
     const loginUrl = new URL("/login", request.url);
-    loginUrl.searchParams.set("redirect", pathname);
+    const redirectPath = pathname + request.nextUrl.search;
+    loginUrl.searchParams.set("redirect", redirectPath);
     return NextResponse.redirect(loginUrl);
   }
 
@@ -59,7 +68,13 @@ export const config = {
   matcher: [
     "/student/:path*",
     "/admin/:path*",
+    "/resume/:path*",
+    "/resume",
     "/onboarding/:path*",
     "/settings/:path*",
+    "/opportunities/:path*",
+    "/opportunities",
+    "/notifications/:path*",
+    "/notifications",
   ],
 };

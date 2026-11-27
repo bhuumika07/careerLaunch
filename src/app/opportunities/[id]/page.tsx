@@ -39,7 +39,6 @@ function OpportunityDetailContent() {
   const [opp, setOpp] = React.useState<Opportunity | null>(null);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
-  const [matchData, setMatchData] = React.useState<any | null>(null);
   const [bookmarked, setBookmarked] = React.useState(false);
   const [descExpanded, setDescExpanded] = React.useState(false);
 
@@ -50,22 +49,19 @@ function OpportunityDetailContent() {
 
   React.useEffect(() => {
     let mounted = true;
-    const loadOpp = async () => {
+    const loadOpportunity = async () => {
       try {
-        const res = await fetch(`/api/opportunities/${id}`);
-        const data = await res.json();
+        const oppRes = await fetch(`/api/opportunities/${id}`, { cache: "no-store" });
+
+        if (oppRes.status === 401) {
+          router.push(`/login?redirect=${encodeURIComponent(`/opportunities/${id}`)}`);
+          return;
+        }
+
+        const data = await oppRes.json();
         if (mounted) {
-          if (res.ok && data.success) {
+          if (oppRes.ok && data.success) {
             setOpp(data.opportunity);
-            // Fetch explainable matching
-            fetch(`/api/opportunities/${id}/matching`)
-              .then((r) => r.json())
-              .then((m) => {
-                if (mounted && m.success) {
-                  setMatchData(m.match);
-                }
-              })
-              .catch(() => {});
           } else {
             setError(data.error || "Opportunity not found.");
           }
@@ -79,11 +75,11 @@ function OpportunityDetailContent() {
       }
     };
 
-    loadOpp();
+    loadOpportunity();
     return () => {
       mounted = false;
     };
-  }, [id]);
+  }, [id, router]);
 
   const toggleBookmark = async () => {
     try {
@@ -128,12 +124,18 @@ function OpportunityDetailContent() {
 
   if (loading) {
     return (
-      <div className="max-w-5xl mx-auto px-6 py-20 animate-pulse space-y-6">
-        <div className="h-8 w-48 bg-white/[0.06] rounded-xl" />
-        <div className="h-32 w-full bg-white/[0.04] rounded-3xl" />
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="md:col-span-2 h-64 bg-white/[0.04] rounded-3xl" />
-          <div className="h-64 bg-white/[0.04] rounded-3xl" />
+      <div className="max-w-5xl mx-auto px-6 py-12 space-y-6">
+        <div className="flex items-center gap-2.5 text-sm text-muted-foreground">
+          <div className="size-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+          <span>Loading opportunity details &amp; fit analysis...</span>
+        </div>
+        <div className="animate-pulse space-y-6">
+          <div className="h-8 w-48 bg-slate-200/80 dark:bg-white/[0.08] rounded-xl" />
+          <div className="h-36 w-full bg-slate-100 dark:bg-white/[0.05] border border-border rounded-3xl" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="md:col-span-2 h-72 bg-slate-100 dark:bg-white/[0.05] border border-border rounded-3xl" />
+            <div className="h-72 bg-slate-100 dark:bg-white/[0.05] border border-border rounded-3xl" />
+          </div>
         </div>
       </div>
     );
@@ -342,92 +344,27 @@ function OpportunityDetailContent() {
           </div>
         </div>
 
-        {/* Right Column: Source Attribution & Explainable Match */}
+        {/* Right Column: Source Attribution & Skill Gap Analysis CTA */}
         <div className="lg:col-span-4 space-y-6">
-          {/* Explainable Fit Score Panel */}
-          {matchData && (
-            <div className="p-6 rounded-3xl glass-card border border-sky/20 space-y-5">
-              <div className="flex items-center justify-between">
-                <div>
-                  <span className="text-[10px] uppercase font-bold text-sky-200 tracking-wider">
-                    Explainable Fit Engine
-                  </span>
-                  <div className="text-3xl font-heading font-extrabold text-foreground">
-                    {matchData.compatibilityScore}%
-                  </div>
-                </div>
-                <div className="text-xs font-semibold px-2.5 py-1 rounded-full bg-teal/20 text-teal border border-teal/30">
-                  {matchData.overallVerdict?.badge || "Compatible"}
-                </div>
-              </div>
-
-              {/* Hard Eligibility Verdict */}
-              {matchData.hardEligibility?.isFullyEligible === false ? (
-                <div className="p-3.5 rounded-2xl bg-destructive/10 border border-destructive/30 text-xs text-destructive space-y-1">
-                  <div className="flex items-center gap-1.5 font-bold">
-                    <AlertCircle className="size-4 shrink-0" />
-                    <span>Hard Criteria Not Met</span>
-                  </div>
-                  <p className="text-[11px] leading-relaxed">
-                    {matchData.overallVerdict?.explanation || "One or more mandatory eligibility requirements are not satisfied."}
-                  </p>
-                </div>
-              ) : (
-                <div className="p-3 rounded-xl bg-teal/10 border border-teal/30 text-xs text-teal flex items-center gap-2">
-                  <CheckCircle2 className="size-4 shrink-0" />
-                  <span>All stated mandatory criteria are satisfied.</span>
-                </div>
-              )}
-
-              {/* Matching Skills */}
-              <div className="space-y-2 pt-2 border-t border-white/[0.08]">
-                <span className="text-[11px] font-semibold text-foreground uppercase tracking-wider">
-                  Matched Skills
-                </span>
-                <div className="flex flex-wrap gap-1.5">
-                  {(matchData.skillAnalysis?.matchingSkills || []).map((s: any, idx: number) => (
-                    <span
-                      key={idx}
-                      className="px-2 py-0.5 rounded-md bg-teal/15 text-teal text-[11px] font-medium"
-                    >
-                      {s.name}
-                    </span>
-                  ))}
-                  {(!matchData.skillAnalysis?.matchingSkills || matchData.skillAnalysis.matchingSkills.length === 0) && (
-                    <span className="text-xs text-muted-foreground">Add skills to your profile to compare fit.</span>
-                  )}
-                </div>
-              </div>
-
-              {/* Missing Skills + Gap Guidance */}
-              {(matchData.skillAnalysis?.skillsToImprove || []).length > 0 && (
-                <div className="space-y-2 pt-2 border-t border-white/[0.08]">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-semibold text-amber uppercase tracking-wider">
-                      Skills to Bridge
-                    </span>
-                    <Link href="/student/roadmap" className="text-[11px] text-sky hover:underline font-medium">
-                      Roadmap &rarr;
-                    </Link>
-                  </div>
-                  <div className="flex flex-wrap gap-1.5">
-                    {matchData.skillAnalysis.skillsToImprove.map((s: any, idx: number) => (
-                      <span
-                        key={idx}
-                        className="px-2 py-0.5 rounded-md bg-white/[0.06] text-muted-foreground text-[11px]"
-                      >
-                        {s.name}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              <p className="text-[10px] text-muted-foreground italic border-t border-white/[0.06] pt-2">
-                Disclaimer: A compatibility score is an informative fit analysis, not a promise of interview or selection.
+          {/* Lightweight Skill Gap Analysis CTA Card */}
+          <div className="p-6 rounded-3xl glass-card border border-sky/20 space-y-4">
+            <div className="space-y-1.5">
+              <span className="text-[10px] uppercase font-bold text-teal tracking-wider">
+                Personalized Fit &amp; Gap Check
+              </span>
+              <h3 className="font-heading text-lg font-bold text-foreground">
+                Analyze Your Skill Gap
+              </h3>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Compare your skills, projects, and academics against this role to see matched skills, missing requirements, and a tailored prep plan.
               </p>
             </div>
-          )}
+            <Link href={`/student/skill-gap?opportunityId=${encodeURIComponent(id)}`} className="block">
+              <PillButton variant="primary" size="md" className="w-full justify-center font-semibold">
+                Analyze Skill Gap &rarr;
+              </PillButton>
+            </Link>
+          </div>
 
           {/* Source Attribution Panel */}
           <div className="p-6 rounded-3xl glass-card border border-sky/15 space-y-4">

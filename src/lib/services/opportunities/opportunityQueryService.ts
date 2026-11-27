@@ -153,19 +153,46 @@ export function adaptConnectorOpportunityToCanonical(connectorOpp: any): Opportu
 }
 
 export class OpportunityQueryService {
+  lastLoadWasFallback = false;
+
   /**
    * Retrieves all candidate opportunities from storage (Prisma or file-based db.json),
    * seamlessly adapting any registered ConnectorOpportunity records.
    */
   async loadAllRawOpportunities(): Promise<Opportunity[]> {
     let rawOpps: any[] = [];
+    this.lastLoadWasFallback = false;
 
     // 1. Attempt PostgreSQL via Prisma
     if (process.env.DATABASE_URL) {
       try {
         const { prisma } = await import("@/lib/prisma");
         const dbOpps = await (prisma.opportunity as any).findMany({
-          include: { source: true, opportunityEnrichment: true },
+          include: { source: true },
+        });
+
+        const mappedDbOpps = (dbOpps || []).map((o: any) => {
+          const verifiedIso = o.lastCheckedAt
+            ? new Date(o.lastCheckedAt).toISOString()
+            : o.firstSeenAt
+            ? new Date(o.firstSeenAt).toISOString()
+            : new Date().toISOString();
+          return {
+            ...o,
+            org: o.organizationName || o.org || "Company",
+            employer: o.organizationName || o.employer || o.org || "Company",
+            skills: o.requiredSkills || o.skills || [],
+            deadline: o.applicationDeadline ? new Date(o.applicationDeadline).toISOString() : null,
+            location: o.locationCity
+              ? `${o.locationCity}${o.locationState ? `, ${o.locationState}` : ""}`
+              : o.locationCountry || "India",
+            status: o.lifecycleStatus === "removed" ? "closed" : o.lifecycleStatus || "active",
+            lastVerifiedDate: verifiedIso,
+            lastVerifiedAt: verifiedIso,
+            sourceName:
+              o.source?.name ||
+              (o.id?.startsWith("gh_in_") ? "Greenhouse" : o.id?.startsWith("adzuna_") ? "Adzuna" : "Direct"),
+          };
         });
 
         // Also check if any ConnectorOpportunity records exist that need adapting
@@ -177,7 +204,7 @@ export class OpportunityQueryService {
         }
 
         const adaptedConnectors = connectorOpps.map(adaptConnectorOpportunityToCanonical);
-        rawOpps = [...dbOpps, ...adaptedConnectors];
+        rawOpps = [...mappedDbOpps, ...adaptedConnectors];
       } catch (err) {
         console.warn("[OpportunityQueryService] Prisma load failed, falling back to db.json", err);
       }
@@ -187,6 +214,7 @@ export class OpportunityQueryService {
     if (!rawOpps || rawOpps.length === 0) {
       const db = readDbStore();
       rawOpps = db.opportunities || [];
+      this.lastLoadWasFallback = true;
     }
 
     return rawOpps;
@@ -201,7 +229,7 @@ export class OpportunityQueryService {
     const rawOpps = await this.loadAllRawOpportunities();
 
     // Default: local fallback without active cron keeps seed opportunities visible for local dev
-    const isLocalFallback = !process.env.DATABASE_URL;
+    const isLocalFallback = !process.env.DATABASE_URL || this.lastLoadWasFallback;
     const freshnessThresholdHours = options.freshnessThresholdHours ?? (isLocalFallback ? 24 * 365 : undefined);
 
     return filterEnrichedStudentFeed(rawOpps, {
@@ -221,7 +249,7 @@ export class OpportunityQueryService {
     options: OpportunityFeedQueryOptions = {}
   ): Promise<Opportunity[]> {
     const rawOpps = await this.loadAllRawOpportunities();
-    const isLocalFallback = !process.env.DATABASE_URL;
+    const isLocalFallback = !process.env.DATABASE_URL || this.lastLoadWasFallback;
     const freshnessThresholdHours = options.freshnessThresholdHours ?? (isLocalFallback ? 24 * 365 : undefined);
 
     return rawOpps.filter((opp) =>
@@ -242,8 +270,49 @@ export class OpportunityQueryService {
     id: string,
     options: { allowQuarantined?: boolean } = {}
   ): Promise<Opportunity | null> {
-    const allOpps = await this.loadAllRawOpportunities();
-    const found = allOpps.find((o) => o.id === id);
+    let found: any = null;
+
+    // Respect subclass/test overrides of loadAllRawOpportunities
+    if (this.loadAllRawOpportunities !== OpportunityQueryService.prototype.loadAllRawOpportunities) {
+      const allOpps = await this.loadAllRawOpportunities();
+      found = allOpps.find((o) => o.id === id) || null;
+    } else {
+      // Fast local lookup first for file-backed / ingested opportunities (<1ms)
+      const db = readDbStore();
+      found = (db.opportunities || []).find((o: any) => o.id === id) || null;
+
+      if (!found && process.env.DATABASE_URL) {
+        try {
+          const { prisma } = await import("@/lib/prisma");
+          const dbOpp = await (prisma.opportunity as any).findUnique({
+            where: { id },
+            include: { source: true },
+          });
+          if (dbOpp) {
+            found = {
+              ...dbOpp,
+              org: dbOpp.organizationName || dbOpp.org || "Company",
+              skills: dbOpp.requiredSkills || dbOpp.skills || [],
+              deadline: dbOpp.applicationDeadline ? new Date(dbOpp.applicationDeadline).toISOString() : null,
+              location: dbOpp.locationCity
+                ? `${dbOpp.locationCity}${dbOpp.locationState ? `, ${dbOpp.locationState}` : ""}`
+                : dbOpp.locationCountry || "India",
+              status: dbOpp.lifecycleStatus === "removed" ? "closed" : dbOpp.lifecycleStatus || "active",
+              lastVerifiedDate: dbOpp.lastCheckedAt ? new Date(dbOpp.lastCheckedAt).toISOString() : new Date().toISOString(),
+            };
+          } else {
+            const connOpp = await (prisma as any).connectorOpportunity?.findUnique?.({
+              where: { id },
+            });
+            if (connOpp) {
+              found = adaptConnectorOpportunityToCanonical(connOpp);
+            }
+          }
+        } catch {
+          // Ignore Prisma error when falling back
+        }
+      }
+    }
 
     if (!found) {
       return null;

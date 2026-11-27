@@ -5,11 +5,16 @@ import type { NextRequest } from "next/server";
 import { readDb, writeDb, type NotificationRecord } from "@/lib/db";
 import { requireAuth, handleAuthError } from "@/lib/auth/authorization";
 import { personalizedJsonResponse } from "@/lib/api/response";
+import { checkAndNotifyExpiredOpportunities } from "@/lib/services/notifications/deadlineNotificationService";
 
 export async function GET(req: NextRequest) {
   try {
     const { user } = await requireAuth(req);
     const userId = user.id;
+
+    // Automatically check for expired saved opportunities and generate alert notifications
+    await checkAndNotifyExpiredOpportunities(userId).catch(() => {});
+
     const db = readDb();
 
     // Invariant: strictly return notifications owned by the authenticated user

@@ -197,7 +197,13 @@ export class MatchingService {
   async matchOpportunity(
     userId: string,
     opportunity: any,
-    catalogue?: CareerRoleEntity[]
+    catalogue?: CareerRoleEntity[],
+    prefetchedData?: {
+      profile?: StudentProfileEntity | null;
+      studentSkills?: StudentSkillDto[];
+      careerInterests?: CareerInterestDto[];
+      preferences?: StudentPreferenceDto | null;
+    }
   ): Promise<OpportunityMatchResult> {
     if (!opportunity) {
       throw new Error("Opportunity payload is required for matching.");
@@ -205,34 +211,36 @@ export class MatchingService {
 
     const activeCatalogue = catalogue || (await this.catalogueSvc.getCatalogue());
 
-    // 1. Retrieve student profile dimensions
-    let profile: StudentProfileEntity | null = null;
-    let studentSkills: StudentSkillDto[] = [];
-    let careerInterests: CareerInterestDto[] = [];
-    let preferences: StudentPreferenceDto | null = null;
+    // 1. Retrieve student profile dimensions (use prefetched if provided to avoid 700+ DB calls in bulk feeds)
+    let profile: StudentProfileEntity | null = prefetchedData?.profile ?? null;
+    let studentSkills: StudentSkillDto[] = prefetchedData?.studentSkills ?? [];
+    let careerInterests: CareerInterestDto[] = prefetchedData?.careerInterests ?? [];
+    let preferences: StudentPreferenceDto | null = prefetchedData?.preferences ?? null;
 
-    try {
-      profile = await this.profService.getProfile(userId);
-    } catch {
-      profile = null;
-    }
+    if (!prefetchedData) {
+      try {
+        profile = await this.profService.getProfile(userId);
+      } catch {
+        profile = null;
+      }
 
-    try {
-      studentSkills = await this.extProfService.getStudentSkills(userId);
-    } catch {
-      studentSkills = [];
-    }
+      try {
+        studentSkills = await this.extProfService.getStudentSkills(userId);
+      } catch {
+        studentSkills = [];
+      }
 
-    try {
-      careerInterests = await this.extProfService.getCareerInterests(userId);
-    } catch {
-      careerInterests = [];
-    }
+      try {
+        careerInterests = await this.extProfService.getCareerInterests(userId);
+      } catch {
+        careerInterests = [];
+      }
 
-    try {
-      preferences = await this.extProfService.getPreferences(userId);
-    } catch {
-      preferences = null;
+      try {
+        preferences = await this.extProfService.getPreferences(userId);
+      } catch {
+        preferences = null;
+      }
     }
 
     // STRICT INVARIANT: Only confirmed/verified skills count
@@ -269,9 +277,10 @@ export class MatchingService {
     const ineligibilityReasons: string[] = [];
 
     // Gate 1: Status & Freshness Invariant
-    const oppStatus = (opportunity.status || "ACTIVE").toUpperCase();
+    const oppStatus = (opportunity.status || opportunity.lifecycleStatus || "ACTIVE").toUpperCase();
+    const rawDeadline = opportunity.deadline || opportunity.applicationDeadline;
     const isDeadlinePassed =
-      opportunity.deadline && new Date(opportunity.deadline).getTime() < Date.now();
+      rawDeadline && new Date(rawDeadline).getTime() < Date.now();
 
     const isStatusEligible = oppStatus === "ACTIVE" && !isDeadlinePassed;
     checks.push({
@@ -307,7 +316,23 @@ export class MatchingService {
     if (allowedYears.length > 0) {
       const studentGradYear = profile?.graduationYear;
       if (studentGradYear) {
-        isGradYearMet = allowedYears.includes(studentGradYear);
+        if (allowedYears.includes(studentGradYear)) {
+          isGradYearMet = true;
+        } else {
+          // Broad multi-year pools or internships/entry programs should include ongoing college batches
+          const maxAllowed = Math.max(...allowedYears);
+          const minAllowed = Math.min(...allowedYears);
+          const isCategoryInternOrEarly =
+            (opportunity.category || "").toLowerCase().includes("intern") ||
+            (opportunity.title || "").toLowerCase().includes("intern") ||
+            allowedYears.length >= 3;
+
+          if (isCategoryInternOrEarly && studentGradYear >= minAllowed && studentGradYear <= maxAllowed + 2) {
+            isGradYearMet = true;
+          } else {
+            isGradYearMet = false;
+          }
+        }
       } else {
         // If student has not specified graduation year, flag as unmet
         isGradYearMet = false;
@@ -566,10 +591,10 @@ export class MatchingService {
       const oppContext: OpportunityContext = {
         id: opportunity.id,
         title: opportunity.title,
-        employer: opportunity.employer || opportunity.org || "Employer",
+        employer: opportunity.employer || opportunity.org || opportunity.company || opportunity.organizationName || "Employer",
         description: opportunity.description,
         location: opportunity.location,
-        workplaceType: opportunity.workplaceType,
+        workplaceType: opportunity.workplaceType || opportunity.workMode,
         requiredSkills: oppRequiredSkills,
         preferredSkills: oppPreferredSkills,
         category: opportunity.category,
@@ -581,12 +606,12 @@ export class MatchingService {
     return {
       opportunityId: opportunity.id,
       title: opportunity.title,
-      employer: opportunity.employer,
-      location: opportunity.location,
-      workplaceType: opportunity.workplaceType || null,
+      employer: opportunity.employer || opportunity.org || opportunity.company || opportunity.organizationName || "Employer",
+      location: opportunity.location || (opportunity.locationCity ? `${opportunity.locationCity}${opportunity.locationState ? `, ${opportunity.locationState}` : ""}` : "India"),
+      workplaceType: opportunity.workplaceType || opportunity.workMode || null,
       employmentType: opportunity.employmentType || null,
-      applicationUrl: opportunity.applicationUrl,
-      deadline: opportunity.deadline || null,
+      applicationUrl: opportunity.applicationUrl || opportunity.sourceUrl,
+      deadline: opportunity.deadline || (opportunity.applicationDeadline ? new Date(opportunity.applicationDeadline).toISOString() : null),
       verifiedAt: opportunity.lastVerifiedAt || opportunity.verifiedAt || null,
       isEligible: isFullyEligible,
       overallScore,
@@ -638,9 +663,25 @@ export class MatchingService {
 
     if (prisma?.opportunity) {
       try {
-        opportunities = await prisma.opportunity.findMany({
-          where: { status: "ACTIVE" },
+        const rawOpps = await prisma.opportunity.findMany({
+          where: { lifecycleStatus: "active" },
         });
+        if (rawOpps && rawOpps.length > 0) {
+          opportunities = rawOpps.map((o: any) => ({
+            ...o,
+            company: o.organizationName,
+            employer: o.organizationName,
+            org: o.organizationName,
+            deadline: o.applicationDeadline ? new Date(o.applicationDeadline).toISOString() : null,
+            workplaceType: o.workMode,
+            location: o.locationCity
+              ? `${o.locationCity}${o.locationState ? `, ${o.locationState}` : ""}`
+              : (o.locationCountry || "India"),
+            status: "active",
+            skills: o.requiredSkills || [],
+            eligibility: typeof o.eligibility === "string" ? JSON.parse(o.eligibility) : o.eligibility,
+          }));
+        }
       } catch (err) {
         console.warn("[matchingService] Prisma query error, falling back to dbStore:", err);
       }
@@ -649,13 +690,41 @@ export class MatchingService {
     if (opportunities.length === 0) {
       const db = readDbStore();
       opportunities = (db.opportunities || []).filter(
-        (o: any) => !o.status || String(o.status).toUpperCase() === "ACTIVE"
+        (o: any) => !o.status || String(o.status).toLowerCase() === "active"
       );
     }
 
+    // Pre-fetch student profile, skills, and preferences ONCE to eliminate N*4 duplicate queries
+    let studentProfile: StudentProfileEntity | null = null;
+    let studentSkills: StudentSkillDto[] = [];
+    let preferences: StudentPreferenceDto | null = null;
+
+    try {
+      studentProfile = await this.profService.getProfile(userId);
+    } catch {
+      studentProfile = null;
+    }
+    try {
+      studentSkills = await this.extProfService.getStudentSkills(userId);
+    } catch {
+      studentSkills = [];
+    }
+    try {
+      preferences = await this.extProfService.getPreferences(userId);
+    } catch {
+      preferences = null;
+    }
+
+    const prefetched = {
+      profile: studentProfile,
+      studentSkills,
+      careerInterests,
+      preferences,
+    };
+
     // Score and filter eligible opportunities
     const scoredPromises = opportunities.map((opp) =>
-      this.matchOpportunity(userId, opp, catalogue)
+      this.matchOpportunity(userId, opp, catalogue, prefetched)
     );
     const scoredResults = await Promise.all(scoredPromises);
 

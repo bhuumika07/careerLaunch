@@ -128,7 +128,6 @@ export default function NotificationsCenterPage() {
           { id: "applications", label: "Applications" },
           { id: "deadlines", label: "Deadlines" },
           { id: "matches", label: "Job Matches" },
-          { id: "learning", label: "Learning & Roadmaps" },
         ].map((f) => (
           <button
             key={f.id}
@@ -147,9 +146,15 @@ export default function NotificationsCenterPage() {
 
       {/* Notifications List */}
       {loading ? (
-        <div className="space-y-3">
+        <div className="space-y-3 animate-pulse">
           {[1, 2, 3].map((n) => (
-            <div key={n} className="h-20 rounded-2xl bg-card border border-border animate-pulse" />
+            <div key={n} className="h-20 rounded-2xl bg-card border border-border p-4 flex items-center gap-4">
+              <div className="size-9 rounded-xl bg-slate-200/80 shrink-0" />
+              <div className="flex-1 space-y-2">
+                <div className="h-4 w-1/3 bg-slate-200/90 rounded-lg" />
+                <div className="h-3 w-2/3 bg-slate-100 rounded-lg" />
+              </div>
+            </div>
           ))}
         </div>
       ) : filteredNotifs.length === 0 ? (

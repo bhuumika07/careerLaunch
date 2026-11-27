@@ -60,7 +60,7 @@ export default function StudentProfilePage() {
     let mounted = true;
     const fetchProfile = async () => {
       try {
-        const res = await fetch("/api/profile/student");
+        const res = await fetch("/api/profile/student", { cache: "no-store" });
         const data = await res.json();
         if (mounted && res.ok && data.success) {
           setUser(data.user);
@@ -294,17 +294,6 @@ export default function StudentProfilePage() {
 
         {/* Action Controls */}
         <div className="flex items-center gap-3">
-          <Link href="/student/profile/questionnaire">
-            <PillButton
-              variant="primary"
-              size="sm"
-              icon={<Sparkles className="size-3.5 text-teal-300" />}
-              className="bg-teal-700 hover:bg-teal-800 text-white border-0"
-            >
-              Questionnaire
-            </PillButton>
-          </Link>
-
           <Link href={`/p/student/${user?.id}`} target="_blank">
             <PillButton
               variant="secondary"

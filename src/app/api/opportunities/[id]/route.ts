@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { readDb, writeDb } from "@/lib/db";
-import { requireRole, handleAuthError } from "@/lib/auth-guard";
+import { requireRole, requireAuth, handleAuthError, AuthError } from "@/lib/auth-guard";
 import { opportunityQueryService } from "@/lib/services/opportunities/opportunityQueryService";
 
 // GET /api/opportunities/[id]
@@ -9,6 +9,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    await requireAuth(req);
     const { id } = await params;
     const url = new URL(req.url);
     const allowQuarantined = url.searchParams.get("includeQuarantined") === "true";
@@ -26,6 +27,9 @@ export async function GET(
       opportunity,
     });
   } catch (error) {
+    if (error instanceof AuthError) {
+      return handleAuthError(error);
+    }
     console.error("Opportunity detail API error:", error);
     return NextResponse.json(
       { success: false, error: "Failed to load opportunity." },

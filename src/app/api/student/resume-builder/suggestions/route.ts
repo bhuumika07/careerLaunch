@@ -7,15 +7,9 @@ export async function GET(req: NextRequest) {
     const { user } = await requireRole(["student"], req);
     const db = readDb();
     const profile = (db.studentProfiles || []).find((p) => p.userId === user.id);
-    const roadmap = (db.roadmaps || []).find((r) => r.userId === user.id);
 
     // Verified skills
     const verifiedSkills = (profile?.skills || []).filter((s) => s.status === "verified");
-
-    // Completed roadmap projects
-    const completedRoadmapProjects = (roadmap?.modules || [])
-      .filter((m) => m.status === "completed" && m.project)
-      .map((m) => m.project);
 
     // Earned certifications
     const certifications = profile?.certifications || [];
@@ -24,7 +18,6 @@ export async function GET(req: NextRequest) {
       success: true,
       suggestions: {
         verifiedSkills,
-        completedRoadmapProjects,
         certifications,
       },
     });
